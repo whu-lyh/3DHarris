@@ -2,6 +2,12 @@
 // @author xhzou_whu@foxmail.com
 // @date 2018/10/04
 // @brief point cloud io
+
+// Copyright (c) 2020 WuHan University. All Rights Reserved
+// @author yhaoli@whu.edu.cn
+// @date 2020/04/02
+// @brief utility
+
 #pragma once
 
 #include "basicLibs.h"
@@ -36,4 +42,4 @@ namespace PointIO
 #define TEMPLATE_POINTCLOUD_IO
 #include "PointCloudIO.cpp"
 
-//this define is used for finding the PointCloudIO.cpp,due to the function defined in namespace Trajectory is a template function ,so this kind of header-file connection is necessary
+//this define is used for finding the PointCloudIO.cpp,due to the function defined in namespace PointIO is a template function ,so this kind of header-file connection is necessary
