@@ -54,7 +54,9 @@ int main ( int argc, char *argv [] )
 	sift.setInputCloud ( input_cloud ); //设置输入点云
 	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree ( new pcl::search::KdTree<pcl::PointXYZ> () );
 	sift.setSearchMethod ( tree ); //创建一个空的kd树对象tree，并把它传递给sift检测对象
-	sift.setScales ( min_scale, n_octaves, n_scales_per_octave ); //指定搜索关键点的尺度范围
+	 //指定搜索关键点的尺度范围，在sift内部计算中，使用了一个默认的下采样方法，该方法采用voxel filter的方式用体素中心点近似代替原始点云进行下采样，
+	//也就是说采样之后的点不是原来的原始点云中的点了
+	sift.setScales ( min_scale, n_octaves, n_scales_per_octave ); 
 	sift.setMinimumContrast ( min_contrast ); //设置限制关键点检测的阈值
 	sift.compute ( result ); //执行sift关键点检测，保存结果在result
 
