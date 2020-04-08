@@ -3,7 +3,9 @@
 #include <pcl/point_cloud.h>
 //#include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/io/io.h>
-#include <pcl/keypoints/harris_3D.h>//harris特征点估计类头文件声明
+#include <pcl/keypoints/harris_3D.h> //harris特征点估计类头文件声明
+#include <pcl/keypoints/sift_keypoint.h> //3D sift 特征点检测
+#include <pcl/filters/voxel_grid.h>
 #include <cstdlib>
 #include <vector>
 #include <pcl/console/parse.h>
@@ -11,6 +13,20 @@
 #include "PointCloudIO.h"
 
 using namespace std;
+
+#define PCLSIFT 
+namespace pcl
+{
+	template<>
+	struct SIFTKeypointFieldSelector<PointXYZ>
+	{
+		inline float
+			operator () ( const PointXYZ &p ) const
+		{
+			return p.z;
+		}
+	};
+}
 
 int main ( int argc, char *argv [] )
 {
@@ -26,6 +42,28 @@ int main ( int argc, char *argv [] )
 		std::cout << "las file load successfully" << std::endl;
 	}
 
+	//octree voxel
+#ifdef PCLSIFT
+	const float min_scale = 0.1;
+	const int n_octaves = 6;
+	const int n_scales_per_octave = 4;
+	const float min_contrast = 0.01;
+
+	pcl::SIFTKeypoint<pcl::PointXYZ, pcl::PointWithScale> sift; //创建sift关键点检测对象
+	pcl::PointCloud<pcl::PointWithScale> result;
+	sift.setInputCloud ( input_cloud ); //设置输入点云
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree ( new pcl::search::KdTree<pcl::PointXYZ> () );
+	sift.setSearchMethod ( tree ); //创建一个空的kd树对象tree，并把它传递给sift检测对象
+	sift.setScales ( min_scale, n_octaves, n_scales_per_octave ); //指定搜索关键点的尺度范围
+	sift.setMinimumContrast ( min_contrast ); //设置限制关键点检测的阈值
+	sift.compute ( result ); //执行sift关键点检测，保存结果在result
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr Sift_keypoint ( new pcl::PointCloud<pcl::PointXYZ> );
+	copyPointCloud ( result, *Sift_keypoint );//将点类型pcl::PointWithScale的数据转换为点类型pcl::PointXYZ的数据
+
+	//save as las
+	PointIO::saveLAS2<pcl::PointXYZ> ( featurepointpath, Sift_keypoint, las_offset );
+#else
 	//pcl::PCDWriter writer;
 	float r_normal;
 	float r_keypoint;
@@ -40,7 +78,7 @@ int main ( int argc, char *argv [] )
 	pcl::PointCloud<pcl::PointXYZI>::Ptr Harris_keypoints ( new pcl::PointCloud<pcl::PointXYZI> () );
 	pcl::HarrisKeypoint3D<pcl::PointXYZ, pcl::PointXYZI, pcl::Normal>* harris_detector = new pcl::HarrisKeypoint3D<pcl::PointXYZ, pcl::PointXYZI, pcl::Normal>;
 
-	harris_detector->setNonMaxSupression(true);
+	harris_detector->setNonMaxSupression ( true );
 	harris_detector->setRadius ( r_normal );
 	harris_detector->setRadiusSearch ( r_keypoint );
 	harris_detector->setInputCloud ( input_cloud );
@@ -53,6 +91,7 @@ int main ( int argc, char *argv [] )
 
 	//save as las
 	PointIO::saveLAS2<pcl::PointXYZI> ( featurepointpath, Harris_keypoints, las_offset );
+#endif
 
 	/*pcl::visualization::PCLVisualizer visu3 ( "clouds" );
 	visu3.setBackgroundColor ( 255, 255, 255 );
