@@ -30,6 +30,9 @@
     <ClCompile Include="tmpcode.hpp">
       <Filter>头文件</Filter>
     </ClCompile>
+    <ClCompile Include="laslib-writepointwithrgb.cpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudIO.h">

@@ -120,6 +120,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="groundExtraction.cpp" />
+    <ClCompile Include="laslib-writepointwithrgb.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PointCloudIO.cpp" />
     <ClCompile Include="tmpcode.hpp" />

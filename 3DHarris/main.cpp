@@ -6,6 +6,7 @@
 #include <pcl/keypoints/harris_3D.h> //harris特征点估计类头文件声明
 #include <pcl/keypoints/sift_keypoint.h> //3D sift 特征点检测
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <cstdlib>
 #include <vector>
@@ -28,8 +29,9 @@ using namespace std;
 
 //#define PCLSIFT 
 //#define 3DHARRIS
-//#define VOXEL_FILTER
-#define SOR_FILTER
+#define VOXEL_FILTER
+#define APPROXIMATE_VOXEL_FILTER
+//#define SOR_FILTER
 //#define CONNECT_ANALYSIS_TEST
 
 namespace pcl
@@ -197,6 +199,19 @@ int main ( int argc, char *argv [] )
 	sor.setInputCloud ( input_cloud );
 	sor.setLeafSize ( 0.2, 0.2, 0.02 );
 	sor.filter ( *spl_cloud );
+	//save as las
+	PointIO::saveLAS2<pcl::PointXYZ> ( featurepointpath, spl_cloud, las_offset );
+#endif
+
+	//approximate voxel filter
+	//using a hash table to mappint the points into the limited number of container, if the hash conflict occurs, clean the point that are already
+	// existed point as a out put point cloud? still from the origin  point cloud?
+#ifdef APPROXIMATE_VOXEL_FILTER
+	pcl::PointCloud<pcl::PointXYZ>::Ptr spl_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
+	pcl::ApproximateVoxelGrid<pcl::PointXYZ> avg;
+	avg.setInputCloud ( input_cloud );
+	avg.setLeafSize ( 0.2, 0.2, 0.02 );
+	avg.filter ( *spl_cloud );
 	//save as las
 	PointIO::saveLAS2<pcl::PointXYZ> ( featurepointpath, spl_cloud, las_offset );
 #endif
