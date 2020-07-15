@@ -29,7 +29,7 @@
 
 using namespace std;
 
-#define COLORSET
+//#define COLORSET
 
 //#define PCLSIFT 
 //#define 3DHARRIS
@@ -238,6 +238,10 @@ int main ( int argc, char *argv [] )
 	std::chrono::high_resolution_clock::time_point t2treport = std::chrono::high_resolution_clock::now ();
 	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>( t2treport - t1report );
 	std::cout << "Out put the regist Summary file, time cost: " << t12report.count () << "s" << std::endl;
+
+	std::cout << sizeof ( short int ) << std::endl;
+	std::cout << sizeof ( char ) << std::endl;
+	std::cout << sizeof ( bool ) << std::endl;
 
 #ifdef COLORSET
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr color_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>> ();

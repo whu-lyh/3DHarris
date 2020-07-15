@@ -874,7 +874,7 @@ namespace PointIO
 						pFile += spt_offset;
 						uint32_t rest_count = num_pts - cur_size.QuadPart / pt_length;
 						parseSPTmmf<T> ( pFile, rest_count, cloud );
-						UnmapViewOfFile ( pFile );
+						UnmapViewOfFile ( pFile - spt_offset );
 						break;
 					}
 				}
