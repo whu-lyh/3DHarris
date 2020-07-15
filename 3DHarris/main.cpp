@@ -10,6 +10,8 @@
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <cstdlib>
 #include <vector>
+#include <ctime>
+#include <chrono>
 #include <pcl/console/parse.h>
 //opencv
 #include <opencv2/opencv.hpp>
@@ -27,10 +29,12 @@
 
 using namespace std;
 
+#define COLORSET
+
 //#define PCLSIFT 
 //#define 3DHARRIS
-#define VOXEL_FILTER
-#define APPROXIMATE_VOXEL_FILTER
+//#define VOXEL_FILTER
+//#define APPROXIMATE_VOXEL_FILTER
 //#define SOR_FILTER
 //#define CONNECT_ANALYSIS_TEST
 
@@ -173,13 +177,50 @@ void GetSubsetBoundary ( pcl::PointCloud<pcl::PointXYZ>::Ptr & plane_wall_cloud,
 	getCloudBound ( *temp_cloud, bound );
 }
 
+bool setColorByDistance ( const float distance, int &r, int &g, int &b )
+{ //set color by distance and the larger distance , the deeper color will be set
+	double maxdist = 20;
+	if ( distance < maxdist / 3 )
+	{
+		r = 255;
+		g = std::ceil ( 255 * 3 * distance / maxdist );
+		b = 0;
+	}
+	else if ( distance < maxdist / 2 )
+	{
+		r = std::ceil ( 750 - distance * 256 * 6 / maxdist );
+		g = 255;
+		b = 0;
+	}
+	else if ( distance < maxdist * 2 / 3 )
+	{
+		r = 0;
+		g = 255;
+		b = std::ceil ( distance * 250 * 6 / maxdist - 750 );
+	}
+	else if ( distance < maxdist * 5 / 6 )
+	{
+		r = 0;
+		g = std::ceil ( 1250 - distance * 250 * 6 / maxdist );
+		b = 255;
+	}
+	else
+	{
+		r = std::ceil ( 150 * distance * 6 / maxdist - 750 );
+		g = 0;
+		b = 255;
+	}
+	return true;
+}
+
 int main ( int argc, char *argv [] )
 {
 	//tbb parallel
 	tbb::parallel_for ( 0, 10, [] ( int num ) {std::cout << num << " : hello tbb " << std::endl; } );
 
 	//std::string pointfilepath = "./181013_030701-11-25-35-538.las";
-	std::string pointfilepath = "./0429-ground-xyziZNN.las";
+	//std::string pointfilepath = "E:/ProjectVolume/PointCloudRegistration/pclargethan500/pc/iScan-Pcd-1_part0.las";
+	std::string pointfilepath = "./withintensity.spt";
 	std::string featurepointpath = "./harris-festure-point.las";
 
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
@@ -187,10 +228,37 @@ int main ( int argc, char *argv [] )
 	pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZ>> ();
 	//pcl::PointCloud<PointXYZINTF>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<PointXYZINTF>> ();
 	Utility::Offset las_offset;
-	if ( PointIO::loadSingleLAS<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
+
+	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now ();
+	if ( PointIO::loadSPT<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
 	{
+		std::cout << input_cloud->points.size () << std::endl;
 		std::cout << "las file load successfully" << std::endl;
 	}
+	std::chrono::high_resolution_clock::time_point t2treport = std::chrono::high_resolution_clock::now ();
+	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>( t2treport - t1report );
+	std::cout << "Out put the regist Summary file, time cost: " << t12report.count () << "s" << std::endl;
+
+#ifdef COLORSET
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr color_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>> ();
+
+	for ( auto pt : input_cloud->points ) {
+		pcl::PointXYZRGB colorp;
+		float dist =rand()%20;
+		int R = 0, G = 0, B = 0;
+		setColorByDistance ( dist, R, G, B );
+		//std::cout << dist << ", " << R << ", " << G << ", " << B << std::endl;
+		colorp.x = pt.x;
+		colorp.y = pt.y;
+		colorp.z = pt.z;
+		colorp.r = R;
+		colorp.g = G;
+		colorp.b = B;
+		color_cloud->push_back ( colorp );
+	}
+	PointIO::saveLAS<pcl::PointXYZRGB> ("./colord_pts.las",color_cloud, las_offset );
+
+#endif
 
 	//octree voxel
 #ifdef VOXEL_FILTER

@@ -69,8 +69,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>E:\Library\CGAL-4.8\include\CGAL;E:\Library\CGAL-4.8\include;E:\Library\Boost_1_67_0\include;E:\Library\eigen-3.3.4;E:\Library\flann-1.9.1\include;E:\Library\liblas-1.8.1\include;E:\Library\opencv-3.4.0\include;E:\Library\pcl-1.8.1\include;E:\Library\glog\include;..\;E:\Library\TBB-2020.2\install\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\CGAL-4.8\x64\vc14\lib;E:\Library\Boost_1_67_0\x64\vc14\lib;E:\Library\flann-1.9.1\x64\vc14\lib;E:\Library\gdal-1.11.5\x64\vc14\lib\release;E:\Library\libtiff-4.0.6\x64\vc14\lib\release;E:\Library\libgeotiff-1.4.2\x64\vc14\lib\release;E:\Library\liblas-1.8.1\x64\vc14\lib\release;E:\Library\opencv-3.4.0\x64\vc14\lib;E:\Library\pcl-1.8.1\x64\vc14\lib;E:\Library\glog\x64\vc14\lib;E:\Library\TBB-2020.2\install\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\Library\Boost_1_67_0\include;E:\Library\eigen-3.3.4;E:\Library\flann-1.9.1\include;E:\Library\liblas-1.8.1\include;E:\Library\opencv-3.4.0\include;E:\Library\pcl-1.8.1\include;E:\Library\glog\include;..\;E:\Library\TBB-2020.2\install\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\Library\Boost_1_67_0\x64\vc14\lib;E:\Library\flann-1.9.1\x64\vc14\lib;E:\Library\gdal-1.11.5\x64\vc14\lib\release;E:\Library\libtiff-4.0.6\x64\vc14\lib\release;E:\Library\libgeotiff-1.4.2\x64\vc14\lib\release;E:\Library\liblas-1.8.1\x64\vc14\lib\release;E:\Library\opencv-3.4.0\x64\vc14\lib;E:\Library\pcl-1.8.1\x64\vc14\lib;E:\Library\glog\x64\vc14\lib;E:\Library\TBB-2020.2\install\lib\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>E:\Library\Boost_1_67_0\include;E:\Library\eigen-3.3.4;E:\Library\flann-1.9.1\include;E:\Library\liblas-1.8.1\include;E:\Library\opencv-3.4.0\include;E:\Library\pcl-1.8.1\include;E:\Library\glog\include;..\;E:\Library\TBB-2020.2\install\include;$(IncludePath)</IncludePath>
@@ -120,7 +120,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="groundExtraction.cpp" />
-    <ClCompile Include="laslib-writepointwithrgb.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PointCloudIO.cpp" />
     <ClCompile Include="tmpcode.hpp" />

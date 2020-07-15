@@ -242,7 +242,7 @@ namespace PointIO
 			//file size
 			uintmax_t sz = boost::filesystem::file_size(filename);
 
-			if (sz >= 400 * 1024 * 1024) //larger than 400M
+			if ( sz >= 500 * 1024 * 1024 )  //larger than 400M, use MMF
 			{
 				HANDLE file_handle = CreateFile(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
 					FILE_ATTRIBUTE_NORMAL, NULL);
@@ -274,6 +274,7 @@ namespace PointIO
 				pFile = (char*)MapViewOfFile(mapping_handle, FILE_MAP_READ, 0, 0, EACH_SIZE * 1.1);
 
 				pFile += offset;
+				//the size created by mmf should be changed with the real point cloud data
 				parseLASmmf<T>(pFile, EACH_POINT_NUM, header, pt_length, cloud, las_offset);
 				UnmapViewOfFile(pFile - offset);
 				cur_size.QuadPart += EACH_SIZE;
@@ -553,63 +554,352 @@ namespace PointIO
 		return true;
 	}
 
-	template <typename T>
-	bool loadSPT(const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud, Offset& offset)
+	//load spt files, spt file just save the offset(double) and xyz(float)
+	template<typename T>
+	void parseSPT ( const std::string &filename, const typename pcl::PointCloud<T>::Ptr& cloud, Offset& offset )
 	{
-		if (!std::is_same<T, pcl::PointXYZ>::value)
-		{
-			LOG(WARNING) << "Warning: skip parsing when point type isn't 'PointXYZ'!";
-			return false;
-		}
+	}
 
-		if (!file_exist(filename))
-		{
-			std::cout << "'" << filename << "' doesn't exist!";
-			return false;
-		}
-
-		if (is_directory(filename))
-		{
-			std::cout << "'" << filename << "' is a directory!";
-			return false;
-		}
-
-		if (cloud == nullptr)
-		{
-			std::cout << "pointer 'cloud' is nullptr!";
-			return false;
-		}
-
+	template <>
+	inline void parseSPT <pcl::PointXYZ> ( const std::string &filename, const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud, Offset& offset )
+	{//old spt file is Depracated, //Note that the loading process is only save the xyz information, but the spt file contains the whole the info
 		std::ifstream ifs;
-		ifs.open(filename, std::ios::in | std::ios::binary);
-		ifs.seekg(0, std::ios::end);
+		ifs.open ( filename, std::ios::in | std::ios::binary );
 
-		double* offset_data = new double[3];
-		int data_length = ifs.tellg();
-		data_length = (data_length -3 * sizeof(double)) / sizeof(float);
-		float* data = new float[data_length];
+		//offset
+		double* offset_data = new double [3];
+		ifs.seekg ( 0, std::ios::beg );
+		ifs.read ( reinterpret_cast<char*>( offset_data ), 3 * sizeof ( double ) );
 
+		//point size = calculate the size of basic type and divided
+		//move the pointer to the end of the binary file
+		ifs.seekg ( 0, std::ios::end );
+		int data_length = ifs.tellg ();
+		int num_pts = ( data_length - 3 * sizeof ( double ) ) / ( sizeof ( float ) * 5 + sizeof ( double ) + sizeof ( uint8_t ) );
+		float* data = new float [num_pts * 3];
 
-		ifs.seekg(0, std::ios::beg);
-		ifs.read(reinterpret_cast<char*>(offset_data), 3 * sizeof(double));
-		ifs.seekg(3 * sizeof(double),std::ios::beg);
-		ifs.read(reinterpret_cast<char*>(data), data_length * sizeof(float));
-		ifs.close();
+		//here jump the pointer to the offset 's end() and read the xyzintf information
+		ifs.seekg ( 3 * sizeof ( double ), std::ios::beg );
 
-		offset = Offset(offset_data[0], offset_data[1], offset_data[2]);
-
-		int num_pts = data_length / 3;
-		for (int i = 0; i < num_pts; ++i)
+		for ( int singlepoint = 0; singlepoint < num_pts; ++singlepoint )
 		{
-			T pt;
-			pt.x = data[3 * i];
-			pt.y = data[3 * i + 1];
-			pt.z = data[3 * i + 2];
-			cloud->emplace_back(pt);
+			ifs.read ( reinterpret_cast<char*>( &data [3 * singlepoint] ), sizeof ( float ) );
+			ifs.read ( reinterpret_cast<char*>( &data [3 * singlepoint + 1] ), sizeof ( float ) );
+			ifs.read ( reinterpret_cast<char*>( &data [3 * singlepoint + 2] ), sizeof ( float ) );
+			//move the pointer to skip the intensity, gpstime, number of return, and edge of flight
+			ifs.seekg ( ( 2 * sizeof ( float ) + sizeof ( double ) + sizeof ( uint8_t ) ), std::ios::cur );
 		}
-		delete[] data;
-		delete[] offset_data;
 
+		ifs.close ();
+
+		offset = Utility::Offset ( offset_data [0], offset_data [1], offset_data [2] );
+
+		for ( int i = 0; i < num_pts; ++i )
+		{
+			pcl::PointXYZ pt;
+			pt.x = data [3 * i];
+			pt.y = data [3 * i + 1];
+			pt.z = data [3 * i + 2];
+			cloud->push_back ( pt );
+		}
+
+		delete [] data;
+		delete [] offset_data;
+	}
+
+	template <>
+	inline void parseSPT <PointXYZINTF> ( const std::string &filename, const pcl::PointCloud<PointXYZINTF>::Ptr& cloud, Offset& offset )
+	{
+		std::ifstream ifs;
+		ifs.open ( filename, std::ios::in | std::ios::binary );
+
+		//offset
+		double* offset_data = new double [3];
+		ifs.seekg ( 0, std::ios::beg );
+		ifs.read ( reinterpret_cast<char*>( offset_data ), 3 * sizeof ( double ) );
+
+		//point size = calculate the size of basic type and divided
+		//move the pointer to the end of the binary file
+		ifs.seekg ( 0, std::ios::end );
+		int data_length = ifs.tellg ();
+		int num_pts = ( data_length - 3 * sizeof ( double ) ) / ( sizeof ( float ) * 5 + sizeof ( double ) + sizeof ( uint8_t ) );
+		float* data = new float [num_pts * 3];
+		float* intendata = new float [num_pts];
+		uint8_t* returndata = new uint8_t [num_pts];
+		double* timedata = new double [num_pts];
+		float* edgedata = new float [num_pts];
+
+		//here jump the pointer to the offset 's end() and read the xyzintf information
+		ifs.seekg ( 3 * sizeof ( double ), std::ios::beg );
+
+		for ( int singlepoint = 0; singlepoint < num_pts; ++singlepoint )
+		{
+			ifs.read ( reinterpret_cast<char*>( &data [3 * singlepoint] ), sizeof ( float ) );
+			ifs.read ( reinterpret_cast<char*>( &data [3 * singlepoint + 1] ), sizeof ( float ) );
+			ifs.read ( reinterpret_cast<char*>( &data [3 * singlepoint + 2] ), sizeof ( float ) );
+			ifs.read ( reinterpret_cast<char*>( &intendata [singlepoint] ), sizeof ( float ) );
+			ifs.read ( reinterpret_cast<char*>( &returndata [singlepoint] ), sizeof ( uint8_t ) );//uint8_t=unsigned char
+			ifs.read ( reinterpret_cast<char*>( &timedata [singlepoint] ), sizeof ( double ) );
+			ifs.read ( reinterpret_cast<char*>( &edgedata [singlepoint] ), sizeof ( float ) );
+		}
+
+		ifs.close ();
+
+		offset = Utility::Offset ( offset_data [0], offset_data [1], offset_data [2] );
+
+		for ( int i = 0; i < num_pts; ++i )
+		{
+			PointXYZINTF pt;
+			pt.x = data [3 * i];
+			pt.y = data [3 * i + 1];
+			pt.z = data [3 * i + 2];
+			pt.intensity = intendata [i];
+			pt.num_returns = returndata [i];
+			pt.gps_time = timedata [i];
+			pt.flighting_line_edge = edgedata [i];
+			cloud->push_back ( pt );
+		}
+
+		delete [] data;
+		delete [] offset_data;
+		delete [] intendata;
+		delete [] returndata;
+		delete [] timedata;
+		delete [] edgedata;
+	}
+
+	//mmap function
+	template<typename T>
+	void parseSPTmmf ( const char *pFile, const uint32_t pts_num,  const typename pcl::PointCloud<T>::Ptr& cloud )
+	{
+	}
+
+	template <>
+	inline void parseSPTmmf <pcl::PointXYZ> ( const char *pFile, const uint32_t pts_num, const pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud )
+	{
+		uint32_t pt_length =  sizeof ( float ) * 5 + sizeof ( double ) + sizeof ( uint8_t ) ;
+		float* data = new float [3];
+		for ( int i = 0; i < pts_num; i++ )
+		{
+			memcpy ( data, pFile, sizeof ( float ) * 3 );
+			pFile += pt_length;
+			pcl::PointXYZ pt;
+			pt.x = data [0];
+			pt.y = data [1];
+			pt.z = data [2];
+			cloud->push_back ( pt );
+		}
+		delete []data;
+	}
+
+	template <>
+	inline void parseSPTmmf <PointXYZINTF> ( const char *pFile, const uint32_t pts_num, const pcl::PointCloud<PointXYZINTF>::Ptr& cloud )
+	{
+		float* data = new float [4];
+		uint8_t* returndata = new uint8_t [1];
+		double* timedata = new double [1];
+		float* edgedata = new float [1];
+		for ( int i = 0; i < pts_num; i++ )
+		{
+			//std::cout << i << std::endl;
+			memcpy ( data , pFile, sizeof ( float ) * 4 );
+			pFile += sizeof ( float ) * 4;
+			memcpy ( returndata , pFile, sizeof ( uint8_t ) );
+			pFile += sizeof ( uint8_t );
+			memcpy ( timedata , pFile, sizeof ( double ) );
+			pFile += sizeof ( double );
+			memcpy ( edgedata , pFile, sizeof ( float ) );
+			pFile += sizeof ( float );
+			PointXYZINTF pt;
+			pt.x = data [0];
+			pt.y = data [1];
+			pt.z = data [2];
+			pt.intensity = data [3];
+			pt.num_returns = returndata [0];
+			pt.gps_time = timedata [0];
+			pt.flighting_line_edge = edgedata [0];
+			cloud->push_back ( pt );
+		}
+		delete [] data;
+		delete [] returndata;
+		delete [] timedata;
+		delete [] edgedata;
+	}
+
+	template <typename T>
+	bool loadSPT ( const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud, Offset& offset )
+	{
+		if ( !std::is_same<T, pcl::PointXYZ>::value && !std::is_same<T, PointXYZINTF>::value )
+		{
+			std::cerr << "Warning: skip parsing when point type isn't 'PointXYZ' or 'PointXYZINTF'!";
+			return false;
+		}
+
+		if ( !file_exist ( filename ) )
+		{
+			std::cerr << "'" << filename << "' doesn't exist!";
+			return false;
+		}
+
+		if ( is_directory ( filename ) )
+		{
+			std::cerr << "'" << filename << "' is a directory!";
+			return false;
+		}
+
+		if ( cloud == nullptr )
+		{
+			std::cerr << "pointer 'cloud' is nullptr!";
+			return false;
+		}
+
+		//check extension
+		std::string ext = boost::filesystem::extension ( filename );
+		if ( ext.compare ( ".spt" ) )
+			std::cerr << "It's a inappropriate file format.";
+
+		//simgle point length
+		uint32_t pt_length = sizeof ( float ) * 5 + sizeof ( double ) + sizeof ( uint8_t );
+		//header offset which is the three double's byte here in spt file
+		uint32_t spt_offset = sizeof ( double ) * 3;
+
+		try
+		{
+			//file size
+			uintmax_t sz = boost::filesystem::file_size ( filename );
+			if (sz >= 300 * 1024 * 1024) //larger than 400M
+			{
+				HANDLE file_handle = CreateFile ( filename.c_str (), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
+				if ( INVALID_HANDLE_VALUE == file_handle )
+				{
+					std::cerr << "Failed because of err.";
+					return false;
+				}
+
+				//a signed 64 bit integer who is a union including DWORD lowpart, LONG highpart and a LONGLONG QuadPart
+				LARGE_INTEGER file_sz;
+				//get file size and return to a LARGE_INTEGER
+				GetFileSizeEx ( file_handle, &file_sz );
+				HANDLE mapping_handle = CreateFileMapping ( file_handle, NULL, PAGE_READONLY, 0, 0, "SPT FILE MAPPING" );
+				if ( INVALID_HANDLE_VALUE == mapping_handle )
+				{
+					std::cerr  << "Mapping file failed.";
+					return false;
+				}
+
+				//error check
+				if ( GetLastError () == ERROR_FILE_INVALID )
+				{
+					std::cerr  << "Fail to create a mmapping which is zero.";
+				}
+				else if ( GetLastError () == ERROR_INVALID_HANDLE )
+				{
+					std::cerr  << "The mmapping's lpName is repeated once. ";
+				}
+				else if ( GetLastError () == ERROR_ALREADY_EXISTS )
+				{
+					std::cout  << "The mmapping memory space is existed.";
+				}
+
+				//system info
+				SYSTEM_INFO sys_info;
+				GetSystemInfo ( &sys_info );
+				DWORD processCoreNum = sys_info.dwNumberOfProcessors;
+				//virtual memory space's granularity
+				DWORD allocation_granularity = sys_info.dwAllocationGranularity;
+				//processor info
+				DWORD ProcessorType = sys_info.dwProcessorType;
+				WORD ProcessorLevel = sys_info.wProcessorLevel;
+				WORD ProcessorRevision = sys_info.wProcessorRevision;
+
+				LARGE_INTEGER cur_size;
+				cur_size.QuadPart = 0;
+				const uint32_t EACH_POINT_NUM = allocation_granularity * 100;
+				//should not be too large
+				const uint32_t EACH_SIZE = EACH_POINT_NUM * pt_length;
+				//num of pts = verified
+				int num_pts = ( file_sz.QuadPart - 3 * sizeof ( double ) ) / ( sizeof ( float ) * 5 + sizeof ( double ) + sizeof ( uint8_t ) ); //sizeof ( uint8_t )=1
+				std::cout << "num_pts: " << num_pts << std::endl;
+
+				char *pFile = nullptr;
+				//MapViewOfFile return a start pointer position pointing to the file mmapping memory space (memory size is EACH_SIZE * 1.1 or rest_sz)
+				//mmapping will divided into several subpieces, subpieces length is rest_sz or EACH_SIZE * 1.1 and should be large enough to handle the point cloud memory size
+				pFile = (char*) MapViewOfFile ( mapping_handle, FILE_MAP_READ, 0, 0, EACH_SIZE * 1.1 );
+				if ( pFile == NULL )
+				{
+					std::cerr  << "Mapping failed";
+				}
+				//error check
+				if ( GetLastError () == ERROR_FILE_INVALID )
+				{
+					std::cerr  << "Fail to create a mmapping which is zero.";
+				}
+				else if ( GetLastError () == ERROR_INVALID_HANDLE )
+				{
+					std::cerr  << "The mmapping's lpName is repeated once. ";
+				}
+				else if ( GetLastError () == ERROR_ALREADY_EXISTS )
+				{
+					std::cout  << "The mmapping memory space is existed.";
+				}
+
+				//get spt offset
+				double* offset_data = new double [3];
+				//memcpy ( reinterpret_cast<char*>( &offset_data ), pFile, spt_offset ); //here should copy directly
+				memcpy ( offset_data, pFile, spt_offset );
+				offset.x = offset_data [0];
+				offset.y = offset_data [1];
+				offset.z = offset_data [2];
+
+				//the main point body
+				pFile += spt_offset;
+				parseSPTmmf<T> ( pFile, EACH_POINT_NUM, cloud );
+				UnmapViewOfFile ( pFile - spt_offset );
+
+				cur_size.QuadPart += EACH_SIZE;
+				while ( true )
+				{
+					if ( cur_size.QuadPart + EACH_SIZE * 1.1 < file_sz.QuadPart )
+					{
+						pFile = (char*) MapViewOfFile ( mapping_handle, FILE_MAP_READ, cur_size.HighPart, cur_size.LowPart, EACH_SIZE * 1.1 );
+						pFile += spt_offset;
+						parseSPTmmf<T> ( pFile, EACH_POINT_NUM, cloud );
+						UnmapViewOfFile ( pFile - spt_offset );
+						cur_size.QuadPart += EACH_SIZE;
+					}
+					else //the last section
+					{
+						uint32_t rest_sz = file_sz.QuadPart - cur_size.QuadPart;
+						pFile = (char*) MapViewOfFile ( mapping_handle, FILE_MAP_READ, cur_size.HighPart, cur_size.LowPart, rest_sz );
+						pFile += spt_offset;
+						uint32_t rest_count = num_pts - cur_size.QuadPart / pt_length;
+						parseSPTmmf<T> ( pFile, rest_count, cloud );
+						UnmapViewOfFile ( pFile );
+						break;
+					}
+				}
+
+				CloseHandle ( mapping_handle );
+				CloseHandle ( file_handle );
+				delete []offset_data;
+			}
+			else //less than 400M
+			{
+				parseSPT<T> ( filename, cloud, offset );
+			}
+		}
+		catch ( std::bad_alloc* e )
+		{
+			std::cerr  << "Error occurred when parsing spt file: " << e->what ();
+		}
+		catch ( std::bad_exception* e )
+		{
+			std::cerr  << "Error occurred when parsing spt file: " << e->what ();
+		}
+		catch ( std::exception* e )
+		{
+			std::cerr  << "Error occurred when parsing spt file: " << e->what ();
+		}
 		return true;
 	}
 
