@@ -50,5 +50,8 @@
     <ClInclude Include="groundExtraction.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="portable-file-dialogs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -25,10 +25,15 @@
 #include "groundExtraction.h"
 #include "tmpcode.hpp"
 
+//memory leaky
 #include <vld.h>
+
+//portable file dialog
+#include "portable-file-dialogs.h"
 
 using namespace std;
 
+#define PDF
 //#define COLORSET
 
 //#define PCLSIFT 
@@ -37,6 +42,12 @@ using namespace std;
 //#define APPROXIMATE_VOXEL_FILTER
 //#define SOR_FILTER
 //#define CONNECT_ANALYSIS_TEST
+
+#if _WIN32
+#define DEFAULT_PATH "C:\\"
+#else
+#define DEFAULT_PATH "/tmp"
+#endif
 
 namespace pcl
 {
@@ -213,6 +224,43 @@ bool setColorByDistance ( const float distance, int &r, int &g, int &b )
 	return true;
 }
 
+// Unused function that just tests the whole API
+void api ()
+{
+	// pfd::settings
+	pfd::settings::verbose ( true );
+	pfd::settings::rescan ();
+
+	// pfd::notify
+	pfd::notify ( "", "" );
+	pfd::notify ( "", "", pfd::icon::info );
+	pfd::notify ( "", "", pfd::icon::warning );
+	pfd::notify ( "", "", pfd::icon::error );
+	pfd::notify ( "", "", pfd::icon::question );
+
+	pfd::notify a ( "", "" );
+	(void) a.ready ();
+	(void) a.ready ( 42 );
+
+	// pfd::message
+	pfd::message ( "", "" );
+	pfd::message ( "", "", pfd::choice::ok );
+	pfd::message ( "", "", pfd::choice::ok_cancel );
+	pfd::message ( "", "", pfd::choice::yes_no );
+	pfd::message ( "", "", pfd::choice::yes_no_cancel );
+	pfd::message ( "", "", pfd::choice::retry_cancel );
+	pfd::message ( "", "", pfd::choice::abort_retry_ignore );
+	pfd::message ( "", "", pfd::choice::ok, pfd::icon::info );
+	pfd::message ( "", "", pfd::choice::ok, pfd::icon::warning );
+	pfd::message ( "", "", pfd::choice::ok, pfd::icon::error );
+	pfd::message ( "", "", pfd::choice::ok, pfd::icon::question );
+
+	pfd::message b ( "", "" );
+	(void) b.ready ();
+	(void) b.ready ( 42 );
+	(void) b.result ();
+}
+
 int main ( int argc, char *argv [] )
 {
 	//tbb parallel
@@ -242,6 +290,37 @@ int main ( int argc, char *argv [] )
 	std::cout << sizeof ( short int ) << std::endl;
 	std::cout << sizeof ( char ) << std::endl;
 	std::cout << sizeof ( bool ) << std::endl;
+
+#ifdef PDF  
+	// Set verbosity to true
+	pfd::settings::verbose ( true );
+
+	// Directory selection
+	auto dir = pfd::select_folder ( "请选择点云文件夹", DEFAULT_PATH ).result ();
+	std::cout << "Selected dir: " << dir << "\n";
+
+	std::vector<std::string> files;
+	Utility::get_files ( dir, ".lin", files );
+	int trajnum = files.size ();
+	std::string trajname;
+	for ( int i = 0; i < trajnum - 1; ++i )
+	{
+		//std::cout << "trajectories: " << std::endl;
+		trajname += files [i] + ",";
+	}
+	trajname += files [trajnum - 1];
+	std::cout << trajname;
+
+	// File open
+	auto f = pfd::open_file ( "请选择轨迹文件", DEFAULT_PATH,
+	{ "车载点云轨迹 (.lin .Post .txtEst)", "*.lin *.Post *.txtEst",
+							  "全部文件", "*.*" },
+							  pfd::opt::multiselect );
+	std::cout << "Selected files:";
+	for ( auto const &name : f.result () )
+		std::cout << name << ",";
+	std::cout << "\n";
+#endif
 
 #ifdef COLORSET
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr color_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>> ();
