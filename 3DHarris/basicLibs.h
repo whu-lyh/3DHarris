@@ -84,3 +84,4 @@
 #include <pcl/registration/transformation_estimation_svd.h>
 
 #include <boost/make_shared.hpp>
+#include <boost/filesystem/convenience.hpp>

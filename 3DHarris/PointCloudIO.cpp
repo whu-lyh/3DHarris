@@ -331,6 +331,62 @@ namespace PointIO
 	}
 
 	template <>
+	inline bool saveLAS2<PointXYZINTF> ( const std::string& filepath, const typename pcl::PointCloud<PointXYZINTF>::Ptr& cloud,
+										 const Offset& offset )
+	{
+		if ( cloud == nullptr )
+		{
+			std::cerr << "Pointer 'cloud' is nullptr!";
+			return false;
+		}
+
+		if ( cloud->empty () )
+		{
+			std::cerr << "Point cloud is empty!";
+			return false;
+		}
+
+		std::ofstream ofs;
+		ofs.open ( filepath, std::ios::out | std::ios::binary );
+		ofs.setf ( std::ios::fixed, std::ios::floatfield );
+		ofs.precision ( 6 );
+
+		if ( ofs.is_open () )
+		{
+			liblas::Header header;
+			header.SetDataFormatId ( liblas::ePointFormat1 );
+			header.SetVersionMajor ( 1 );
+			header.SetVersionMinor ( 2 );
+			header.SetOffset ( offset.x, offset.y, offset.z );
+			header.SetScale ( 0.0001, 0.0001, 0.0001 );
+			header.SetPointRecordsCount ( (uint32_t) cloud->size () );
+
+			liblas::Writer writer ( ofs, header );
+			liblas::Point pt ( &header );
+
+			for ( int i = 0; i < cloud->size (); ++i )
+			{
+				double x = static_cast<double>( cloud->points [i].x ) + offset.x;
+				double y = static_cast<double>( cloud->points [i].y ) + offset.y;
+				double z = static_cast<double>( cloud->points [i].z ) + offset.z;
+
+				pt.SetCoordinates ( x, y, z );
+				pt.SetIntensity ( cloud->points [i].intensity );
+				pt.SetNumberOfReturns ( (uint8_t) cloud->points [i].num_returns );
+				pt.SetTime ( cloud->points [i].gps_time );
+				pt.SetFlightLineEdge ( cloud->points [i].flighting_line_edge );
+
+				writer.WritePoint ( pt );
+			}
+			ofs.flush ();
+			ofs.close ();
+		}
+
+		std::cout<< "Save file: " << filepath;
+		return true;
+	}
+
+	template <>
 	inline bool saveLAS2<pcl::PointXYZRGB>(const std::string& filepath, const typename pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud,
 		const Offset& offset)
 	{
