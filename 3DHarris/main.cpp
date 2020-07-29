@@ -33,7 +33,7 @@
 
 using namespace std;
 
-#define PDF
+//#define PDF
 //#define COLORSET
 
 //#define PCLSIFT 
@@ -261,7 +261,7 @@ void api ()
 	(void) b.result ();
 }
 
-int main ( int argc, char *argv [] )
+int main0 ( int argc, char *argv [] )
 {
 	//tbb parallel
 	tbb::parallel_for ( 0, 10, [] ( int num ) {std::cout << num << " : hello tbb " << std::endl; } );
@@ -290,6 +290,18 @@ int main ( int argc, char *argv [] )
 	std::cout << sizeof ( short int ) << std::endl;
 	std::cout << sizeof ( char ) << std::endl;
 	std::cout << sizeof ( bool ) << std::endl;
+
+	//float 6 valid value will be keeped(the 1 will be saved)
+	float slamm = 0.000111111;
+	std::cout << slamm << std::endl;
+
+	vector<short int> occupation_grid;
+	occupation_grid.reserve ( 40000000);
+	occupation_grid.resize ( 40000000, false );
+	for (auto singlegrid:occupation_grid)
+	{
+		std::cout << singlegrid << std::endl;
+	}
 
 #ifdef PDF  
 	// Set verbosity to true

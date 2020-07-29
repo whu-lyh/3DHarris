@@ -30,6 +30,24 @@
     <ClCompile Include="tmpcode.hpp">
       <Filter>头文件</Filter>
     </ClCompile>
+    <ClCompile Include="svg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="clipper_triangulation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="clipper_offset.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="clipper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="clipper_demo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pointcloudculling.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudIO.h">
@@ -51,6 +69,21 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="portable-file-dialogs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="svg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="clipper_triangulation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="clipper_offset.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="clipper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pointcloudculling.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

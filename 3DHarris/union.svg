@@ -1,0 +1,37 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg width="680px" height="680px" viewBox="0 0 680 680" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+  <path d=" M 80.00 253.33 L 426.67 253.33 L 426.67 426.67 L 288.00 357.33 z"
+    style="fill:#00009c; fill-opacity:0.07; fill-rule:evenodd; stroke:#d3d3da; stroke-opacity:0.80; stroke-width:0.80;"/>
+  <g font-family="Verdana" font-size="9" fill="#0000aa" fill-opacity="1.00">
+    <text x="80" y="253">0,50</text>
+    <text x="426" y="253">100,50</text>
+    <text x="426" y="426">100,100</text>
+    <text x="288" y="357">60,80</text>
+  </g>
+
+  <path d=" M 253.33 80.00 L 600.00 80.00 L 600.00 600.00 L 253.33 600.00 z"
+    style="fill:#9c0000; fill-opacity:0.07; fill-rule:evenodd; stroke:#ffa07a; stroke-opacity:0.80; stroke-width:0.80;"/>
+  <g font-family="Verdana" font-size="9" fill="#0000aa" fill-opacity="1.00">
+    <text x="253" y="80">50,0</text>
+    <text x="600" y="80">150,0</text>
+    <text x="600" y="600">150,150</text>
+    <text x="253" y="600">50,150</text>
+  </g>
+
+  <path d=" M 600.00 80.00 L 600.00 600.00 L 253.33 600.00 L 253.33 340.00 L 80.00 253.33 L 253.33 253.33 L 253.33 80.00 z"
+    style="fill:#80ff9c; fill-opacity:0.38; fill-rule:evenodd; stroke:#003300; stroke-opacity:1.00; stroke-width:0.80;"/>
+  <g font-family="Verdana" font-size="9" fill="#0000aa" fill-opacity="1.00">
+    <text x="600" y="80">150,0</text>
+    <text x="600" y="600">150,150</text>
+    <text x="253" y="600">50,150</text>
+    <text x="253" y="340">50,75</text>
+    <text x="80" y="253">0,50</text>
+    <text x="253" y="253">50,50</text>
+    <text x="253" y="80">50,0</text>
+  </g>
+
+</svg>

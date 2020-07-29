@@ -119,19 +119,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="clipper.cpp" />
+    <ClCompile Include="clipper_demo.cpp" />
+    <ClCompile Include="clipper_offset.cpp" />
+    <ClCompile Include="clipper_triangulation.cpp" />
     <ClCompile Include="groundExtraction.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="pointcloudculling.cpp" />
     <ClCompile Include="PointCloudIO.cpp" />
+    <ClCompile Include="svg.cpp" />
     <ClCompile Include="tmpcode.hpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basicLibs.h" />
+    <ClInclude Include="clipper.h" />
+    <ClInclude Include="clipper_offset.h" />
+    <ClInclude Include="clipper_triangulation.h" />
     <ClInclude Include="dataStructure.h" />
     <ClInclude Include="groundExtraction.h" />
+    <ClInclude Include="pointcloudculling.h" />
     <ClInclude Include="PointCloudIO.h" />
     <ClInclude Include="PointType.h" />
     <ClInclude Include="portable-file-dialogs.h" />
+    <ClInclude Include="svg.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
