@@ -16,6 +16,9 @@
 namespace PointIO
 {
 	template <typename T>
+	Utility::Bound getBoundBox (const typename pcl::PointCloud<T>::Ptr& cloud);
+
+	template <typename T>
 	 bool loadSingleLAS(const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud, Utility::Offset& las_offset);
 
 	template <typename T>

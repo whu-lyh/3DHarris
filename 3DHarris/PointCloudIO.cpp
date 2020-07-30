@@ -10,6 +10,41 @@ using namespace Utility;
 
 namespace PointIO
 {
+	template<typename T>
+	Utility::Bound getBoundBox<T> (const typename pcl::PointCloud<T>::Ptr& cloud)
+	{
+		Utility::Bound bound;
+		bound.min_x = std::numeric_limits<double>::max ();
+		bound.min_y = std::numeric_limits<double>::max ();
+		bound.min_z = std::numeric_limits<double>::max ();
+		bound.max_x = std::numeric_limits<double>::lowest ();
+		bound.max_y = std::numeric_limits<double>::lowest ();
+		bound.max_z = std::numeric_limits<double>::lowest ();
+
+		if (!cloud)
+		{
+			std::cerr << "cloud is null!";
+			return bound;
+		}
+
+		for (auto pt : cloud->points)
+		{
+			if (pt.x < bound.min_x)
+				bound.min_x = pt.x;
+			if (pt.x > bound.max_x)
+				bound.max_x = pt.x;
+			if (pt.y < bound.min_y)
+				bound.min_y = pt.y;
+			if (pt.y > bound.max_y)
+				bound.max_y = pt.y;
+			if (pt.z < bound.min_z)
+				bound.min_z = pt.z;
+			if (pt.z > bound.max_z)
+				bound.max_z = pt.z;
+		}
+		return bound;
+	}
+
 	//parse las file less than 400M
 	template <typename T>
 	void parseLAS(liblas::Reader& reader, const typename pcl::PointCloud<T>::Ptr& cloud, const Offset& offset)
@@ -196,7 +231,7 @@ namespace PointIO
 			return false;
 		}
 
-		std::cout << "Load file: " << filename;
+		std::cout << "Load file: " << filename << std::endl;
 		try
 		{
 			//check extension
@@ -340,6 +375,8 @@ namespace PointIO
 			return false;
 		}
 
+		Utility::Bound boundbox = getBoundBox<PointXYZINTF> (cloud);
+
 		if ( cloud->empty () )
 		{
 			std::cerr << "Point cloud is empty!";
@@ -354,9 +391,11 @@ namespace PointIO
 		if ( ofs.is_open () )
 		{
 			liblas::Header header;
-			header.SetDataFormatId ( liblas::ePointFormat1 );
+			header.SetDataFormatId ( liblas::ePointFormat3 );
 			header.SetVersionMajor ( 1 );
 			header.SetVersionMinor ( 2 );
+			header.SetMin (boundbox.min_x + offset.x, boundbox.min_y + offset.y, boundbox.min_z + offset.z);
+			header.SetMax (boundbox.max_x + offset.x, boundbox.max_y + offset.y, boundbox.max_z + offset.z);
 			header.SetOffset ( offset.x, offset.y, offset.z );
 			header.SetScale ( 0.0001, 0.0001, 0.0001 );
 			header.SetPointRecordsCount ( (uint32_t) cloud->size () );
@@ -382,7 +421,7 @@ namespace PointIO
 			ofs.close ();
 		}
 
-		std::cout<< "Save file: " << filepath;
+		std::cout<< "Save file: " << filepath << std::endl;
 		return true;
 	}
 
@@ -395,6 +434,8 @@ namespace PointIO
 			std::cout << "Pointer 'cloud' is nullptr!";
 			return false;
 		}
+		
+		Utility::Bound boundbox = getBoundBox<pcl::PointXYZRGB> (cloud);
 
 		if (cloud->empty())
 		{
@@ -413,6 +454,8 @@ namespace PointIO
 			header.SetDataFormatId(liblas::ePointFormat2);
 			header.SetVersionMajor(1);
 			header.SetVersionMinor(2);
+			header.SetMin (boundbox.min_x + offset.x, boundbox.min_y + offset.y, boundbox.min_z + offset.z);
+			header.SetMax (boundbox.max_x + offset.x, boundbox.max_y + offset.y, boundbox.max_z + offset.z);
 			header.SetOffset(offset.x, offset.y, offset.z);
 			header.SetScale(0.0001, 0.0001, 0.0001);
 			header.SetPointRecordsCount(cloud->size());
@@ -436,7 +479,7 @@ namespace PointIO
 			ofs.close();
 		}
 		
-		std::cout << "Save file: " << filepath;
+		std::cout << "Save file: " << filepath << std::endl;
 		return true;
 	}
 
@@ -449,6 +492,8 @@ namespace PointIO
 			std::cout << "Pointer 'cloud' is nullptr!";
 			return false;
 		}
+
+		Utility::Bound boundbox = getBoundBox<pcl::PointXYZ> (cloud);
 
 		if (cloud->empty())
 		{
@@ -464,9 +509,11 @@ namespace PointIO
 		if (ofs.is_open())
 		{
 			liblas::Header header;
-			header.SetDataFormatId(liblas::ePointFormat2);
+			header.SetDataFormatId(liblas::ePointFormat0);
 			header.SetVersionMajor(1);
 			header.SetVersionMinor(2);
+			header.SetMin (boundbox.min_x + offset.x, boundbox.min_y + offset.y, boundbox.min_z + offset.z);
+			header.SetMax (boundbox.max_x + offset.x, boundbox.max_y + offset.y, boundbox.max_z + offset.z);
 			header.SetOffset(offset.x, offset.y, offset.z);
 			header.SetScale(0.0001, 0.0001, 0.0001);
 			header.SetPointRecordsCount(cloud->size());
@@ -489,7 +536,7 @@ namespace PointIO
 			ofs.close();
 		}
 
-		std::cout << "Save file: " << filepath;
+		std::cout << "Save file: " << filepath << std::endl;
 		return true;
 	}
 
@@ -502,6 +549,8 @@ namespace PointIO
 			std::cout << "Pointer 'cloud' is nullptr!";
 			return false;
 		}
+
+		Utility::Bound boundbox = getBoundBox<pcl::PointXYZI> (cloud);
 
 		if ( cloud->empty () )
 		{
@@ -517,9 +566,11 @@ namespace PointIO
 		if ( ofs.is_open () )
 		{
 			liblas::Header header;
-			header.SetDataFormatId ( liblas::ePointFormat2 );
+			header.SetDataFormatId ( liblas::ePointFormat1 );
 			header.SetVersionMajor ( 1 );
 			header.SetVersionMinor ( 2 );
+			header.SetMin (boundbox.min_x + offset.x, boundbox.min_y + offset.y, boundbox.min_z + offset.z);
+			header.SetMax (boundbox.max_x + offset.x, boundbox.max_y + offset.y, boundbox.max_z + offset.z);
 			header.SetOffset ( offset.x, offset.y, offset.z );
 			header.SetScale ( 0.0001, 0.0001, 0.0001 );
 			header.SetPointRecordsCount ( cloud->size () );
@@ -544,7 +595,7 @@ namespace PointIO
 			ofs.close ();
 		}
 
-		std::cout << "Save file: " << filepath;
+		std::cout << "Save file: " << filepath << std::endl;
 		return true;
 	}
 

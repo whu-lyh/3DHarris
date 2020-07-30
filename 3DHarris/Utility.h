@@ -44,6 +44,33 @@ namespace Utility
 
 	typedef Point3d Offset;
 
+	class Bound
+	{
+	public:
+		Bound (double min_x0 = (std::numeric_limits<double>::max)(), double max_x0 = (std::numeric_limits<double>::lowest)(),
+			double min_y0 = (std::numeric_limits<double>::max)(), double max_y0 = (std::numeric_limits<double>::lowest)(),
+			double min_z0 = (std::numeric_limits<double>::max)(), double max_z0 = (std::numeric_limits<double>::lowest)())
+			: min_x (min_x0), max_x (max_x0), min_y (min_y0), max_y (max_y0), min_z (min_z0), max_z (max_z0)
+		{
+		}
+
+		std::ostream& operator<< (std::ostream& os)
+		{
+			os << "Boundingbox scope, max_x= " << max_x << ", min_x= "
+				<< min_x << "\n max_y= " << max_y << ", min_y= "
+				<< min_y << "\n max_z= " << max_z << ", min_z= " << min_z;
+			return os;
+		}
+
+	public:
+		double min_x;
+		double max_x;
+		double min_y;
+		double max_y;
+		double min_z;
+		double max_z;
+	};
+
 	extern  void ensure_dir(const std::string &dir);
 
 	extern  void format_path(std::string &path);

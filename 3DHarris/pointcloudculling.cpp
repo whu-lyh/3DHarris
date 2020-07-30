@@ -41,7 +41,7 @@ bool loadPosTLin ( const std::string& filename, Utility::PoseVec& poses )
 		++i;
 	}
 	traj_file.close ();
-	std::cout << "Succeed to load trajectory file: " << filename;
+	std::cout << "Succeed to load trajectory file: " << filename << std::endl;
 	return true;
 }
 
@@ -87,11 +87,16 @@ int selectTraject ( const boost::shared_ptr<pcl::PointCloud<PointT>> &cloud, std
 
 int main ( int argc, char* argv [] )
 {
+	if (argc<4)
+	{
+		std::cout << "the parameter is insufficient";
+	}
 	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now ();
 	//load trajectory
-	std::string filename = "D:/data/wuhangi/traj";
-	std::string pointfileoutpath = "D:/data/wuhangi/pointcloud-df";
-	std::string pointfilename = "D:/data/wuhangi/pointcloud";
+	const double cont_distance = std::stod (argv [1]);
+	std::string filename = argv[2];
+	std::string pointfilename = argv [3];
+	std::string pointfileoutpath = argv [4];
 	
 	//读取全部轨迹，多个文件夹，并构建多个kd树
 	std::vector<std::string> trajfiles;
@@ -119,6 +124,8 @@ int main ( int argc, char* argv [] )
 		kdtree_vec.push_back ( kdtree );
 	}
 
+	std::cout << std::endl;
+
 	//判断点云和轨迹是不是重合的，将每一份点云对应的kd树拿出来开始剔除。
 	std::vector<std::string> pointfiles;
 	Utility::get_files ( pointfilename, ".las", pointfiles );
@@ -145,13 +152,13 @@ int main ( int argc, char* argv [] )
 			{
 				if ( pointIdxRadiusSearch.empty () )
 				{
-					std::cout << "Point index extracted failed";
+					std::cout << "Point index extracted failed" << std::endl;
 					continue;
 				}
 
 				if ( pointRadiusSquaredDistance.empty () )
 				{
-					std::cout << "Distance hasn't been parsed correctly";
+					std::cout << "Distance hasn't been parsed correctly" << std::endl;
 					continue;
 				}
 
@@ -163,11 +170,13 @@ int main ( int argc, char* argv [] )
 		}
 
 		std::string outfilepath = pointfileoutpath + "/" + Utility::get_name ( pointfile );
-		std::cout << "origin pts:\t" << input_cloud->size () << " left pts: \t" << output_cloud->size ();
+		
+		std::cout << "origin pts:\t" << input_cloud->size () << " left pts: \t" << output_cloud->size () << std::endl;
 		
 		//release memory and save
 		input_cloud->swap ( pcl::PointCloud<PointXYZINTF > () );
 		PointIO::saveLAS<PointXYZINTF> ( outfilepath, output_cloud, las_offset );
+		std::cout << std::endl;
 	}
 
 	std::chrono::high_resolution_clock::time_point t2treport = std::chrono::high_resolution_clock::now ();
