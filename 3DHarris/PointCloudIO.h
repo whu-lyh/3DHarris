@@ -16,6 +16,9 @@
 namespace PointIO
 {
 	template <typename T>
+	double computeCloudResolution(const typename pcl::PointCloud<T>::ConstPtr& cloud);
+
+	template <typename T>
 	Utility::Bound getBoundBox (const typename pcl::PointCloud<T>::Ptr& cloud);
 
 	template <typename T>
