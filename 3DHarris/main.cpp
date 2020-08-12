@@ -267,9 +267,9 @@ int main ( int argc, char *argv [] )
 	//tbb parallel
 	tbb::parallel_for ( 0, 10, [] ( int num ) {std::cout << num << " : hello tbb " << std::endl; } );
 
-	std::string pointfilepath = "./181013_030701-11-25-35-538.las";
+	//std::string pointfilepath = "./181013_030701-11-25-35-538.las";
 	//std::string pointfilepath = "E:/ProjectVolume/PointCloudRegistration/pclargethan500/pc/iScan-Pcd-1_part0.las";
-	//std::string pointfilepath = "./withintensity.spt";
+	std::string pointfilepath = "./withintensity.spt";
 	std::string featurepointpath = "./ISS-festure-point.las";
 
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
@@ -279,7 +279,7 @@ int main ( int argc, char *argv [] )
 	Utility::Offset las_offset;
 
 	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now ();
-	if ( PointIO::loadSingleLAS<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
+	if ( PointIO::loadSPT<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
 	{
 		std::cout << input_cloud->points.size () << std::endl;
 		std::cout << "las file load successfully" << std::endl;
@@ -293,7 +293,7 @@ int main ( int argc, char *argv [] )
 		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_1(new pcl::search::KdTree<pcl::PointXYZ>());
 
 		//calculate the resolution
-		double model_solution = PointIO::computeCloudResolution(input_cloud);//参数小，采取的关键点多，论文中为500左右
+		double model_solution = PointIO::computeCloudResolution<pcl::PointXYZ>(input_cloud);//参数小，采取的关键点多，论文中为500左右
 		std::cout << model_solution << std::endl;
 		//参数设置
 		iss_det.setInputCloud(input_cloud);
@@ -304,7 +304,7 @@ int main ( int argc, char *argv [] )
 		iss_det.setThreshold32(0.975); //lambda3/lambda2>gamma32
 		 //if this points lambda3 > all the other points' lambda3, this is a final points
 		iss_det.setMinNeighbors(50); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
-		iss_det.setNumberOfThreads(4); //default thread is the current machine's cpu kernel
+		iss_det.setNumberOfThreads(1); //default thread is the current machine's cpu kernel
 		//cull key points that are lying on the border
 		//iss_det.setBorderRadius(6 * model_solution);
 		//iss_det.setNormalRadius(4 * model_solution);
@@ -315,7 +315,7 @@ int main ( int argc, char *argv [] )
 
 	std::chrono::high_resolution_clock::time_point t2treport = std::chrono::high_resolution_clock::now ();
 	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>( t2treport - t1report );
-	std::cout << "Out put the regist Summary file, time cost: " << t12report.count () << "s" << std::endl;
+	std::cout << "Out put the key point extracted file, time cost: " << t12report.count () << "s" << std::endl;
 
 	std::cout << sizeof ( short int ) << std::endl;
 	std::cout << sizeof ( char ) << std::endl;

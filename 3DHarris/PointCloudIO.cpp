@@ -12,14 +12,15 @@ namespace PointIO
 {
 	// This function by Tommaso Cavallari and Federico Tombari, taken from the tutorial
 	// http://pointclouds.org/documentation/tutorials/correspondence_grouping.php
-	double computeCloudResolution(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr& cloud)
+	template<typename T>
+	double computeCloudResolution(const typename pcl::PointCloud<T>::ConstPtr& cloud)
 	{
 		double resolution = 0.0;
 		int numberOfPoints = 0;
 		int nres;
 		std::vector<int> indices(2);
 		std::vector<float> squaredDistances(2);
-		pcl::search::KdTree<pcl::PointXYZ> tree;
+		pcl::search::KdTree<T> tree;
 		tree.setInputCloud(cloud);
 
 		for ( size_t i = 0; i < cloud->size(); ++i )
