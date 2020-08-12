@@ -5,6 +5,7 @@
 #include <pcl/io/io.h>
 #include <pcl/keypoints/harris_3D.h> //harris特征点估计类头文件声明
 #include <pcl/keypoints/sift_keypoint.h> //3D sift 特征点检测
+#include <pcl/keypoints/iss_3d.h> //ISS KEY POINT
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
@@ -261,15 +262,15 @@ void api ()
 	(void) b.result ();
 }
 
-int main0 ( int argc, char *argv [] )
+int main ( int argc, char *argv [] )
 {
 	//tbb parallel
 	tbb::parallel_for ( 0, 10, [] ( int num ) {std::cout << num << " : hello tbb " << std::endl; } );
 
-	//std::string pointfilepath = "./181013_030701-11-25-35-538.las";
+	std::string pointfilepath = "./181013_030701-11-25-35-538.las";
 	//std::string pointfilepath = "E:/ProjectVolume/PointCloudRegistration/pclargethan500/pc/iScan-Pcd-1_part0.las";
-	std::string pointfilepath = "./withintensity.spt";
-	std::string featurepointpath = "./harris-festure-point.las";
+	//std::string pointfilepath = "./withintensity.spt";
+	std::string featurepointpath = "./ISS-festure-point.las";
 
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
 	//pcl::io::loadPCDFile ( "./181013_030701-11-25-35-538 - Cloud.pcd", *input_cloud );
@@ -278,11 +279,40 @@ int main0 ( int argc, char *argv [] )
 	Utility::Offset las_offset;
 
 	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now ();
-	if ( PointIO::loadSPT<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
+	if ( PointIO::loadSingleLAS<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
 	{
 		std::cout << input_cloud->points.size () << std::endl;
 		std::cout << "las file load successfully" << std::endl;
 	}
+
+	{
+		//iss key point detected
+		pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud_src_is(new pcl::PointCloud<pcl::PointXYZ>);
+		//pcl::PointCloud<pcl::PointXYZ>::Ptr model_keypoint(new pcl::PointCloud<pcl::PointXYZ>());
+		pcl::ISSKeypoint3D<pcl::PointXYZ, pcl::PointXYZ> iss_det;
+		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_1(new pcl::search::KdTree<pcl::PointXYZ>());
+
+		//calculate the resolution
+		double model_solution = PointIO::computeCloudResolution(input_cloud);//参数小，采取的关键点多，论文中为500左右
+		std::cout << model_solution << std::endl;
+		//参数设置
+		iss_det.setInputCloud(input_cloud);
+		iss_det.setSearchMethod(tree_1);
+		iss_det.setSalientRadius(6 * model_solution); //the radius to collecte the neighbor points while building the scatter matrix. The block size is 5-15m
+		iss_det.setNonMaxRadius(4 * model_solution); //
+		iss_det.setThreshold21(0.975); //lambda2/lambda1>gamma21,lambdai is calculated by the EVD (eigen value decomposition) matrix
+		iss_det.setThreshold32(0.975); //lambda3/lambda2>gamma32
+		 //if this points lambda3 > all the other points' lambda3, this is a final points
+		iss_det.setMinNeighbors(50); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
+		iss_det.setNumberOfThreads(4); //default thread is the current machine's cpu kernel
+		//cull key points that are lying on the border
+		//iss_det.setBorderRadius(6 * model_solution);
+		//iss_det.setNormalRadius(4 * model_solution);
+		iss_det.compute(*cloud_src_is);
+
+		PointIO::saveLAS2<pcl::PointXYZ>(featurepointpath, cloud_src_is, las_offset);
+	}
+
 	std::chrono::high_resolution_clock::time_point t2treport = std::chrono::high_resolution_clock::now ();
 	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>( t2treport - t1report );
 	std::cout << "Out put the regist Summary file, time cost: " << t12report.count () << "s" << std::endl;
@@ -298,10 +328,10 @@ int main0 ( int argc, char *argv [] )
 	vector<short int> occupation_grid;
 	occupation_grid.reserve ( 40000000);
 	occupation_grid.resize ( 40000000, false );
-	for (auto singlegrid:occupation_grid)
-	{
-		std::cout << singlegrid << std::endl;
-	}
+	//for (auto singlegrid:occupation_grid)
+	//{
+	//	std::cout << singlegrid << std::endl;
+	//}
 
 #ifdef PDF  
 	// Set verbosity to true

@@ -85,7 +85,7 @@ int selectTraject ( const boost::shared_ptr<pcl::PointCloud<PointT>> &cloud, std
 	return traj_idx;
 }
 
-int main ( int argc, char* argv [] )
+int main_CULL ( int argc, char* argv [] )
 {
 	if (argc<4)
 	{
