@@ -268,8 +268,8 @@ int main ( int argc, char *argv [] )
 	tbb::parallel_for ( 0, 10, [] ( int num ) {std::cout << num << " : hello tbb " << std::endl; } );
 
 	//std::string pointfilepath = "./181013_030701-11-25-35-538.las";
-	//std::string pointfilepath = "E:/ProjectVolume/PointCloudRegistration/pclargethan500/pc/iScan-Pcd-1_part0.las";
-	std::string pointfilepath = "./withintensity.spt";
+	std::string pointfilepath = "D:/data/wuhangi/RefinedGCPs/results-pairwise/iScan-Pcd-1_part20.las";
+	//std::string pointfilepath = "./withintensity.spt";
 	std::string featurepointpath = "./ISS-festure-point.las";
 
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
@@ -279,7 +279,7 @@ int main ( int argc, char *argv [] )
 	Utility::Offset las_offset;
 
 	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now ();
-	if ( PointIO::loadSPT<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
+	if ( PointIO::loadSingleLAS<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
 	{
 		std::cout << input_cloud->points.size () << std::endl;
 		std::cout << "las file load successfully" << std::endl;
@@ -304,7 +304,7 @@ int main ( int argc, char *argv [] )
 		iss_det.setThreshold32(0.975); //lambda3/lambda2>gamma32
 		 //if this points lambda3 > all the other points' lambda3, this is a final points
 		iss_det.setMinNeighbors(50); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
-		iss_det.setNumberOfThreads(1); //default thread is the current machine's cpu kernel
+		iss_det.setNumberOfThreads(8); //default thread is the current machine's cpu kernel
 		//cull key points that are lying on the border
 		//iss_det.setBorderRadius(6 * model_solution);
 		//iss_det.setNormalRadius(4 * model_solution);
