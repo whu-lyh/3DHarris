@@ -268,8 +268,8 @@ int main ( int argc, char *argv [] )
 	tbb::parallel_for ( 0, 10, [] ( int num ) {std::cout << num << " : hello tbb " << std::endl; } );
 
 	//std::string pointfilepath = "./181013_030701-11-25-35-538.las";
-	std::string pointfilepath = "D:/data/wuhangi/RefinedGCPs/results-pairwise/iScan-Pcd-1_part20.las";
-	//std::string pointfilepath = "./withintensity.spt";
+	//std::string pointfilepath = "D:/data/wuhangi/RefinedGCPs/results-pairwise/iScan-Pcd-1_part20.las";
+	std::string pointfilepath = "./withintensity.spt";
 	std::string featurepointpath = "./ISS-festure-point.las";
 
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
@@ -278,13 +278,13 @@ int main ( int argc, char *argv [] )
 	//pcl::PointCloud<PointXYZINTF>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<PointXYZINTF>> ();
 	Utility::Offset las_offset;
 
-	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now ();
-	if ( PointIO::loadSingleLAS<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
+	if ( PointIO::loadSPT<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
 	{
 		std::cout << input_cloud->points.size () << std::endl;
 		std::cout << "las file load successfully" << std::endl;
 	}
 
+	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now();
 	{
 		//iss key point detected
 		pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud_src_is(new pcl::PointCloud<pcl::PointXYZ>);
@@ -303,7 +303,7 @@ int main ( int argc, char *argv [] )
 		iss_det.setThreshold21(0.975); //lambda2/lambda1>gamma21,lambdai is calculated by the EVD (eigen value decomposition) matrix
 		iss_det.setThreshold32(0.975); //lambda3/lambda2>gamma32
 		 //if this points lambda3 > all the other points' lambda3, this is a final points
-		iss_det.setMinNeighbors(50); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
+		iss_det.setMinNeighbors(80); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
 		iss_det.setNumberOfThreads(8); //default thread is the current machine's cpu kernel
 		//cull key points that are lying on the border
 		//iss_det.setBorderRadius(6 * model_solution);
