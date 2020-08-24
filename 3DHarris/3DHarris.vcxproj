@@ -124,9 +124,11 @@
     <ClCompile Include="clipper_offset.cpp" />
     <ClCompile Include="clipper_triangulation.cpp" />
     <ClCompile Include="groundExtraction.cpp" />
+    <ClCompile Include="iss_keypoint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pointcloudculling.cpp" />
     <ClCompile Include="PointCloudIO.cpp" />
+    <ClCompile Include="ProgressiveMorphologicalFilter.cpp" />
     <ClCompile Include="svg.cpp" />
     <ClCompile Include="tmpcode.hpp" />
     <ClCompile Include="Utility.cpp" />
@@ -138,6 +140,7 @@
     <ClInclude Include="clipper_triangulation.h" />
     <ClInclude Include="dataStructure.h" />
     <ClInclude Include="groundExtraction.h" />
+    <ClInclude Include="iss_keypoint.h" />
     <ClInclude Include="pointcloudculling.h" />
     <ClInclude Include="PointCloudIO.h" />
     <ClInclude Include="PointType.h" />

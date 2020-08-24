@@ -5,7 +5,7 @@
 #include <pcl/io/io.h>
 #include <pcl/keypoints/harris_3D.h> //harris特征点估计类头文件声明
 #include <pcl/keypoints/sift_keypoint.h> //3D sift 特征点检测
-#include <pcl/keypoints/iss_3d.h> //ISS KEY POINT
+//#include <pcl/keypoints/iss_3d.h> //ISS KEY POINT
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
@@ -25,6 +25,7 @@
 #include "dataStructure.h"
 #include "groundExtraction.h"
 #include "tmpcode.hpp"
+#include "iss_keypoint.h"
 
 //memory leaky
 #include <vld.h>
@@ -262,14 +263,62 @@ void api ()
 	(void) b.result ();
 }
 
-int main ( int argc, char *argv [] )
+void setScatterMatrix(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const int& current_index, Eigen::Matrix3d &cov_m)
+{
+	const pcl::PointXYZ& current_point = input_cloud->points[current_index];
+
+	double central_point[3];
+	memset(central_point, 0, sizeof(double) * 3);
+
+	central_point[0] = current_point.x;
+	central_point[1] = current_point.y;
+	central_point[2] = current_point.z;
+
+	cov_m = Eigen::Matrix3d::Zero();
+
+	std::vector<int> nn_indices;
+	std::vector<float> nn_distances;
+	int n_neighbors;
+
+	pcl::KdTreeFLANN<pcl::PointXYZ> kdtree;
+	kdtree.setInputCloud(input_cloud);
+	kdtree.radiusSearch(current_index, 5, nn_indices, nn_distances);
+
+	n_neighbors = static_cast<int> (nn_indices.size());
+
+	double cov[9];
+	memset(cov, 0, sizeof(double) * 9);
+
+	for ( int n_idx = 0; n_idx < n_neighbors; n_idx++ )
+	{
+		const pcl::PointXYZ& n_point = input_cloud->points[nn_indices[n_idx]];
+
+		double neigh_point[3];
+		memset(neigh_point, 0, sizeof(double) * 3);
+
+		neigh_point[0] = n_point.x;
+		neigh_point[1] = n_point.y;
+		neigh_point[2] = n_point.z;
+
+		for ( int i = 0; i < 3; i++ )
+			for ( int j = 0; j < 3; j++ )
+				cov[i * 3 + j] += (neigh_point[i] - central_point[i]) * (neigh_point[j] - central_point[j]);
+	}
+
+	cov_m << cov[0], cov[1], cov[2],
+		cov[3], cov[4], cov[5],
+		cov[6], cov[7], cov[8];
+}
+
+int main_iss ( int argc, char *argv [] )
 {
 	//tbb parallel
 	tbb::parallel_for ( 0, 10, [] ( int num ) {std::cout << num << " : hello tbb " << std::endl; } );
 
 	//std::string pointfilepath = "./181013_030701-11-25-35-538.las";
-	//std::string pointfilepath = "D:/data/wuhangi/RefinedGCPs/results-pairwise/iScan-Pcd-1_part20.las";
-	std::string pointfilepath = "./withintensity.spt";
+	//std::string pointfilepath = "D:/data/wuhangi/RefinedGCPs/iScan-Pcd-1_part20.las"; 
+	std::string pointfilepath = "D:/data/wuhangi/gaojia0817/gaojia-down-Cull/iScan-Pcd-1_part14.las";
+	//std::string pointfilepath = "./withintensity.spt";
 	std::string featurepointpath = "./ISS-festure-point.las";
 
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
@@ -278,36 +327,67 @@ int main ( int argc, char *argv [] )
 	//pcl::PointCloud<PointXYZINTF>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<PointXYZINTF>> ();
 	Utility::Offset las_offset;
 
-	if ( PointIO::loadSPT<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
+	if ( PointIO::loadSingleLAS<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
 	{
 		std::cout << input_cloud->points.size () << std::endl;
 		std::cout << "las file load successfully" << std::endl;
 	}
+
+	//Eigen::Matrix3d cov_m = Eigen::Matrix3d::Zero();
+	//setScatterMatrix(input_cloud, 0, cov_m);
+	//Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov_m);
+
+	//const double& e1c = solver.eigenvalues()[2];
+	//const double& e2c = solver.eigenvalues()[1];
+	//const double& e3c = solver.eigenvalues()[0];
+
+	//if ( !pcl_isfinite(e1c) || !pcl_isfinite(e2c) || !pcl_isfinite(e3c) )
+	//	std::cerr<<"error"<<std::endl;
+
+	//Eigen::Vector3d *omp_mem = new Eigen::Vector3d[1];
+
+	//omp_mem[0].setZero(3);
+	//std::cout << e1c << "," << e2c << "," << e3c << std::endl;
+	//omp_mem[0][0] = e2c / e1c;
+	//omp_mem[0][1] = e3c / e2c;
+	//omp_mem[0][2] = e3c;
+
+	pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sorfilter(true); // Initializing with true will allow us to extract the removed indices
+	sorfilter.setInputCloud(input_cloud);
+	sorfilter.setMeanK(10);
+	sorfilter.setStddevMulThresh(1.0);
+	sorfilter.filter(*input_cloud);
 
 	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now();
 	{
 		//iss key point detected
 		pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud_src_is(new pcl::PointCloud<pcl::PointXYZ>);
 		//pcl::PointCloud<pcl::PointXYZ>::Ptr model_keypoint(new pcl::PointCloud<pcl::PointXYZ>());
-		pcl::ISSKeypoint3D<pcl::PointXYZ, pcl::PointXYZ> iss_det;
+		iss::ISSKeypoint3D<pcl::PointXYZ, pcl::PointXYZ> iss_det;
 		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_1(new pcl::search::KdTree<pcl::PointXYZ>());
 
-		//calculate the resolution
-		double model_solution = PointIO::computeCloudResolution<pcl::PointXYZ>(input_cloud);//参数小，采取的关键点多，论文中为500左右
+		//calculate the resolution but might be more time consuming
+		//double model_solution = PointIO::computeCloudResolution<pcl::PointXYZ>(input_cloud);//参数小，采取的关键点多，论文中为500左右
+		double model_solution = 0.05;//basically the resolution is 0.03
 		std::cout << model_solution << std::endl;
 		//参数设置
 		iss_det.setInputCloud(input_cloud);
 		iss_det.setSearchMethod(tree_1);
 		iss_det.setSalientRadius(6 * model_solution); //the radius to collecte the neighbor points while building the scatter matrix. The block size is 5-15m
 		iss_det.setNonMaxRadius(4 * model_solution); //
-		iss_det.setThreshold21(0.975); //lambda2/lambda1>gamma21,lambdai is calculated by the EVD (eigen value decomposition) matrix
+		//gamma32 larger ,gamma21 larger==>the plane feature
+		//gamma32 larger ,gamma21 smaller==>the line feature
+		//the threshold should not be too tight in case of the noisy
+		iss_det.setThreshold21(0.5); //lambda2/lambda1>gamma21,lambdai is calculated by the EVD (eigen value decomposition) matrix
+		iss_det.setThreshold21_line(0.3);
 		iss_det.setThreshold32(0.975); //lambda3/lambda2>gamma32
+		iss_det.setThreshold32_line(0.6);
 		 //if this points lambda3 > all the other points' lambda3, this is a final points
-		iss_det.setMinNeighbors(80); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
+		iss_det.setMinNeighbors(15); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
 		iss_det.setNumberOfThreads(8); //default thread is the current machine's cpu kernel
 		//cull key points that are lying on the border
-		//iss_det.setBorderRadius(6 * model_solution);
-		//iss_det.setNormalRadius(4 * model_solution);
+		//iss_det.setBorderRadius(3 * model_solution);
+		//iss_det.setNormalRadius(3 * model_solution);
 		iss_det.compute(*cloud_src_is);
 
 		PointIO::saveLAS2<pcl::PointXYZ>(featurepointpath, cloud_src_is, las_offset);

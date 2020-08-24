@@ -48,6 +48,12 @@
     <ClCompile Include="pointcloudculling.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="iss_keypoint.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressiveMorphologicalFilter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudIO.h">
@@ -84,6 +90,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="pointcloudculling.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="iss_keypoint.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
