@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{826EBDA3-C645-490E-AC8C-DF4DE4594935}</ProjectGuid>
     <RootNamespace>My3DHarris</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -66,6 +66,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="C:\Users\yons\AppData\Local\Microsoft\MSBuild\v4.0\MicroStation_liblas_x64_Release.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -119,32 +120,56 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="CCShareable.cpp" />
     <ClCompile Include="clipper.cpp" />
     <ClCompile Include="clipper_demo.cpp" />
     <ClCompile Include="clipper_offset.cpp" />
     <ClCompile Include="clipper_triangulation.cpp" />
+    <ClCompile Include="DistanceComputationTools.cpp" />
     <ClCompile Include="groundExtraction.cpp" />
     <ClCompile Include="iss_keypoint.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Neighbourhood.cpp" />
     <ClCompile Include="pointcloudculling.cpp" />
     <ClCompile Include="PointCloudIO.cpp" />
     <ClCompile Include="ProgressiveMorphologicalFilter.cpp" />
+    <ClCompile Include="ScalarField.cpp" />
     <ClCompile Include="svg.cpp" />
     <ClCompile Include="tmpcode.hpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basicLibs.h" />
+    <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="CCConst.h" />
+    <ClInclude Include="CCCoreLib.h" />
+    <ClInclude Include="CCGeom.h" />
+    <ClInclude Include="CCShareable.h" />
+    <ClInclude Include="CCToolbox.h" />
+    <ClInclude Include="CCTypes.h" />
     <ClInclude Include="clipper.h" />
     <ClInclude Include="clipper_offset.h" />
     <ClInclude Include="clipper_triangulation.h" />
+    <ClInclude Include="ConjugateGradient.h" />
     <ClInclude Include="dataStructure.h" />
+    <ClInclude Include="DistanceComputationTools.h" />
+    <ClInclude Include="GenericCloud.h" />
+    <ClInclude Include="GenericIndexedCloud.h" />
+    <ClInclude Include="GenericIndexedCloudPersist.h" />
     <ClInclude Include="groundExtraction.h" />
     <ClInclude Include="iss_keypoint.h" />
+    <ClInclude Include="Jacobi.h" />
+    <ClInclude Include="MathTools.h" />
+    <ClInclude Include="Neighbourhood.h" />
+    <ClInclude Include="PointCloud.h" />
     <ClInclude Include="pointcloudculling.h" />
     <ClInclude Include="PointCloudIO.h" />
+    <ClInclude Include="PointCloudTpl.h" />
     <ClInclude Include="PointType.h" />
     <ClInclude Include="portable-file-dialogs.h" />
+    <ClInclude Include="ScalarField.h" />
+    <ClInclude Include="SquareMatrix.h" />
     <ClInclude Include="svg.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>

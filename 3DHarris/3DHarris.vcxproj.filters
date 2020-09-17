@@ -54,6 +54,21 @@
     <ClCompile Include="ProgressiveMorphologicalFilter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Neighbourhood.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingBox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DistanceComputationTools.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CCShareable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ScalarField.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudIO.h">
@@ -93,6 +108,63 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="iss_keypoint.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ConjugateGradient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DistanceComputationTools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Jacobi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PointCloud.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Neighbourhood.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SquareMatrix.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CCTypes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CCGeom.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericIndexedCloudPersist.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PointCloudTpl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericIndexedCloud.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericCloud.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CCConst.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MathTools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CCToolbox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CCCoreLib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CCShareable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ScalarField.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
