@@ -1,7 +1,6 @@
 #include <iostream>
 #include <pcl\io\pcd_io.h>
 #include <pcl/point_cloud.h>
-//#include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/io/io.h>
 #include <pcl/keypoints/harris_3D.h> //harris特征点估计类头文件声明
 #include <pcl/keypoints/sift_keypoint.h> //3D sift 特征点检测
@@ -18,32 +17,31 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 
-//parallel
+//parallel library test
 #include <tbb/tbb.h>
 
 #include "PointCloudIO.h"
-#include "dataStructure.h"
-#include "groundExtraction.h"
-#include "tmpcode.hpp"
+
 #include "iss_keypoint.h"
 
 //memory leaky
-#include <vld.h>
+//#include <vld.h>
 
 //portable file dialog
 #include "portable-file-dialogs.h"
 
 using namespace std;
 
+#define REGISTRATION
 //#define PDF
 //#define COLORSET
-
 //#define PCLSIFT 
 //#define 3DHARRIS
 //#define VOXEL_FILTER
 //#define APPROXIMATE_VOXEL_FILTER
 //#define SOR_FILTER
 //#define CONNECT_ANALYSIS_TEST
+//#define CPLUSPLUS
 
 #if _WIN32
 #define DEFAULT_PATH "C:\\"
@@ -62,132 +60,6 @@ namespace pcl
 			return p.z;
 		}
 	};
-}
-
-//获取边界
-void getCloudBound ( const pcl::PointCloud<pcl::PointXYZ> & cloud, pmProcessUrban::Bounds_ym & bound )
-{
-	double min_x = cloud [0].x;
-	double min_y = cloud [0].y;
-	double min_z = cloud [0].z;
-	double max_x = cloud [0].x;
-	double max_y = cloud [0].y;
-	double max_z = cloud [0].z;
-
-	for ( int i = 0; i < cloud.size (); i++ )
-	{
-		//获取边界
-		if ( min_x > cloud.points [i].x )
-			min_x = cloud.points [i].x;
-		if ( min_y > cloud.points [i].y )
-			min_y = cloud.points [i].y;
-		if ( min_z > cloud.points [i].z )
-			min_z = cloud.points [i].z;
-		if ( max_x < cloud.points [i].x )
-			max_x = cloud.points [i].x;
-		if ( max_y < cloud.points [i].y )
-			max_y = cloud.points [i].y;
-		if ( max_z < cloud.points [i].z )
-			max_z = cloud.points [i].z;
-	}
-	bound.min_x = min_x;
-	bound.max_x = max_x;
-	bound.min_y = min_y;
-	bound.max_y = max_y;
-	bound.min_z = min_z;
-	bound.max_z = max_z;
-}
-
-//获取边界-重载
-void getCloudBound ( const pcl::PointCloud<PointXYZINTF> & cloud, pmProcessUrban::Bounds_ym & bound )
-{
-	double min_x = cloud [0].x;
-	double min_y = cloud [0].y;
-	double min_z = cloud [0].z;
-	double max_x = cloud [0].x;
-	double max_y = cloud [0].y;
-	double max_z = cloud [0].z;
-
-	for ( int i = 0; i < cloud.size (); i++ )
-	{
-		//获取边界
-		if ( min_x > cloud.points [i].x )
-			min_x = cloud.points [i].x;
-		if ( min_y > cloud.points [i].y )
-			min_y = cloud.points [i].y;
-		if ( min_z > cloud.points [i].z )
-			min_z = cloud.points [i].z;
-		if ( max_x < cloud.points [i].x )
-			max_x = cloud.points [i].x;
-		if ( max_y < cloud.points [i].y )
-			max_y = cloud.points [i].y;
-		if ( max_z < cloud.points [i].z )
-			max_z = cloud.points [i].z;
-	}
-	bound.min_x = min_x;
-	bound.max_x = max_x;
-	bound.min_y = min_y;
-	bound.max_y = max_y;
-	bound.min_z = min_z;
-	bound.max_z = max_z;
-}
-
-//获取中心和边界
-void getBoundAndCenter ( const pcl::PointCloud<pcl::PointXYZ> & cloud, pmProcessUrban::Bounds_ym & bound, pmProcessUrban::CenterPoint_ym& centerPoint )
-{
-	double min_x = cloud [0].x;
-	double min_y = cloud [0].y;
-	double min_z = cloud [0].z;
-	double max_x = cloud [0].x;
-	double max_y = cloud [0].y;
-	double max_z = cloud [0].z;
-
-	double cx = 0, cy = 0, cz = 0;
-
-	for ( int i = 0; i < cloud.size (); i++ )
-	{
-		//获取边界
-		if ( min_x > cloud.points [i].x )
-			min_x = cloud.points [i].x;
-		if ( min_y > cloud.points [i].y )
-			min_y = cloud.points [i].y;
-		if ( min_z > cloud.points [i].z )
-			min_z = cloud.points [i].z;
-		if ( max_x < cloud.points [i].x )
-			max_x = cloud.points [i].x;
-		if ( max_y < cloud.points [i].y )
-			max_y = cloud.points [i].y;
-		if ( max_z < cloud.points [i].z )
-			max_z = cloud.points [i].z;
-
-
-		cx += cloud.points [i].x / cloud.size ();
-		cy += cloud.points [i].y / cloud.size ();
-		cz += cloud.points [i].z / cloud.size ();
-	}
-	bound.min_x = min_x;
-	bound.max_x = max_x;
-	bound.min_y = min_y;
-	bound.max_y = max_y;
-	bound.min_z = min_z;
-	bound.max_z = max_z;
-
-
-	centerPoint.x = cx;
-	centerPoint.y = cy;
-	centerPoint.z = cz;
-}
-
-void GetSubsetBoundary ( pcl::PointCloud<pcl::PointXYZ>::Ptr & plane_wall_cloud,
-						 vector<int> & index, pmProcessUrban::Bounds_ym & bound )
-{
-	//构建点云
-	pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
-	for ( int i = 0; i < index.size (); i++ )
-	{
-		temp_cloud->push_back ( plane_wall_cloud->points [index [i]] );
-	}
-	getCloudBound ( *temp_cloud, bound );
 }
 
 bool setColorByDistance ( const float distance, int &r, int &g, int &b )
@@ -310,26 +182,26 @@ void setScatterMatrix(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const in
 		cov[6], cov[7], cov[8];
 }
 
-int main_iss ( int argc, char *argv [] )
+int main(int argc, char *argv[])
 {
-	//tbb parallel
-	tbb::parallel_for ( 0, 10, [] ( int num ) {std::cout << num << " : hello tbb " << std::endl; } );
+
+#ifdef REGISTRATION
 
 	//std::string pointfilepath = "./181013_030701-11-25-35-538.las";
 	//std::string pointfilepath = "D:/data/wuhangi/RefinedGCPs/iScan-Pcd-1_part20.las"; 
-	std::string pointfilepath = "D:/data/wuhangi/gaojia0817/gaojia-down-Cull/iScan-Pcd-1_part14.las";
+	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/heightPlus14_20191211150218/iScan-Pcd-1_part20.las";
 	//std::string pointfilepath = "./withintensity.spt";
-	std::string featurepointpath = "./ISS-festure-point.las";
+	std::string featurepointpath = "F:/Data/wuhan/dataaroundGaoJia/heightPlus14_20191211150218/iss/ISS-festure-point.las";
 
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
 	//pcl::io::loadPCDFile ( "./181013_030701-11-25-35-538 - Cloud.pcd", *input_cloud );
-	pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZ>> ();
+	pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
 	//pcl::PointCloud<PointXYZINTF>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<PointXYZINTF>> ();
 	Utility::Offset las_offset;
 
-	if ( PointIO::loadSingleLAS<pcl::PointXYZ> (pointfilepath, input_cloud , las_offset ))
+	if (PointIO::loadSingleLAS<pcl::PointXYZ>(pointfilepath, input_cloud, las_offset))
 	{
-		std::cout << input_cloud->points.size () << std::endl;
+		std::cout << input_cloud->points.size() << std::endl;
 		std::cout << "las file load successfully" << std::endl;
 	}
 
@@ -352,11 +224,11 @@ int main_iss ( int argc, char *argv [] )
 	//omp_mem[0][1] = e3c / e2c;
 	//omp_mem[0][2] = e3c;
 
-	pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sorfilter(true); // Initializing with true will allow us to extract the removed indices
-	sorfilter.setInputCloud(input_cloud);
-	sorfilter.setMeanK(10);
-	sorfilter.setStddevMulThresh(1.0);
-	sorfilter.filter(*input_cloud);
+	//pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sorfilter(true); // Initializing with true will allow us to extract the removed indices
+	//sorfilter.setInputCloud(input_cloud);
+	//sorfilter.setMeanK(10);
+	//sorfilter.setStddevMulThresh(1.0);
+	//sorfilter.filter(*input_cloud);
 
 	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now();
 	{
@@ -378,10 +250,10 @@ int main_iss ( int argc, char *argv [] )
 		//gamma32 larger ,gamma21 larger==>the plane feature
 		//gamma32 larger ,gamma21 smaller==>the line feature
 		//the threshold should not be too tight in case of the noisy
-		iss_det.setThreshold21(0.5); //lambda2/lambda1>gamma21,lambdai is calculated by the EVD (eigen value decomposition) matrix
-		iss_det.setThreshold21_line(0.3);
-		iss_det.setThreshold32(0.975); //lambda3/lambda2>gamma32
-		iss_det.setThreshold32_line(0.6);
+		iss_det.setThreshold21(0.975); //lambda2/lambda1>gamma21,lambdai is calculated by the EVD (eigen value decomposition) matrix
+		iss_det.setThreshold21_line(0.4);
+		iss_det.setThreshold32(0.4); //lambda3/lambda2>gamma32
+		iss_det.setThreshold32_line(0.4);
 		 //if this points lambda3 > all the other points' lambda3, this is a final points
 		iss_det.setMinNeighbors(15); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
 		iss_det.setNumberOfThreads(8); //default thread is the current machine's cpu kernel
@@ -393,25 +265,11 @@ int main_iss ( int argc, char *argv [] )
 		PointIO::saveLAS2<pcl::PointXYZ>(featurepointpath, cloud_src_is, las_offset);
 	}
 
-	std::chrono::high_resolution_clock::time_point t2treport = std::chrono::high_resolution_clock::now ();
-	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>( t2treport - t1report );
-	std::cout << "Out put the key point extracted file, time cost: " << t12report.count () << "s" << std::endl;
+	std::chrono::high_resolution_clock::time_point t2treport = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>(t2treport - t1report);
+	std::cout << "Out put the key point extracted file, time cost: " << t12report.count() << "s" << std::endl;
 
-	std::cout << sizeof ( short int ) << std::endl;
-	std::cout << sizeof ( char ) << std::endl;
-	std::cout << sizeof ( bool ) << std::endl;
-
-	//float 6 valid value will be keeped(the 1 will be saved)
-	float slamm = 0.000111111;
-	std::cout << slamm << std::endl;
-
-	vector<short int> occupation_grid;
-	occupation_grid.reserve ( 40000000);
-	occupation_grid.resize ( 40000000, false );
-	//for (auto singlegrid:occupation_grid)
-	//{
-	//	std::cout << singlegrid << std::endl;
-	//}
+#endif
 
 #ifdef PDF  
 	// Set verbosity to true
@@ -442,7 +300,7 @@ int main_iss ( int argc, char *argv [] )
 	for ( auto const &name : f.result () )
 		std::cout << name << ",";
 	std::cout << "\n";
-#endif
+#endif // PDF
 
 #ifdef COLORSET
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr color_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>> ();
@@ -463,7 +321,7 @@ int main_iss ( int argc, char *argv [] )
 	}
 	PointIO::saveLAS<pcl::PointXYZRGB> ("./colord_pts.las",color_cloud, las_offset );
 
-#endif
+#endif //COLORSET
 
 	//octree voxel
 #ifdef VOXEL_FILTER
@@ -526,7 +384,7 @@ int main_iss ( int argc, char *argv [] )
 
 	//save as las
 	PointIO::saveLAS2<pcl::PointXYZ> ( featurepointpath, Sift_keypoint, las_offset );
-#endif
+#endif // PCLSIFT
 
 	//pcl 3d harris
 #ifdef HARRIS
@@ -557,7 +415,7 @@ int main_iss ( int argc, char *argv [] )
 
 	//save as las
 	PointIO::saveLAS2<pcl::PointXYZI> ( featurepointpath, Harris_keypoints, las_offset );
-#endif
+#endif // HARRIS
 
 	//conncected analysis
 #ifdef CONNECT_ANALYSIS_TEST
@@ -576,17 +434,30 @@ int main_iss ( int argc, char *argv [] )
 
 	cv::imshow ( "show image", pData );
 	cv::imwrite ( "./point.jpg", pData );
-#endif
+#endif // CONNECT_ANALYSIS_TEST
 
 
-	//visualization
-	/*pcl::visualization::PCLVisualizer visu3 ( "clouds" );
-	visu3.setBackgroundColor ( 255, 255, 255 );
-	visu3.addPointCloud ( Harris_keypoints, ColorHandlerT3 ( Harris_keypoints, 0.0, 0.0, 255.0 ), "Harris_keypoints" );
-	visu3.setPointCloudRenderingProperties ( pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 8, "Harris_keypoints" );
-	visu3.addPointCloud ( input_cloud, "input_cloud" );
-	visu3.setPointCloudRenderingProperties ( pcl::visualization::PCL_VISUALIZER_COLOR, 0, 0, 0, "input_cloud" );
-	visu3.spin ();*/
+#ifdef CPLUSPLUS
+	//tbb parallel
+	tbb::parallel_for(0, 10, [](int num) {std::cout << num << " : hello tbb " << std::endl; });
+
+	std::cout << sizeof(short int) << std::endl;
+	std::cout << sizeof(char) << std::endl;
+	std::cout << sizeof(bool) << std::endl;
+
+	//float 6 valid value will be keeped(the 1 will be saved)
+	float slamm = 0.000111111;
+	std::cout << slamm << std::endl;
+
+	vector<short int> occupation_grid;
+	occupation_grid.reserve(40000000);
+	occupation_grid.resize(40000000, false);
+	//for (auto singlegrid:occupation_grid)
+	//{
+	//	std::cout << singlegrid << std::endl;
+	//}
+
+#endif // CPLUSPLUS
 
 	system ( "pause" );
 	return 1;

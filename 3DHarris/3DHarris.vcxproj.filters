@@ -24,12 +24,6 @@
     <ClCompile Include="Utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="groundExtraction.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="tmpcode.hpp">
-      <Filter>头文件</Filter>
-    </ClCompile>
     <ClCompile Include="svg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -81,12 +75,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="PointType.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="dataStructure.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="groundExtraction.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="portable-file-dialogs.h">
