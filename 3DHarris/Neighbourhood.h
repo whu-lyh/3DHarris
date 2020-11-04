@@ -31,6 +31,7 @@ namespace CCLib
 	It implements the GenericIndexCloud interface by
 	inheriting the ReferenceCloud class.
 **/
+template<class PointT>
 class Neighbourhood
 {
 	public:
@@ -47,9 +48,9 @@ class Neighbourhood
 								NORMAL_CHANGE_RATE};
 
 		//! Default constructor
-		/** \param associatedCloud reference cloud
+		/** \param PointT reference cloud
 		**/
-		explicit Neighbourhood(GenericIndexedCloudPersist* associatedCloud);
+		explicit Neighbourhood(PointT* associatedCloud);
 
 		//! Default destructor
 		virtual ~Neighbourhood() = default;
@@ -58,7 +59,7 @@ class Neighbourhood
 		virtual void reset();
 
 		//! Returns associated cloud
-		GenericIndexedCloudPersist* associatedCloud() const { return m_associatedCloud; }
+		PointT* associatedCloud() const { return m_associatedCloud; }
 
 		//! Projects points on the best fitting LS plane
 		/** Projected points are stored in the points2D vector.
@@ -296,7 +297,7 @@ class Neighbourhood
 		bool computeQuadric();
 
 		//! Associated cloud
-		GenericIndexedCloudPersist* m_associatedCloud;
+		PointT* m_associatedCloud;
 };
 
 }

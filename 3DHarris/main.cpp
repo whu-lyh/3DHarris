@@ -4,7 +4,7 @@
 #include <pcl/io/io.h>
 #include <pcl/keypoints/harris_3D.h> //harris特征点估计类头文件声明
 #include <pcl/keypoints/sift_keypoint.h> //3D sift 特征点检测
-//#include <pcl/keypoints/iss_3d.h> //ISS KEY POINT
+#include <pcl/keypoints/iss_3d.h> //ISS KEY POINT
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
@@ -21,8 +21,10 @@
 #include <tbb/tbb.h>
 
 #include "PointCloudIO.h"
+//#include "iss_keypoint.h"
 
-#include "iss_keypoint.h"
+#include "CCConst.h"
+#include "Neighbourhood.h"
 
 //memory leaky
 //#include <vld.h>
@@ -34,12 +36,11 @@ using namespace std;
 
 #define REGISTRATION
 //#define PDF
-//#define COLORSET
 //#define PCLSIFT 
 //#define 3DHARRIS
 //#define VOXEL_FILTER
 //#define APPROXIMATE_VOXEL_FILTER
-//#define SOR_FILTER
+#define SOR_FILTER
 //#define CONNECT_ANALYSIS_TEST
 //#define CPLUSPLUS
 
@@ -60,42 +61,6 @@ namespace pcl
 			return p.z;
 		}
 	};
-}
-
-bool setColorByDistance ( const float distance, int &r, int &g, int &b )
-{ //set color by distance and the larger distance , the deeper color will be set
-	double maxdist = 20;
-	if ( distance < maxdist / 3 )
-	{
-		r = 255;
-		g = std::ceil ( 255 * 3 * distance / maxdist );
-		b = 0;
-	}
-	else if ( distance < maxdist / 2 )
-	{
-		r = std::ceil ( 750 - distance * 256 * 6 / maxdist );
-		g = 255;
-		b = 0;
-	}
-	else if ( distance < maxdist * 2 / 3 )
-	{
-		r = 0;
-		g = 255;
-		b = std::ceil ( distance * 250 * 6 / maxdist - 750 );
-	}
-	else if ( distance < maxdist * 5 / 6 )
-	{
-		r = 0;
-		g = std::ceil ( 1250 - distance * 250 * 6 / maxdist );
-		b = 255;
-	}
-	else
-	{
-		r = std::ceil ( 150 * distance * 6 / maxdist - 750 );
-		g = 0;
-		b = 255;
-	}
-	return true;
 }
 
 // Unused function that just tests the whole API
@@ -185,63 +150,60 @@ void setScatterMatrix(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const in
 int main(int argc, char *argv[])
 {
 
+	using PointT = pcl::PointXYZ;
+
 #ifdef REGISTRATION
 
-	//std::string pointfilepath = "./181013_030701-11-25-35-538.las";
-	//std::string pointfilepath = "D:/data/wuhangi/RefinedGCPs/iScan-Pcd-1_part20.las"; 
-	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/heightPlus14_20191211150218/iScan-Pcd-1_part20.las";
-	//std::string pointfilepath = "./withintensity.spt";
-	std::string featurepointpath = "F:/Data/wuhan/dataaroundGaoJia/heightPlus14_20191211150218/iss/ISS-festure-point.las";
+	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/20191211150218-df/iScan-Pcd-1_part18.las";
+	//std::string pointfilepath = "../x64/Release/line.las";
 
-	//pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
-	//pcl::io::loadPCDFile ( "./181013_030701-11-25-35-538 - Cloud.pcd", *input_cloud );
-	pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
-	//pcl::PointCloud<PointXYZINTF>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<PointXYZINTF>> ();
+	std::string keypointpath = Utility::get_parent(pointfilepath) + "/iss";
+	Utility::ensure_dir(keypointpath);
+
+	pcl::PointCloud<PointT>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
 	Utility::Offset las_offset;
 
-	if (PointIO::loadSingleLAS<pcl::PointXYZ>(pointfilepath, input_cloud, las_offset))
+	if (PointIO::loadSingleLAS<PointT>(pointfilepath, input_cloud, las_offset))
 	{
-		std::cout << input_cloud->points.size() << std::endl;
 		std::cout << "las file load successfully" << std::endl;
+		std::cout << input_cloud->points.size() << std::endl;
 	}
 
-	//Eigen::Matrix3d cov_m = Eigen::Matrix3d::Zero();
-	//setScatterMatrix(input_cloud, 0, cov_m);
-	//Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(cov_m);
+	//sor
+#ifdef SOR_FILTER
 
-	//const double& e1c = solver.eigenvalues()[2];
-	//const double& e2c = solver.eigenvalues()[1];
-	//const double& e3c = solver.eigenvalues()[0];
+	pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sorfilter(true); // Initializing with true will allow us to extract the removed indices
+	sorfilter.setInputCloud(input_cloud);
+	sorfilter.setMeanK(6);
+	sorfilter.setStddevMulThresh(5.0);
+	sorfilter.filter(*input_cloud);
 
-	//if ( !pcl_isfinite(e1c) || !pcl_isfinite(e2c) || !pcl_isfinite(e3c) )
-	//	std::cerr<<"error"<<std::endl;
-
-	//Eigen::Vector3d *omp_mem = new Eigen::Vector3d[1];
-
-	//omp_mem[0].setZero(3);
-	//std::cout << e1c << "," << e2c << "," << e3c << std::endl;
-	//omp_mem[0][0] = e2c / e1c;
-	//omp_mem[0][1] = e3c / e2c;
-	//omp_mem[0][2] = e3c;
-
-	//pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sorfilter(true); // Initializing with true will allow us to extract the removed indices
-	//sorfilter.setInputCloud(input_cloud);
-	//sorfilter.setMeanK(10);
-	//sorfilter.setStddevMulThresh(1.0);
-	//sorfilter.filter(*input_cloud);
+	//save as las
+	std::string tmppath = keypointpath + "/" + Utility::get_name_without_ext(pointfilepath) + "_sor.las";
+	PointIO::saveLAS2<pcl::PointXYZ>(tmppath, input_cloud, las_offset);
+#endif
 
 	std::chrono::high_resolution_clock::time_point t1report = std::chrono::high_resolution_clock::now();
 	{
 		//iss key point detected
-		pcl::PointCloud<pcl::PointXYZ>::Ptr  cloud_src_is(new pcl::PointCloud<pcl::PointXYZ>);
-		//pcl::PointCloud<pcl::PointXYZ>::Ptr model_keypoint(new pcl::PointCloud<pcl::PointXYZ>());
-		iss::ISSKeypoint3D<pcl::PointXYZ, pcl::PointXYZ> iss_det;
-		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_1(new pcl::search::KdTree<pcl::PointXYZ>());
+		pcl::PointCloud<PointT>::Ptr  cloud_src_iss(new pcl::PointCloud<PointT>);
+		pcl::ISSKeypoint3D<PointT, PointT> iss_det;
+		pcl::search::KdTree<PointT>::Ptr tree_1(new pcl::search::KdTree<PointT>());
 
+		double model_solution = 0.0;
 		//calculate the resolution but might be more time consuming
-		//double model_solution = PointIO::computeCloudResolution<pcl::PointXYZ>(input_cloud);//参数小，采取的关键点多，论文中为500左右
-		double model_solution = 0.05;//basically the resolution is 0.03
-		std::cout << model_solution << std::endl;
+		{
+			//double model_solution = PointIO::computeCloudResolution<pcl::PointXYZ>(input_cloud);//参数小，采取的关键点多，论文中为500左右
+			pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_colored = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
+			model_solution = PointIO::computeCloudResolution<pcl::PointXYZ, 50>(input_cloud, cloud_colored);
+
+			tmppath = keypointpath + "/" + Utility::get_name_without_ext(pointfilepath) + "_distance_colord.las";
+			PointIO::saveLAS2<pcl::PointXYZRGB>(tmppath, cloud_colored, las_offset);
+
+			//double model_solution = 0.05;//basically the resolution is 0.03
+			std::cout << "model_solution:\t" << model_solution << std::endl;
+		}
+
 		//参数设置
 		iss_det.setInputCloud(input_cloud);
 		iss_det.setSearchMethod(tree_1);
@@ -251,22 +213,30 @@ int main(int argc, char *argv[])
 		//gamma32 larger ,gamma21 smaller==>the line feature
 		//the threshold should not be too tight in case of the noisy
 		iss_det.setThreshold21(0.975); //lambda2/lambda1>gamma21,lambdai is calculated by the EVD (eigen value decomposition) matrix
-		iss_det.setThreshold21_line(0.4);
-		iss_det.setThreshold32(0.4); //lambda3/lambda2>gamma32
-		iss_det.setThreshold32_line(0.4);
+		//iss_det.setThreshold21_line(0.1);
+		iss_det.setThreshold32(0.975); //lambda3/lambda2>gamma32
+		//iss_det.setThreshold32_line(0.05);
 		 //if this points lambda3 > all the other points' lambda3, this is a final points
 		iss_det.setMinNeighbors(15); //Set the minimum number of neighbors that has to be found while applying the non maxima suppression algorithm.
 		iss_det.setNumberOfThreads(8); //default thread is the current machine's cpu kernel
 		//cull key points that are lying on the border
 		//iss_det.setBorderRadius(3 * model_solution);
 		//iss_det.setNormalRadius(3 * model_solution);
-		iss_det.compute(*cloud_src_is);
+		iss_det.compute(*cloud_src_iss);
 
-		PointIO::saveLAS2<pcl::PointXYZ>(featurepointpath, cloud_src_is, las_offset);
+		tmppath = keypointpath + "/" + Utility::get_name_without_ext(pointfilepath) + "_keypoints.las";
+		PointIO::saveLAS2<pcl::PointXYZ>(tmppath, cloud_src_iss, las_offset);
 	}
 
-	std::chrono::high_resolution_clock::time_point t2treport = std::chrono::high_resolution_clock::now();
-	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>(t2treport - t1report);
+	{
+		//CCLib::GenericIndexedCloudPersist neighboursCloud(&nNSS.pointsInNeighbourhood);
+		//CCLib::Neighbourhood Z(&neighboursCloud);
+		//ScalarType value = NAN_VALUE;
+		//value = static_cast<ScalarType>(Z.computeFeature(static_cast<CCLib::Neighbourhood::GeomFeature>(5)));
+	}
+
+	std::chrono::high_resolution_clock::time_point t2report = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>(t2report - t1report);
 	std::cout << "Out put the key point extracted file, time cost: " << t12report.count() << "s" << std::endl;
 
 #endif
@@ -302,27 +272,6 @@ int main(int argc, char *argv[])
 	std::cout << "\n";
 #endif // PDF
 
-#ifdef COLORSET
-	pcl::PointCloud<pcl::PointXYZRGB>::Ptr color_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>> ();
-
-	for ( auto pt : input_cloud->points ) {
-		pcl::PointXYZRGB colorp;
-		float dist =rand()%20;
-		int R = 0, G = 0, B = 0;
-		setColorByDistance ( dist, R, G, B );
-		//std::cout << dist << ", " << R << ", " << G << ", " << B << std::endl;
-		colorp.x = pt.x;
-		colorp.y = pt.y;
-		colorp.z = pt.z;
-		colorp.r = R;
-		colorp.g = G;
-		colorp.b = B;
-		color_cloud->push_back ( colorp );
-	}
-	PointIO::saveLAS<pcl::PointXYZRGB> ("./colord_pts.las",color_cloud, las_offset );
-
-#endif //COLORSET
-
 	//octree voxel
 #ifdef VOXEL_FILTER
 	pcl::PointCloud<pcl::PointXYZ>::Ptr spl_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
@@ -345,20 +294,6 @@ int main(int argc, char *argv[])
 	avg.filter ( *spl_cloud );
 	//save as las
 	PointIO::saveLAS2<pcl::PointXYZ> ( featurepointpath, spl_cloud, las_offset );
-#endif
-
-	//sor
-#ifdef SOR_FILTER
-	for ( int i = 0; i < 5; ++i ) {
-		pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sorfilter ( true ); // Initializing with true will allow us to extract the removed indices
-		sorfilter.setInputCloud ( input_cloud );
-		sorfilter.setMeanK ( 1-i*0.15 );
-		sorfilter.setStddevMulThresh ( 1.0 );
-		sorfilter.filter ( *input_cloud );
-	}
-
-	//save as las
-	PointIO::saveLAS2<pcl::PointXYZ> ( "sor_filter.las", input_cloud, las_offset );
 #endif
 	
 	//pcl 3d sift

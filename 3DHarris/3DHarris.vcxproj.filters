@@ -42,9 +42,6 @@
     <ClCompile Include="pointcloudculling.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="iss_keypoint.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="ProgressiveMorphologicalFilter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -61,6 +58,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ScalarField.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="iss_keypoint.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

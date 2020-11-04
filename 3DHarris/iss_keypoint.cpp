@@ -306,7 +306,7 @@ iss::ISSKeypoint3D<PointInT, PointOutT, NormalT>::initCompute ()
 template<typename PointInT, typename PointOutT, typename NormalT> void
 iss::ISSKeypoint3D<PointInT, PointOutT, NormalT>::detectKeypoints (PointCloudOut &output)
 {
-  // Make sure the output cloud is empty
+  // Make sure the output cloud (keypoints that out put) is empty
   output.points.clear ();
 
   if (border_radius_ > 0.0)
@@ -394,14 +394,15 @@ iss::ISSKeypoint3D<PointInT, PointOutT, NormalT>::detectKeypoints (PointCloudOut
       }
 
 	  //original pcl
-      //omp_mem[tid][0] = e2c / e1c;
-      //omp_mem[tid][1] = e3c / e2c;
-      //omp_mem[tid][2] = e3c;
+      omp_mem[tid][0] = e2c / e1c;
+      omp_mem[tid][1] = e3c / e2c;
+      omp_mem[tid][2] = e3c;
 
 	  //from cloudcompare, might the neighbor points should be located in a voxel or a circle ? octree better than kdtree?
-	  omp_mem[tid][0] = (e2c - e3c) / e1c; //Planarity
-	  omp_mem[tid][1] = (e1c - e2c) / e1c; //Linearity
-	  omp_mem[tid][2] = e3c;
+	  //omp_mem[tid][0] = (e2c - e3c) / e1c; //Planarity
+	  //omp_mem[tid][1] = (e1c - e2c) / e1c; //Linearity
+	  //omp_mem[tid][2] = e3c;
+	  //std::cout << e1c << "," << e2c << "," << e3c << std::endl;
     }
 
     for (int d = 0; d < omp_mem[tid].size (); d++)
@@ -417,19 +418,25 @@ iss::ISSKeypoint3D<PointInT, PointOutT, NormalT>::detectKeypoints (PointCloudOut
     //    third_eigen_value_[index] = prg_mem[index][2];
 
 	   //original
-	   //if ( (prg_mem[index][0] < gamma_21_) && (prg_mem[index][1] < gamma_32_) ) 
-		  // third_eigen_value_[index] = prg_mem[index][2];
+	   if ((prg_mem[index][0] < gamma_21_) && (prg_mem[index][1] < gamma_32_))
+		   third_eigen_value_[index] = prg_mem[index][2];
 
 	   //if ( ((prg_mem[index][0] < gamma_21_) && (prg_mem[index][1] < gamma_32_))
 		  // || ((prg_mem[index][0] < gamma_21_line_) && (prg_mem[index][1] > gamma_32_line_)) )
 		  // third_eigen_value_[index] = prg_mem[index][2];
 
 	   //from cloudcompare
-	   if ((prg_mem[index][1] > gamma_21_line_) && (prg_mem[index][0] > gamma_32_))// && (prg_mem[index][2] < gamma_32_))
-		   third_eigen_value_[index] = prg_mem[index][2];
+	   //std::cout << "prg_mem:\t" << prg_mem[index][0] << "," << prg_mem[index][1] << "," << prg_mem[index][2] << std::endl;
+	   //plane prg_mem[index][0]>gamma_32_(0.95) && prg_mem[index][1] < gamma_21_line_(0.1)
+	   //if ((prg_mem[index][1] < gamma_21_line_) && (prg_mem[index][0] > gamma_32_)
+		  // || (prg_mem[index][1] > gamma_21_) && (prg_mem[index][0] < gamma_32_line_))
+		  // third_eigen_value_[index] = prg_mem[index][2];
+	   //if ((prg_mem[index][1] > gamma_21_) && (prg_mem[index][0] < gamma_32_line_))
+		  // third_eigen_value_[index] = prg_mem[index][2];
     }
   }
 
+  //feat_max is used for exclude the key point that are inside the nms radius
   bool* feat_max = new bool [input_->size()];
   bool is_max;
 
@@ -481,6 +488,7 @@ iss::ISSKeypoint3D<PointInT, PointOutT, NormalT>::detectKeypoints (PointCloudOut
     }
   }
 
+  //the output keypoint header
   output.header = input_->header;
   output.width = static_cast<uint32_t> (output.points.size ());
   output.height = 1;

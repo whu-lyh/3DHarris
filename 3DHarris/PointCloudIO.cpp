@@ -29,6 +29,7 @@ namespace PointIO
 				continue;
 
 			// Considering the second neighbor since the first is the point itself.
+			// return number of neighbors found
 			nres = tree.nearestKSearch(i, 2, indices, squaredDistances);
 			if ( nres == 2 )
 			{
@@ -37,6 +38,122 @@ namespace PointIO
 			}
 		}
 		if ( numberOfPoints != 0 )
+			resolution /= numberOfPoints;
+
+		return resolution;
+	}
+	
+	template <typename T>
+	int generateStdColorRamp(typename std::vector<std::vector<T>> &colorRamp)
+	{
+		colorRamp.emplace_back(std::vector<T>{ 0.0, 0.0, 0.0 });
+		colorRamp.emplace_back(std::vector<T>{0.0, 255.0, 255.0});
+		colorRamp.emplace_back(std::vector<T>{0.0, 255.0, 0.0});
+		colorRamp.emplace_back(std::vector<T>{255.0, 255.0, 0.0});
+		colorRamp.emplace_back(std::vector<T>{255.0, 0.0, 0.0});
+		return 1;
+	}
+
+	template <typename T>
+	bool setColorByDistance(typename std::vector<std::vector<T>> &colorRamp, const double &maxdist, const double &mindist, const double &distance, T &r, T &g, T &b)
+	{ //set color by distance and the larger distance , the deeper color will be set
+		double rampLength = maxdist - mindist;
+		double sectionLength = double(rampLength) / colorRamp.size();
+
+		double relevant_val = distance - mindist;
+		int index(relevant_val / sectionLength);
+		int maxIndex = colorRamp.size() - 1;
+		if (index >= maxIndex)
+		{//the higher height
+			index = colorRamp.size() - 1;
+			r = colorRamp[index][0];
+			g = colorRamp[index][1];
+			b = colorRamp[index][2];
+		}
+		else if (index < 0)	//考虑噪点小于统计出的最低距离的情况
+		{//the lower height
+			index = 0;
+			r = colorRamp[index][0];
+			g = colorRamp[index][1];
+			b = colorRamp[index][2];
+		}
+		else
+		{
+			double remainder = relevant_val - sectionLength * index;
+			double ratio = (double)remainder / sectionLength;
+
+			r = (colorRamp[index + 1][0] - colorRamp[index][0]) * ratio + colorRamp[index][0];
+			g = (colorRamp[index + 1][1] - colorRamp[index][1]) * ratio + colorRamp[index][1];
+			b = (colorRamp[index + 1][2] - colorRamp[index][2]) * ratio + colorRamp[index][2];
+		}
+
+		return true;
+	}
+
+	//set the distance as a property to each point
+	template<typename T, size_t D>
+	double computeCloudResolution(const typename pcl::PointCloud<T>::ConstPtr& cloud,
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud_color)
+	{
+		double resolution = 0.0;
+		int numberOfPoints = 0;
+		int nres;
+		std::vector<int> indices(D);
+		std::vector<float> squaredDistances(D);
+		pcl::search::KdTree<T> tree;
+		tree.setInputCloud(cloud);
+
+		//generate the std color ramp set
+		std::vector<std::vector<float>> colorRamp;
+		PointIO::generateStdColorRamp<float>(colorRamp);
+
+		pcl::PointXYZRGB pt_color;
+		std::vector<float> distance_vec;
+		double max_dist = std::numeric_limits<float>::lowest(), min_dist = std::numeric_limits<float>::max();
+		for (int i = 0; i < cloud->size(); ++i)
+		{
+			if (!pcl_isfinite((*cloud)[i].x))
+				continue;
+
+			// Considering the second neighbor since the first is the point itself.
+			// return number of neighbors found
+			nres = tree.nearestKSearch(i, D, indices, squaredDistances);
+			if (nres == D)
+			{
+				float single_distance = 0.0;
+				for (auto sd : squaredDistances)
+				{
+					single_distance += sd;
+				}
+				
+				resolution += sqrt(squaredDistances[1]);
+
+				if (single_distance > max_dist) max_dist = single_distance;
+				if (single_distance < min_dist) min_dist = single_distance;
+				distance_vec.emplace_back(single_distance);
+
+				++numberOfPoints;
+			}
+		}
+		std::cout << "max dist: " << max_dist << ",\t" << "min dist: " << min_dist << std::endl;
+//#pragma omp parallel for
+		for (int i = 0; i < cloud->size(); ++i)
+		{
+			if (!pcl_isfinite((*cloud)[i].x))
+				continue;
+
+			pcl::copyPoint((*cloud)[i], pt_color);
+
+			float r = 0, g = 0, b = 0;
+			PointIO::setColorByDistance<float>(colorRamp, max_dist, min_dist, distance_vec[i], r, g, b);
+			pt_color.r = r;
+			pt_color.g = g;
+			pt_color.b = b;
+
+			cloud_color->push_back(pt_color);
+		}
+
+		if (numberOfPoints != 0)
 			resolution /= numberOfPoints;
 
 		return resolution;
@@ -94,7 +211,9 @@ namespace PointIO
 			pt.y = p.GetY()- offset.y;
 			pt.z = p.GetZ()- offset.z;
 			pt.intensity = p.GetIntensity();
-			pt.num_returns = p.GetNumberOfReturns();
+			pt.num_of_returns = p.GetNumberOfReturns();
+			pt.return_number = p.GetReturnNumber();
+			pt.classification = (uint8_t)p.GetClassification().GetClass();
 			pt.gps_time = p.GetTime();
 			pt.flighting_line_edge = p.GetFlightLineEdge();
 			cloud->push_back(pt);
@@ -160,7 +279,9 @@ namespace PointIO
 					pt.y = p.GetY()- offset.y;
 					pt.z = p.GetZ()- offset.z;
 					pt.intensity = p.GetIntensity();
-					pt.num_returns = p.GetNumberOfReturns();
+					pt.num_of_returns = p.GetNumberOfReturns();
+					pt.return_number = p.GetReturnNumber();
+					pt.classification = p.GetClassification().GetClass();
 					pt.gps_time = p.GetTime();
 					pt.flighting_line_edge = p.GetFlightLineEdge();
 					cloud->push_back (pt);
@@ -398,6 +519,69 @@ namespace PointIO
 	}
 
 	template <>
+	inline bool saveLAS2<PointXYZRGBINTF>(const std::string& filepath, const typename pcl::PointCloud<PointXYZRGBINTF>::Ptr& cloud,
+		const Offset& offset)
+	{
+		if (cloud == nullptr)
+		{
+			std::cerr << "Pointer 'cloud' is nullptr!";
+			return false;
+		}
+
+		Utility::Bound boundbox = getBoundBox<PointXYZRGBINTF>(cloud);
+
+		if (cloud->empty())
+		{
+			std::cerr << "Point cloud is empty!";
+			return false;
+		}
+
+		std::ofstream ofs;
+		ofs.open(filepath, std::ios::out | std::ios::binary);
+		ofs.setf(std::ios::fixed, std::ios::floatfield);
+		ofs.precision(6);
+
+		if (ofs.is_open())
+		{
+			liblas::Header header;
+			header.SetDataFormatId(liblas::ePointFormat3);
+			header.SetVersionMajor(1);
+			header.SetVersionMinor(2);
+			header.SetMin(boundbox.min_x + offset.x, boundbox.min_y + offset.y, boundbox.min_z + offset.z);
+			header.SetMax(boundbox.max_x + offset.x, boundbox.max_y + offset.y, boundbox.max_z + offset.z);
+			header.SetOffset(offset.x, offset.y, offset.z);
+			header.SetScale(0.0001, 0.0001, 0.0001);
+			header.SetPointRecordsCount((uint32_t)cloud->size());
+
+			liblas::Writer writer(ofs, header);
+			liblas::Point pt(&header);
+
+			for (int i = 0; i < cloud->size(); ++i)
+			{
+				double x = static_cast<double>(cloud->points[i].x) + offset.x;
+				double y = static_cast<double>(cloud->points[i].y) + offset.y;
+				double z = static_cast<double>(cloud->points[i].z) + offset.z;
+
+				pt.SetCoordinates(x, y, z);
+				pt.SetColor(liblas::Color(cloud->points[i].r, cloud->points[i].g, cloud->points[i].b));
+				pt.SetIntensity(cloud->points[i].intensity);
+				pt.SetNumberOfReturns((uint8_t)cloud->points[i].num_of_returns);
+				pt.SetReturnNumber((uint8_t)cloud->points[i].return_number);
+				pt.SetClassification((uint8_t)cloud->points[i].classification);
+				pt.SetTime(cloud->points[i].gps_time);
+				pt.SetFlightLineEdge(cloud->points[i].flighting_line_edge);
+
+				writer.WritePoint(pt);
+			}
+			ofs.flush();
+			ofs.close();
+		}
+
+		std::cout << "Save file: " << filepath << std::endl;
+		return true;
+	}
+
+	template <>
 	inline bool saveLAS2<PointXYZINTF> ( const std::string& filepath, const typename pcl::PointCloud<PointXYZINTF>::Ptr& cloud,
 										 const Offset& offset )
 	{
@@ -443,7 +627,9 @@ namespace PointIO
 
 				pt.SetCoordinates ( x, y, z );
 				pt.SetIntensity ( cloud->points [i].intensity );
-				pt.SetNumberOfReturns ( (uint8_t) cloud->points [i].num_returns );
+				pt.SetNumberOfReturns ( (uint8_t) cloud->points [i].num_of_returns);
+				pt.SetReturnNumber((uint8_t)cloud->points[i].return_number);
+				pt.SetClassification((uint8_t)cloud->points[i].classification);
 				pt.SetTime ( cloud->points [i].gps_time );
 				pt.SetFlightLineEdge ( cloud->points [i].flighting_line_edge );
 
@@ -504,6 +690,9 @@ namespace PointIO
 				pt.SetCoordinates(x, y, z);
 				pt.SetIntensity(10);
 				pt.SetColor(liblas::Color(cloud->points[i].r, cloud->points[i].g, cloud->points[i].b));
+				pt.SetNumberOfReturns((uint8_t)1);
+				pt.SetReturnNumber((uint8_t)1);
+				pt.SetClassification((uint8_t)0);
 
 				writer.WritePoint(pt);
 			}
@@ -793,7 +982,7 @@ namespace PointIO
 			pt.y = data [3 * i + 1];
 			pt.z = data [3 * i + 2];
 			pt.intensity = intendata [i];
-			pt.num_returns = returndata [i];
+			pt.num_of_returns = returndata [i];
 			pt.gps_time = timedata [i];
 			pt.flighting_line_edge = edgedata [i];
 			cloud->push_back ( pt );
@@ -854,7 +1043,7 @@ namespace PointIO
 			pt.y = data [1];
 			pt.z = data [2];
 			pt.intensity = data [3];
-			pt.num_returns = returndata [0];
+			pt.num_of_returns = returndata [0];
 			pt.gps_time = timedata [0];
 			pt.flighting_line_edge = edgedata [0];
 			cloud->push_back ( pt );

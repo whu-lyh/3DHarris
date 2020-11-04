@@ -55,7 +55,8 @@ Eigen::MatrixXd ToEigen(const SquareMatrixd& M)
 }
 #endif
 
-Neighbourhood::Neighbourhood(GenericIndexedCloudPersist* associatedCloud)
+template<class PointT>
+Neighbourhood<PointT>::Neighbourhood(PointT* associatedCloud)
 	: m_quadricEquationDirections(0, 1, 2)
 	, m_structuresValidity(FLAG_DEPRECATED)
 	, m_associatedCloud(associatedCloud)
@@ -66,32 +67,37 @@ Neighbourhood::Neighbourhood(GenericIndexedCloudPersist* associatedCloud)
 	assert(m_associatedCloud);
 }
 
-void Neighbourhood::reset()
+template<class PointT>
+void Neighbourhood<PointT>::reset()
 {
 	m_structuresValidity = FLAG_DEPRECATED;
 }
 
-const CCVector3* Neighbourhood::getGravityCenter()
+template<class PointT>
+const CCVector3* Neighbourhood<PointT>::getGravityCenter()
 {
 	if (!(m_structuresValidity & FLAG_GRAVITY_CENTER))
 		computeGravityCenter();
 	return ((m_structuresValidity & FLAG_GRAVITY_CENTER) ? &m_gravityCenter : nullptr);
 }
 
-void Neighbourhood::setGravityCenter(const CCVector3& G)
+template<class PointT>
+void Neighbourhood<PointT>::setGravityCenter(const CCVector3& G)
 {
 	m_gravityCenter = G;
 	m_structuresValidity |= FLAG_GRAVITY_CENTER;
 }
 
-const PointCoordinateType* Neighbourhood::getLSPlane()
+template<class PointT>
+const PointCoordinateType* getLSPlane()
 {
 	if (!(m_structuresValidity & FLAG_LS_PLANE))
 		computeLeastSquareBestFittingPlane();
 	return ((m_structuresValidity & FLAG_LS_PLANE) ? m_lsPlaneEquation : nullptr);
 }
 
-void Neighbourhood::setLSPlane(	const PointCoordinateType eq[4],
+template<class PointT>
+void Neighbourhood<PointT>::setLSPlane(	const PointCoordinateType eq[4],
 								const CCVector3& X,
 								const CCVector3& Y,
 								const CCVector3& N)
@@ -104,28 +110,32 @@ void Neighbourhood::setLSPlane(	const PointCoordinateType eq[4],
 	m_structuresValidity |= FLAG_LS_PLANE;
 }
 
-const CCVector3* Neighbourhood::getLSPlaneX()
+template<class PointT>
+const CCVector3* Neighbourhood<PointT>::getLSPlaneX()
 {
 	if (!(m_structuresValidity & FLAG_LS_PLANE))
 		computeLeastSquareBestFittingPlane();
 	return ((m_structuresValidity & FLAG_LS_PLANE) ? m_lsPlaneVectors : nullptr);
 }
 
-const CCVector3* Neighbourhood::getLSPlaneY()
+template<class PointT>
+const CCVector3* Neighbourhood<PointT>::getLSPlaneY()
 {
 	if (!(m_structuresValidity & FLAG_LS_PLANE))
 		computeLeastSquareBestFittingPlane();
 	return ((m_structuresValidity & FLAG_LS_PLANE) ? m_lsPlaneVectors + 1 : nullptr);
 }
 
-const CCVector3* Neighbourhood::getLSPlaneNormal()
+template<class PointT>
+const CCVector3* Neighbourhood<PointT>::getLSPlaneNormal()
 {
 	if (!(m_structuresValidity & FLAG_LS_PLANE))
 		computeLeastSquareBestFittingPlane();
 	return ((m_structuresValidity & FLAG_LS_PLANE) ? m_lsPlaneVectors + 2 : nullptr);
 }
 
-const PointCoordinateType* Neighbourhood::getQuadric(Tuple3ub* dims/*=0*/)
+template<class PointT>
+const PointCoordinateType* Neighbourhood<PointT>::getQuadric(Tuple3ub* dims/*=0*/)
 {
 	if (!(m_structuresValidity & FLAG_QUADRIC))
 	{
@@ -140,7 +150,8 @@ const PointCoordinateType* Neighbourhood::getQuadric(Tuple3ub* dims/*=0*/)
 	return ((m_structuresValidity & FLAG_QUADRIC) ? m_quadricEquation : nullptr);
 }
 
-void Neighbourhood::computeGravityCenter()
+template<class PointT>
+void Neighbourhood<PointT>::computeGravityCenter()
 {
 	//invalidate previous centroid (if any)
 	m_structuresValidity &= (~FLAG_GRAVITY_CENTER);
@@ -167,7 +178,8 @@ void Neighbourhood::computeGravityCenter()
 					  } );
 }
 
-CCLib::SquareMatrixd Neighbourhood::computeCovarianceMatrix()
+template<class PointT>
+CCLib::SquareMatrixd Neighbourhood<PointT>::computeCovarianceMatrix()
 {
 	assert(m_associatedCloud);
 	unsigned count = (m_associatedCloud ? m_associatedCloud->size() : 0);
@@ -210,7 +222,8 @@ CCLib::SquareMatrixd Neighbourhood::computeCovarianceMatrix()
 	return covMat;
 }
 
-PointCoordinateType Neighbourhood::computeLargestRadius()
+template<class PointT>
+PointCoordinateType Neighbourhood<PointT>::computeLargestRadius()
 {
 	assert(m_associatedCloud);
 	unsigned pointCount = (m_associatedCloud ? m_associatedCloud->size() : 0);
@@ -237,7 +250,8 @@ PointCoordinateType Neighbourhood::computeLargestRadius()
 	return static_cast<PointCoordinateType>(sqrt(maxSquareDist));
 }
 
-bool Neighbourhood::computeLeastSquareBestFittingPlane()
+template<class PointT>
+bool Neighbourhood<PointT>::computeLeastSquareBestFittingPlane()
 {
 	//invalidate previous LS plane (if any)
 	m_structuresValidity &= (~FLAG_LS_PLANE);
@@ -347,7 +361,8 @@ bool Neighbourhood::computeLeastSquareBestFittingPlane()
 	return true;
 }
 
-bool Neighbourhood::computeQuadric()
+template<class PointT>
+bool Neighbourhood<PointT>::computeQuadric()
 {
 	//invalidate previous quadric (if any)
 	m_structuresValidity &= (~FLAG_QUADRIC);
@@ -576,7 +591,8 @@ bool Neighbourhood::computeQuadric()
 	return true;
 }
 
-bool Neighbourhood::compute3DQuadric(double quadricEquation[10])
+template<class PointT>
+bool Neighbourhood<PointT>::compute3DQuadric(double quadricEquation[10])
 {
 	if (!m_associatedCloud || !quadricEquation)
 	{
@@ -677,7 +693,8 @@ bool Neighbourhood::compute3DQuadric(double quadricEquation[10])
 	return true;
 }
 
-ScalarType Neighbourhood::computeMomentOrder1(const CCVector3& P)
+template<class PointT>
+ScalarType Neighbourhood<PointT>::computeMomentOrder1(const CCVector3& P)
 {
 	if (!m_associatedCloud || m_associatedCloud->size() < 3)
 	{
@@ -710,7 +727,8 @@ ScalarType Neighbourhood::computeMomentOrder1(const CCVector3& P)
 	return (m2 < std::numeric_limits<double>::epsilon() ? NAN_VALUE : static_cast<ScalarType>((m1 * m1) / m2));
 }
 
-double Neighbourhood::computeFeature(GeomFeature feature)
+template<class PointT>
+double Neighbourhood<PointT>::computeFeature(GeomFeature feature)
 {
 	if (!m_associatedCloud || m_associatedCloud->size() < 3)
 	{
@@ -800,7 +818,8 @@ double Neighbourhood::computeFeature(GeomFeature feature)
 	return value;
 }
 
-ScalarType Neighbourhood::computeRoughness(const CCVector3& P)
+template<class PointT>
+ScalarType Neighbourhood<PointT>::computeRoughness(const CCVector3& P)
 {
 	const PointCoordinateType* lsPlane = getLSPlane();
 	if (lsPlane)
@@ -814,7 +833,8 @@ ScalarType Neighbourhood::computeRoughness(const CCVector3& P)
 }
 
 //CurvatureType includes 1,2,3 (int) three types
-ScalarType Neighbourhood::computeCurvature(const CCVector3& P, CurvatureType cType)
+template<class PointT>
+ScalarType Neighbourhood<PointT>::computeCurvature(const CCVector3& P, CurvatureType cType)
 {
 	switch (cType)
 	{

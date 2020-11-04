@@ -18,6 +18,16 @@ namespace PointIO
 	template <typename T>
 	double computeCloudResolution(const typename pcl::PointCloud<T>::ConstPtr& cloud);
 
+	template<typename T, size_t D>
+	double computeCloudResolution(const typename pcl::PointCloud<T>::ConstPtr& cloud,
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud_color);
+
+	template <typename T>
+	int generateStdColorRamp(typename std::vector<std::vector<T>> &colorRamp);
+
+	template <typename T>
+	bool setColorByDistance(typename std::vector<std::vector<T>> &colorRamp, const double &maxdist, const double& mindist, const double &distance, typename T &r, typename T &g, typename T &b);
+
 	template <typename T>
 	Utility::Bound getBoundBox (const typename pcl::PointCloud<T>::Ptr& cloud);
 
