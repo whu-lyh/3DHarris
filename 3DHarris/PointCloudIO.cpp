@@ -128,9 +128,9 @@ namespace PointIO
 				
 				resolution += sqrt(squaredDistances[1]);
 
-				if (single_distance > max_dist) max_dist = single_distance;
-				if (single_distance < min_dist) min_dist = single_distance;
-				distance_vec.emplace_back(single_distance);
+				if (single_distance > max_dist) max_dist = std::log(single_distance);
+				if (single_distance < min_dist) min_dist = std::log(single_distance);
+				distance_vec.emplace_back(std::log(single_distance));
 
 				++numberOfPoints;
 			}
@@ -145,7 +145,7 @@ namespace PointIO
 			pcl::copyPoint((*cloud)[i], pt_color);
 
 			float r = 0, g = 0, b = 0;
-			PointIO::setColorByDistance<float>(colorRamp, max_dist, min_dist, distance_vec[i], r, g, b);
+			PointIO::setColorByDistance<float>(colorRamp, max_dist - min_dist, 0, distance_vec[i] - min_dist, r, g, b);
 			pt_color.r = r;
 			pt_color.g = g;
 			pt_color.b = b;
