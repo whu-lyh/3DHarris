@@ -87,6 +87,8 @@ namespace Utility
 
 	extern  std::string get_parent(const std::string &path);
 
+	extern  std::string get_parent(const std::wstring &path);
+
 	extern  void get_files(const std::string& dir, const std::string& ext, filelist& list);
 
 	extern  void get_files(const std::string& dir, const std::string& ext, std::vector<std::string>& files);

@@ -5,6 +5,7 @@
 #include <pcl/keypoints/harris_3D.h> //harris特征点估计类头文件声明
 #include <pcl/keypoints/sift_keypoint.h> //3D sift 特征点检测
 #include <pcl/keypoints/iss_3d.h> //ISS KEY POINT
+#include <pcl/registration/icp.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
@@ -34,7 +35,8 @@
 
 using namespace std;
 
-#define REGISTRATION
+#define ICP_REGISTRATION_
+//#define REGISTRATION
 //#define PDF
 //#define PCLSIFT 
 //#define 3DHARRIS
@@ -61,6 +63,44 @@ namespace pcl
 			return p.z;
 		}
 	};
+}
+
+std::wstring StringToWString(const std::string& str)
+{
+	LPCSTR pszSrc = str.c_str();
+	int nLen = MultiByteToWideChar(CP_ACP, 0, pszSrc, -1, NULL, 0);
+	if (nLen == 0)
+		return std::wstring(L"");
+
+	wchar_t* pwszDst = new wchar_t[nLen];
+	if (!pwszDst)
+		return std::wstring(L"");
+
+	MultiByteToWideChar(CP_ACP, 0, pszSrc, -1, pwszDst, nLen);
+	std::wstring wstr(pwszDst);
+	delete[] pwszDst;
+	pwszDst = NULL;
+
+	return wstr;
+}
+
+std::string WStringToString(const std::wstring &wstr)
+{
+	LPCWSTR pwszSrc = wstr.c_str();
+	int nLen = WideCharToMultiByte(CP_ACP, 0, pwszSrc, -1, NULL, 0, NULL, NULL);
+	if (nLen == 0)
+		return std::string("");
+
+	char* pszDst = new char[nLen];
+	if (!pszDst)
+		return std::string("");
+
+	WideCharToMultiByte(CP_ACP, 0, pwszSrc, -1, pszDst, nLen, NULL, NULL);
+	std::string str(pszDst);
+	delete[] pszDst;
+	pszDst = NULL;
+
+	return str;
 }
 
 // Unused function that just tests the whole API
@@ -152,6 +192,57 @@ int main(int argc, char *argv[])
 
 	using PointT = pcl::PointXYZ;
 
+#ifdef ICP_REGISTRATION_
+
+	//std::string source_pc_path = "F:/Data/wuhan/dataaroundGaoJia/20191211150218-df/iss/iScan-Pcd-1_part18_keypoints.las";
+	//std::string target_pc_path = Utility::get_parent(source_pc_path) + "/iScan-Pcd-1_part18_keypoints_target.las";
+	//std::string result_pc_path = Utility::get_parent(source_pc_path) + "/iScan-Pcd-1_part18_keypoints_result.las";
+
+	std::vector<std::string> source_files,target_files;
+	Utility::get_files("F:/Data/Train/20190315", ".las", source_files);
+	Utility::get_files("F:/Data/Train/20190401", ".las", target_files);
+
+
+	wcout.imbue(locale("chs"));
+	//std::wcout << "1.\t" << StringToWString(source_pc_path) << std::endl;
+
+	std::wstring source_pc_path_w = L"F:/Data/Train/pairwiseregistration/京沈线_上行_普通线路_2019-03-15_0-27-3_0_0_t_dis.las";
+	std::string source_pc_path = WStringToString(source_pc_path_w);
+	cout << "3.\t" << source_pc_path << std::endl;
+	std::wstring target_pc_path_w = L"/京沈线_上行_普通线路_2019-04-01_0-20-25_0_0_t_dis.las";
+	std::string target_pc_path = Utility::get_parent(source_pc_path) + WStringToString(target_pc_path_w);
+	std::string result_pc_path = Utility::get_parent(source_pc_path)+"/psline_up_normal_2019_0315-0401_0.las";
+
+	pcl::PointCloud<PointT>::Ptr source_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+	pcl::PointCloud<PointT>::Ptr target_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+	pcl::PointCloud<PointT>::Ptr result_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+	Utility::Offset las_offset, las_offset2;
+
+	if (PointIO::loadSingleLAS<PointT>(source_pc_path, source_cloud, las_offset) &&
+		PointIO::loadSingleLAS<PointT>(target_pc_path, target_cloud, las_offset2))
+	{
+		std::cout << "las file load successfully" << std::endl;
+		std::cout << source_cloud->points.size() << std::endl;
+		std::cout << target_cloud->points.size() << std::endl;
+	}
+
+	boost::shared_ptr<pcl::IterativeClosestPoint<PointT, PointT>> icp(new pcl::IterativeClosestPoint<PointT, PointT>());
+	icp->setTransformationEpsilon(0.05);
+	icp->setEuclideanFitnessEpsilon(0.05);
+	icp->setMaximumIterations(10);
+	icp->setUseReciprocalCorrespondences(true);
+	icp->setMaxCorrespondenceDistance(5);
+	icp->setRANSACIterations(10);
+	icp->setRANSACOutlierRejectionThreshold(5);
+
+	icp->setInputSource(source_cloud);
+	icp->setInputTarget(target_cloud);
+	icp->align(*result_cloud);
+
+	PointIO::saveLAS2<PointT>(result_pc_path, result_cloud, las_offset);
+
+#endif //ICP_REGISTRATION_
+
 #ifdef REGISTRATION
 
 	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/20191211150218-df/iScan-Pcd-1_part18.las";
@@ -190,9 +281,9 @@ int main(int argc, char *argv[])
 		pcl::ISSKeypoint3D<PointT, PointT> iss_det;
 		pcl::search::KdTree<PointT>::Ptr tree_1(new pcl::search::KdTree<PointT>());
 
-		double model_solution = 0.0;
+		double model_solution = 0.03;
 		//calculate the resolution but might be more time consuming
-		{
+		/*{
 			//double model_solution = PointIO::computeCloudResolution<pcl::PointXYZ>(input_cloud);//参数小，采取的关键点多，论文中为500左右
 			pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_colored = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
 			model_solution = PointIO::computeCloudResolution<pcl::PointXYZ, 50>(input_cloud, cloud_colored);
@@ -200,9 +291,8 @@ int main(int argc, char *argv[])
 			tmppath = keypointpath + "/" + Utility::get_name_without_ext(pointfilepath) + "_distance_colord.las";
 			PointIO::saveLAS2<pcl::PointXYZRGB>(tmppath, cloud_colored, las_offset);
 
-			//double model_solution = 0.05;//basically the resolution is 0.03
 			std::cout << "model_solution:\t" << model_solution << std::endl;
-		}
+		}*/
 
 		//参数设置
 		iss_det.setInputCloud(input_cloud);

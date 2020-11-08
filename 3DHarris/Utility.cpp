@@ -86,6 +86,17 @@ namespace Utility
 #endif
 	}
 
+	//overload function of wstring
+	std::string get_parent(const std::wstring &path)
+	{
+		boost::filesystem::path p(path);
+#if BOOST_VERSION > 104000
+		return p.parent_path().string();
+#else
+		return p.parent_path();
+#endif
+	}
+
 	//获得文件夹下所有的文件;
 	void get_files (const std::string& dir, const std::string& ext, filelist& list)
 	{
