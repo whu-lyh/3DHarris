@@ -5,7 +5,9 @@
 #include <pcl/keypoints/harris_3D.h> //harris特征点估计类头文件声明
 #include <pcl/keypoints/sift_keypoint.h> //3D sift 特征点检测
 #include <pcl/keypoints/iss_3d.h> //ISS KEY POINT
+#include <pcl/common/centroid.h>
 #include <pcl/registration/icp.h>
+#include <pcl/registration/ndt.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
@@ -35,8 +37,9 @@
 
 using namespace std;
 
-#define ICP_REGISTRATION_
-//#define REGISTRATION
+//#define ICP_REGISTRATION_
+#define ISSMODIFY_
+//#define NORMAL_
 //#define PDF
 //#define PCLSIFT 
 //#define 3DHARRIS
@@ -65,6 +68,7 @@ namespace pcl
 	};
 }
 
+//seems to be useless might be used in print the string contains Chinese?
 std::wstring StringToWString(const std::string& str)
 {
 	LPCSTR pszSrc = str.c_str();
@@ -101,6 +105,33 @@ std::string WStringToString(const std::wstring &wstr)
 	pszDst = NULL;
 
 	return str;
+}
+
+std::vector<std::string> stringSplit(const string& str, const string& pattern)
+{//c++ standard
+	std::vector<std::string> ret;
+	if (pattern.empty()) return ret;
+	size_t start = 0, index = str.find_first_of(pattern, 0);
+	while (index != str.npos)
+	{
+		if (start != index)
+			ret.push_back(str.substr(start, index - start));
+		start = index + 1;
+		index = str.find_first_of(pattern, start);
+	}
+	if (!str.substr(start).empty())
+		ret.push_back(str.substr(start));
+	return ret;
+}
+
+//compare by the specific part of the string
+bool compareString(const std::string &str1, const std::string &str2)
+{
+	std::vector<std::string> splited_value1 = stringSplit(str1, "_");
+	std::vector<std::string> splited_value2 = stringSplit(str2, "_");
+	if (!splited_value1.empty() && splited_value1.size() > 7 && !splited_value2.empty() && splited_value2.size() > 7)
+		return std::stoi(splited_value1[6]) < std::stoi(splited_value2[6]);
+	return str1.length() < str2.length();
 }
 
 // Unused function that just tests the whole API
@@ -198,52 +229,70 @@ int main(int argc, char *argv[])
 	//std::string target_pc_path = Utility::get_parent(source_pc_path) + "/iScan-Pcd-1_part18_keypoints_target.las";
 	//std::string result_pc_path = Utility::get_parent(source_pc_path) + "/iScan-Pcd-1_part18_keypoints_result.las";
 
-	std::vector<std::string> source_files,target_files;
-	Utility::get_files("F:/Data/Train/20190315", ".las", source_files);
-	Utility::get_files("F:/Data/Train/20190401", ".las", target_files);
-
-
-	wcout.imbue(locale("chs"));
+	std::wcout.imbue(locale("chs"));
 	//std::wcout << "1.\t" << StringToWString(source_pc_path) << std::endl;
 
 	std::wstring source_pc_path_w = L"F:/Data/Train/pairwiseregistration/京沈线_上行_普通线路_2019-03-15_0-27-3_0_0_t_dis.las";
+	std::cout << source_pc_path_w.length()<<std::endl; //each word(character) is 1 length
 	std::string source_pc_path = WStringToString(source_pc_path_w);
-	cout << "3.\t" << source_pc_path << std::endl;
+	std::cout << "3.\t" << source_pc_path << std::endl;
 	std::wstring target_pc_path_w = L"/京沈线_上行_普通线路_2019-04-01_0-20-25_0_0_t_dis.las";
 	std::string target_pc_path = Utility::get_parent(source_pc_path) + WStringToString(target_pc_path_w);
-	std::string result_pc_path = Utility::get_parent(source_pc_path)+"/psline_up_normal_2019_0315-0401_0.las";
+	std::string result_pc_path = Utility::get_parent(source_pc_path) + "/psline_up_normal_2019_0315-0401_0.las";
 
-	pcl::PointCloud<PointT>::Ptr source_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
-	pcl::PointCloud<PointT>::Ptr target_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
-	pcl::PointCloud<PointT>::Ptr result_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
-	Utility::Offset las_offset, las_offset2;
-
-	if (PointIO::loadSingleLAS<PointT>(source_pc_path, source_cloud, las_offset) &&
-		PointIO::loadSingleLAS<PointT>(target_pc_path, target_cloud, las_offset2))
-	{
-		std::cout << "las file load successfully" << std::endl;
-		std::cout << source_cloud->points.size() << std::endl;
-		std::cout << target_cloud->points.size() << std::endl;
-	}
+	std::vector<std::string> source_files,target_files;
+	Utility::get_files("F:/Data/Train/20190315", ".las", source_files);
+	std::sort(source_files.begin(), source_files.end(), compareString);
+	Utility::get_files("F:/Data/Train/20190401", ".las", target_files);
+	std::sort(target_files.begin(), target_files.end(), compareString);
+	std::string source_refined_path = "F:/Data/Train/result_0315";
 
 	boost::shared_ptr<pcl::IterativeClosestPoint<PointT, PointT>> icp(new pcl::IterativeClosestPoint<PointT, PointT>());
-	icp->setTransformationEpsilon(0.05);
-	icp->setEuclideanFitnessEpsilon(0.05);
-	icp->setMaximumIterations(10);
+	icp->setTransformationEpsilon(0.005);
+	icp->setEuclideanFitnessEpsilon(0.005);
+	icp->setMaximumIterations(100);
 	icp->setUseReciprocalCorrespondences(true);
-	icp->setMaxCorrespondenceDistance(5);
-	icp->setRANSACIterations(10);
-	icp->setRANSACOutlierRejectionThreshold(5);
+	icp->setMaxCorrespondenceDistance(0.1);
+	icp->setRANSACIterations(50);
+	icp->setRANSACOutlierRejectionThreshold(0.1);
 
-	icp->setInputSource(source_cloud);
-	icp->setInputTarget(target_cloud);
-	icp->align(*result_cloud);
+	boost::shared_ptr<pcl::NormalDistributionsTransform<PointT, PointT>> ndt(new pcl::NormalDistributionsTransform<PointT, PointT>());
+	ndt->setTransformationEpsilon(0.005);
+	ndt->setMaximumIterations(20);
+	ndt->setResolution(0.2);
+	ndt->setStepSize(0.05);
 
-	PointIO::saveLAS2<PointT>(result_pc_path, result_cloud, las_offset);
+	for (int i=0;i<source_files.size();i++)
+	{
+		pcl::PointCloud<PointT>::Ptr source_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+		pcl::PointCloud<PointT>::Ptr target_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+		pcl::PointCloud<PointT>::Ptr result_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+		Utility::Offset las_offset, las_offset2;
+
+		if (PointIO::loadSingleLAS<PointT>(source_files[i], source_cloud, las_offset) &&
+			PointIO::loadSingleLAS<PointT>(target_files[i], target_cloud, las_offset2))
+		{
+			std::cout << "las file load successfully" << std::endl;
+			std::cout << source_cloud->points.size() << std::endl;
+			std::cout << target_cloud->points.size() << std::endl;
+		}
+
+		icp->setInputSource(source_cloud);
+		icp->setInputTarget(target_cloud);
+		icp->align(*result_cloud);
+
+		//ndt->setInputSource(source_cloud);
+		//ndt->setInputTarget(target_cloud);
+		//ndt->align(*result_cloud);
+		std::cout << "Score:\t" << icp->getFitnessScore(0.05) << std::endl;;
+
+		std::string tmp_path = source_refined_path + "/" + Utility::get_name_without_ext(source_files[i]) + "_refined.las";
+		PointIO::saveLAS2<PointT>(tmp_path, result_cloud, las_offset);
+	}
 
 #endif //ICP_REGISTRATION_
 
-#ifdef REGISTRATION
+#ifdef ISSMODIFY_
 
 	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/20191211150218-df/iScan-Pcd-1_part18.las";
 	//std::string pointfilepath = "../x64/Release/line.las";
@@ -329,7 +378,29 @@ int main(int argc, char *argv[])
 	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>(t2report - t1report);
 	std::cout << "Out put the key point extracted file, time cost: " << t12report.count() << "s" << std::endl;
 
-#endif
+#endif //ISSMODIFY_
+
+#ifdef NORMAL_
+	
+	pcl::PointCloud<pcl::PointXYZ>::Ptr norm_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/20191211150218-df/iScan-Pcd-1_part18.las";
+	Utility::Offset las_offset;
+
+	if (PointIO::loadSingleLAS<PointT>(pointfilepath, norm_cloud, las_offset))
+	{
+		std::cout << "las file load successfully" << std::endl;
+		std::cout << norm_cloud->points.size() << std::endl;
+	}
+
+	Eigen::Matrix<float, 3, 3> covariance_matrix;
+	Eigen::Matrix<float, 4, 1> centroid;
+	pcl::computeMeanAndCovarianceMatrix<pcl::PointXYZ,float>(*norm_cloud, covariance_matrix, centroid);
+	float nx, ny, nz, curvature;
+	pcl::solvePlaneParameters(covariance_matrix, nx, ny, nz, curvature);
+	
+	//nx,ny,nz is exactly the normal of this plane-like point cloud
+
+#endif //NORMAL_
 
 #ifdef PDF  
 	// Set verbosity to true
