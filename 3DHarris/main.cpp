@@ -37,15 +37,16 @@
 
 using namespace std;
 
+#define COLORSETTING
 //#define ICP_REGISTRATION_
-#define ISSMODIFY_
+//#define ISSMODIFY_
 //#define NORMAL_
 //#define PDF
 //#define PCLSIFT 
 //#define 3DHARRIS
 //#define VOXEL_FILTER
 //#define APPROXIMATE_VOXEL_FILTER
-#define SOR_FILTER
+//#define SOR_FILTER
 //#define CONNECT_ANALYSIS_TEST
 //#define CPLUSPLUS
 
@@ -222,6 +223,64 @@ int main(int argc, char *argv[])
 {
 
 	using PointT = pcl::PointXYZ;
+	using PointTcolor = pcl::PointXYZRGB;
+
+#ifdef COLORSETTING
+	std::wcout.imbue(locale("chs"));
+
+	std::vector<std::string> source_files, target_files;
+	Utility::get_files("F:/Data/Train/Train_Roam/refine", ".las", source_files);
+	Utility::get_files("F:/Data/Train/Train_Roam/refine/0401", ".las", target_files);
+
+	for (int i = 0; i < source_files.size(); i++)
+	{
+		pcl::PointCloud<PointT>::Ptr source_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+		pcl::PointCloud<PointT>::Ptr target_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+		pcl::PointCloud<PointTcolor>::Ptr source_cloud_c = boost::make_shared<pcl::PointCloud<PointTcolor>>();
+		pcl::PointCloud<PointTcolor>::Ptr target_cloud_c = boost::make_shared<pcl::PointCloud<PointTcolor>>();
+
+		Utility::Offset las_offset, las_offset2;
+
+		if (PointIO::loadSingleLAS<PointT>(source_files[i], source_cloud, las_offset) &&
+			PointIO::loadSingleLAS<PointT>(target_files[i], target_cloud, las_offset2))
+		{
+			std::cout << "las file load successfully" << std::endl;
+			std::cout << source_cloud->points.size() << std::endl;
+			std::cout << target_cloud->points.size() << std::endl;
+		}
+
+		for (auto pt:source_cloud->points)
+		{
+			PointTcolor cpt;
+			cpt.x = pt.x;
+			cpt.y = pt.y;
+			cpt.z = pt.z;
+			cpt.r = 0;
+			cpt.g = 255;
+			cpt.b = 0;
+			source_cloud_c->push_back(cpt);
+		}
+
+		for (auto pt : target_cloud->points)
+		{
+			PointTcolor cpt;
+			cpt.x = pt.x;
+			cpt.y = pt.y;
+			cpt.z = pt.z;
+			cpt.r = 255;
+			cpt.g = 0;
+			cpt.b = 0;
+			target_cloud_c->push_back(cpt);
+		}
+
+		std::string source_result = Utility::get_parent(source_files[i]) + "/" + Utility::get_name_without_ext(source_files[i]) + "_c.las";
+		std::string target_result = Utility::get_parent(target_files[i]) + "/" + Utility::get_name_without_ext(target_files[i]) + "_c.las";
+		PointIO::saveLAS2<PointTcolor>(source_result, source_cloud_c, las_offset);
+		PointIO::saveLAS2<PointTcolor>(target_result, target_cloud_c, las_offset2);
+	}
+
+
+#endif //COLORSETTING
 
 #ifdef ICP_REGISTRATION_
 
@@ -241,20 +300,21 @@ int main(int argc, char *argv[])
 	std::string result_pc_path = Utility::get_parent(source_pc_path) + "/psline_up_normal_2019_0315-0401_0.las";
 
 	std::vector<std::string> source_files,target_files;
-	Utility::get_files("F:/Data/Train/20190315", ".las", source_files);
+	//Utility::get_files("F:/Data/Train/20190315", ".las", source_files);
+	Utility::get_files("F:/Data/Train/result_700_710", ".las", source_files); 
 	std::sort(source_files.begin(), source_files.end(), compareString);
-	Utility::get_files("F:/Data/Train/20190401", ".las", target_files);
+	Utility::get_files("F:/Data/Train/origin_0401_700_710", ".las", target_files);
 	std::sort(target_files.begin(), target_files.end(), compareString);
-	std::string source_refined_path = "F:/Data/Train/result_0315";
+	std::string source_refined_path = "F:/Data/Train/result_0315_icp_700_710";
 
 	boost::shared_ptr<pcl::IterativeClosestPoint<PointT, PointT>> icp(new pcl::IterativeClosestPoint<PointT, PointT>());
-	icp->setTransformationEpsilon(0.005);
-	icp->setEuclideanFitnessEpsilon(0.005);
+	icp->setTransformationEpsilon(0.01);
+	icp->setEuclideanFitnessEpsilon(0.01);
 	icp->setMaximumIterations(100);
 	icp->setUseReciprocalCorrespondences(true);
-	icp->setMaxCorrespondenceDistance(0.1);
+	icp->setMaxCorrespondenceDistance(0.25);
 	icp->setRANSACIterations(50);
-	icp->setRANSACOutlierRejectionThreshold(0.1);
+	icp->setRANSACOutlierRejectionThreshold(0.05);
 
 	boost::shared_ptr<pcl::NormalDistributionsTransform<PointT, PointT>> ndt(new pcl::NormalDistributionsTransform<PointT, PointT>());
 	ndt->setTransformationEpsilon(0.005);
@@ -286,7 +346,7 @@ int main(int argc, char *argv[])
 		//ndt->align(*result_cloud);
 		std::cout << "Score:\t" << icp->getFitnessScore(0.05) << std::endl;;
 
-		std::string tmp_path = source_refined_path + "/" + Utility::get_name_without_ext(source_files[i]) + "_refined.las";
+		std::string tmp_path = source_refined_path + "/" + Utility::get_name_without_ext(source_files[i]) + "_icp_refined.las";
 		PointIO::saveLAS2<PointT>(tmp_path, result_cloud, las_offset);
 	}
 
@@ -363,6 +423,10 @@ int main(int argc, char *argv[])
 		//iss_det.setNormalRadius(3 * model_solution);
 		iss_det.compute(*cloud_src_iss);
 
+		std::chrono::high_resolution_clock::time_point t2report = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>(t2report - t1report);
+		std::cout << "Out put the key point extracted file, time cost: " << t12report.count() << "s" << std::endl;
+
 		tmppath = keypointpath + "/" + Utility::get_name_without_ext(pointfilepath) + "_keypoints.las";
 		PointIO::saveLAS2<pcl::PointXYZ>(tmppath, cloud_src_iss, las_offset);
 	}
@@ -374,16 +438,12 @@ int main(int argc, char *argv[])
 		//value = static_cast<ScalarType>(Z.computeFeature(static_cast<CCLib::Neighbourhood::GeomFeature>(5)));
 	}
 
-	std::chrono::high_resolution_clock::time_point t2report = std::chrono::high_resolution_clock::now();
-	std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>(t2report - t1report);
-	std::cout << "Out put the key point extracted file, time cost: " << t12report.count() << "s" << std::endl;
-
 #endif //ISSMODIFY_
 
 #ifdef NORMAL_
 	
 	pcl::PointCloud<pcl::PointXYZ>::Ptr norm_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/20191211150218-df/iScan-Pcd-1_part18.las";
+	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/20191211150218-df/iss/plane-normal-test.las";
 	Utility::Offset las_offset;
 
 	if (PointIO::loadSingleLAS<PointT>(pointfilepath, norm_cloud, las_offset))
@@ -399,6 +459,7 @@ int main(int argc, char *argv[])
 	pcl::solvePlaneParameters(covariance_matrix, nx, ny, nz, curvature);
 	
 	//nx,ny,nz is exactly the normal of this plane-like point cloud
+	std::cout << nx << "," << ny << "," << nz << std::endl;
 
 #endif //NORMAL_
 
