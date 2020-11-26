@@ -11,6 +11,7 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/common/transforms.h>
 #include <cstdlib>
 #include <vector>
 #include <ctime>
@@ -37,10 +38,10 @@
 
 using namespace std;
 
-#define COLORSETTING
+//#define COLORSETTING
 //#define ICP_REGISTRATION_
 //#define ISSMODIFY_
-//#define NORMAL_
+#define NORMAL_
 //#define PDF
 //#define PCLSIFT 
 //#define 3DHARRIS
@@ -442,24 +443,121 @@ int main(int argc, char *argv[])
 
 #ifdef NORMAL_
 	
-	pcl::PointCloud<pcl::PointXYZ>::Ptr norm_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-	std::string pointfilepath = "F:/Data/wuhan/dataaroundGaoJia/20191211150218-df/iss/plane-normal-test.las";
+	pcl::PointCloud<pcl::PointXYZ>::Ptr normal_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	//std::string pointfilepath = "F:/Data/TS/1028WHTSpointcloudfenkuai1-2-8-intensity-filt-lable3.las";
+	std::string pointfilepath = "F:/Data/TS/lable4-seg.las";
 	Utility::Offset las_offset;
 
-	if (PointIO::loadSingleLAS<PointT>(pointfilepath, norm_cloud, las_offset))
+	if (PointIO::loadSingleLAS<PointT>(pointfilepath, normal_cloud, las_offset))
 	{
 		std::cout << "las file load successfully" << std::endl;
-		std::cout << norm_cloud->points.size() << std::endl;
+		std::cout << normal_cloud->points.size() << std::endl;
 	}
 
 	Eigen::Matrix<float, 3, 3> covariance_matrix;
 	Eigen::Matrix<float, 4, 1> centroid;
-	pcl::computeMeanAndCovarianceMatrix<pcl::PointXYZ,float>(*norm_cloud, covariance_matrix, centroid);
+	//calculate the covariance matrix using the cloud without demean
+	pcl::computeMeanAndCovarianceMatrix<pcl::PointXYZ,float>(*normal_cloud, covariance_matrix, centroid);
+	//normal direction
 	float nx, ny, nz, curvature;
 	pcl::solvePlaneParameters(covariance_matrix, nx, ny, nz, curvature);
 	
 	//nx,ny,nz is exactly the normal of this plane-like point cloud
 	std::cout << nx << "," << ny << "," << nz << std::endl;
+
+	Eigen::Vector4f pcaCentroid;
+	pcl::compute3DCentroid(*normal_cloud, pcaCentroid);
+	Eigen::Matrix3f covariance;
+	//calculate the covariance matrix using the cloud without demean
+	pcl::computeCovarianceMatrixNormalized(*normal_cloud, pcaCentroid, covariance);
+
+	Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigen_solver(covariance, Eigen::ComputeEigenvectors);
+	Eigen::Matrix3f eigenVectorsPCA = eigen_solver.eigenvectors();
+	Eigen::Vector3f eigenValuesPCA = eigen_solver.eigenvalues();
+	std::cout << "eigenValuesPCA_before: " << std::endl << eigenValuesPCA << std::endl;
+	std::cout << "eigenVectorsPCA_before: " << std::endl << eigenVectorsPCA << std::endl;
+
+	//y axis
+	eigenVectorsPCA.col(1) = eigenVectorsPCA.col(0).cross(eigenVectorsPCA.col(2));
+	//change to x-y-z=pca.p-pca.p.cross(normal)-normal
+	eigenVectorsPCA.col(2).swap(eigenVectorsPCA.col(0));
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_src(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_target(new pcl::PointCloud<pcl::PointXYZ>);
+	Eigen::Matrix4f trans;
+	{
+		pcl::PointXYZ pt;
+		//获得cloud_src点云;
+		pt.x = 1.f;
+		pt.y = 0.f;
+		pt.z = 0.f;
+		cloud_src->push_back(pt);
+
+		pt.x = 0.f;
+		pt.y = 1.f;
+		pt.z = 0.f;
+		cloud_src->push_back(pt);
+
+		pt.x = 0.f;
+		pt.y = 0.f;
+		pt.z = 1.f;
+		cloud_src->push_back(pt);
+
+		//获得cloud_target点云;
+		pt.x = eigenVectorsPCA.col(0)[0];
+		pt.y = eigenVectorsPCA.col(0)[1];
+		pt.z = eigenVectorsPCA.col(0)[2];
+		cloud_target->push_back(pt);
+
+		pt.x = eigenVectorsPCA.col(1)[0];
+		pt.y = eigenVectorsPCA.col(1)[1];
+		pt.z = eigenVectorsPCA.col(1)[2];
+		cloud_target->push_back(pt);
+
+		pt.x = eigenVectorsPCA.col(2)[0];
+		pt.y = eigenVectorsPCA.col(2)[1];
+		pt.z = eigenVectorsPCA.col(2)[2];
+		cloud_target->push_back(pt);
+
+		/*创建点对的对应关系correspondences;*/
+		pcl::Correspondences  correspondences;
+		pcl::Correspondence   correspondence;
+		for (size_t i = 0; i < 3; i++)
+		{
+			correspondence.index_match = (int)i;
+			correspondence.index_query = (int)i;
+			correspondences.push_back(correspondence);
+		}
+
+		//根据对应关系correspondences计算旋转平移矩阵;
+		pcl::registration::TransformationEstimationSVD<pcl::PointXYZ, pcl::PointXYZ> trans_est;
+		
+		trans_est.estimateRigidTransformation(*cloud_target, *cloud_src, correspondences, trans);
+	}
+	std::cout << "Object main direction transformed to canonical coordinate" << std::endl << trans << std::endl;
+
+	Eigen::Matrix4f transform(Eigen::Matrix4f::Identity());
+	//transpose is necessary
+	transform.block<3, 3>(0, 0) = eigenVectorsPCA.transpose();
+	//transform.block<3, 1>(0, 3) = Eigen::Vector3f::Zero();
+	transform.block<3, 1>(0, 3) = -1.f*transform.block<3, 3>(0, 0)*pcaCentroid.head<3>();
+	std::cout << "transform: " << std::endl << transform << std::endl;
+
+	Eigen::Affine3f affine_transform(Eigen::Affine3f::Identity());
+	affine_transform = eigenVectorsPCA.transpose();
+
+	pcl::PointCloud<PointT>::Ptr transformedCloud(new pcl::PointCloud<PointT>);
+	//pcl::transformPointCloud(*normal_cloud, *transformedCloud, trans);
+	pcl::transformPointCloud(*normal_cloud, *transformedCloud, affine_transform);
+	pcaCentroid = -1.f*pcaCentroid;
+	//pcl::demeanPointCloud(*transformedCloud, pcaCentroid, *normal_cloud_demean);
+
+
+	std::cout << "eigenValuesPCA after: " << std::endl << eigenValuesPCA << std::endl;
+	std::cout << "eigenVectorsPCA after: " << std::endl << eigenVectorsPCA << std::endl;
+	std::cout << "eigenVectorsPCA.transpose: " << std::endl << eigenVectorsPCA.transpose() << std::endl;
+	std::string out_file_name = Utility::get_parent(pointfilepath) + "/" + Utility::get_name_without_ext(pointfilepath) + "_pca.las";
+	PointIO::saveLAS<PointT>(out_file_name, transformedCloud, las_offset);
 
 #endif //NORMAL_
 
