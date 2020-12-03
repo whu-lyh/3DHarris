@@ -11,6 +11,7 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/filters/radius_outlier_removal.h>
 #include <pcl/common/transforms.h>
 #include <cstdlib>
 #include <vector>
@@ -40,14 +41,15 @@ using namespace std;
 
 //#define COLORSETTING
 //#define ICP_REGISTRATION_
-//#define ISSMODIFY_
-#define NORMAL_
+#define ISSMODIFY_
+//#define NORMAL_
 //#define PDF
 //#define PCLSIFT 
 //#define 3DHARRIS
 //#define VOXEL_FILTER
 //#define APPROXIMATE_VOXEL_FILTER
-//#define SOR_FILTER
+#define SOR_FILTER
+//#define ROR_FILTER
 //#define CONNECT_ANALYSIS_TEST
 //#define CPLUSPLUS
 
@@ -369,6 +371,19 @@ int main(int argc, char *argv[])
 		std::cout << "las file load successfully" << std::endl;
 		std::cout << input_cloud->points.size() << std::endl;
 	}
+
+#ifdef ROR_FILTER
+	{
+		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
+		pcl::RadiusOutlierRemoval<pcl::PointXYZ> pcFilter;  //创建滤波器对象
+		pcFilter.setInputCloud(input_cloud);             //设置待滤波的点云
+		pcFilter.setRadiusSearch(0.3);               // 设置搜索半径
+		pcFilter.setMinNeighborsInRadius(2);      // 设置一个内点最少的邻居数目
+		pcFilter.filter(*cloud_filtered);        //滤波结果存储到cloud_filtered
+		std::cerr << "Cloud after filtering: " << std::endl;
+		std::cerr << cloud_filtered->points.size() << std::endl;
+	}
+#endif //RadiusOutlierRemoval
 
 	//sor
 #ifdef SOR_FILTER
