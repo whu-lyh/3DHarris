@@ -26,6 +26,7 @@
 #include <tbb/tbb.h>
 
 #include "PointCloudIO.h"
+#include "kmeans.hpp"
 //#include "iss_keypoint.h"
 
 #include "CCConst.h"
@@ -41,14 +42,15 @@ using namespace std;
 
 //#define COLORSETTING
 //#define ICP_REGISTRATION_
-#define ISSMODIFY_
+//#define ISSMODIFY_
+#define KMEANS_
 //#define NORMAL_
 //#define PDF
 //#define PCLSIFT 
 //#define 3DHARRIS
 //#define VOXEL_FILTER
 //#define APPROXIMATE_VOXEL_FILTER
-#define SOR_FILTER
+//#define SOR_FILTER
 //#define ROR_FILTER
 //#define CONNECT_ANALYSIS_TEST
 //#define CPLUSPLUS
@@ -227,6 +229,71 @@ int main(int argc, char *argv[])
 
 	using PointT = pcl::PointXYZ;
 	using PointTcolor = pcl::PointXYZRGB;
+
+#ifdef KMEANS_
+	std::string pointfilepath = "F:/Data/TS/local_9TS0.las";
+
+	std::string keypointpath = Utility::get_parent(pointfilepath) + "/kmeans";
+	Utility::ensure_dir(keypointpath);
+
+	pcl::PointCloud<PointT>::Ptr input_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
+	Utility::Offset las_offset;
+
+	if (PointIO::loadSingleLAS<PointT>(pointfilepath, input_cloud, las_offset))
+	{
+		std::cout << "las file load successfully" << std::endl;
+		std::cout << input_cloud->points.size() << std::endl;
+	}
+
+	KmeansPlus kmean_ts(input_cloud->size(), 3);
+
+	std::vector<std::vector<float>> pts;//, centroids;
+
+	for (auto pt: input_cloud->points)
+	{
+		std::vector<float> pt_xyz = { pt.x,pt.y,pt.z };
+		pts.push_back(pt_xyz);
+	}
+
+	kmean_ts.setInputData(pts);
+	kmean_ts.setClusterSize(2);
+	kmean_ts.kMeans();
+
+	pcl::Kmeans::Centroids centroids = kmean_ts.get_centroids();
+	//in fact the centroid is the double vector container
+
+	std::cout << "points in total Cloud : " << input_cloud->points.size() << std::endl;
+	std::cout << "centroid count: " << centroids.size() << std::endl;
+
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr output_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
+	Utility::Offset las_offset_cluster;
+
+	for (int i = 0; i < centroids.size(); ++i)
+	{
+		std::cout << centroids[i][0] << "," << centroids[i][1] << "," << centroids[i][2]<<std::endl;
+	}
+
+	pcl::Kmeans::ClustersToPoints clusters2points = kmean_ts.getclusters2points();
+
+	for (int i = 0; i < clusters2points.size(); ++i)
+	{
+		pcl::PointXYZRGB pt;
+		for (auto it = clusters2points[i].begin(); it != clusters2points[i].end(); it++)
+		{
+			//std::cout << *it << std::endl;
+			pt.x = input_cloud->points[*it].x;
+			pt.y = input_cloud->points[*it].y;
+			pt.z = input_cloud->points[*it].z;
+			pt.r = i * 125;
+			pt.g = i;
+			pt.b = i * 125;
+			output_cloud->push_back(pt);
+		}
+	}
+
+	PointIO::saveLAS2<pcl::PointXYZRGB>(keypointpath + "/cluester.las", output_cloud, las_offset_cluster);
+
+#endif
 
 #ifdef COLORSETTING
 	std::wcout.imbue(locale("chs"));

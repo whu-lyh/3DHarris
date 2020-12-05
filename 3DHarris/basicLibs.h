@@ -38,6 +38,7 @@
 #pragma comment(lib, "pcl_search_debug.lib")
 #pragma comment(lib, "pcl_registration_debug.lib")
 #pragma comment(lib, "pcl_io_debug.lib")
+#pragma comment(lib, "pcl_ml_debug.lib")
 
 //#pragma comment(lib, "tbb_debug.lib")
 //#pragma comment(lib, "opencv_core347d.lib")
@@ -57,6 +58,7 @@
 #pragma comment(lib, "pcl_search_release.lib")
 #pragma comment(lib, "pcl_registration_release.lib")
 #pragma comment(lib, "pcl_io_release.lib")
+#pragma comment(lib, "pcl_ml_release.lib")
 
 //#pragma comment(lib, "tbb.lib")
 //#pragma comment(lib, "opencv_core347.lib")

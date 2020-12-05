@@ -156,6 +156,7 @@
     <ClInclude Include="GenericIndexedCloudPersist.h" />
     <ClInclude Include="iss_keypoint.h" />
     <ClInclude Include="Jacobi.h" />
+    <ClInclude Include="kmeans.hpp" />
     <ClInclude Include="MathTools.h" />
     <ClInclude Include="Neighbourhood.h" />
     <ClInclude Include="PointCloud.h" />
