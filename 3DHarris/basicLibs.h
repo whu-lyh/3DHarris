@@ -30,7 +30,7 @@
 #pragma comment(lib, "pcl_common_debug.lib")
 #pragma comment(lib, "pcl_io_debug.lib")
 
-#pragma comment(lib, "libboost_thread-vc141-mt-gd-1_64.lib")
+#pragma comment(lib, "libboost_thread-vc140-mt-gd-x64-1_67.lib")
 #pragma comment(lib, "pcl_common_debug.lib")
 #pragma comment(lib, "pcl_features_debug.lib")
 #pragma comment(lib, "pcl_filters_debug.lib")
@@ -40,17 +40,17 @@
 #pragma comment(lib, "pcl_io_debug.lib")
 #pragma comment(lib, "pcl_ml_debug.lib")
 
-//#pragma comment(lib, "tbb_debug.lib")
-//#pragma comment(lib, "opencv_core347d.lib")
-//#pragma comment(lib, "opencv_highgui347d.lib")
-//#pragma comment(lib, "opencv_imgproc347d.lib")
-//#pragma comment(lib, "opencv_imgcodecs347d.lib")
+#pragma comment(lib, "tbb_debug.lib")
+#pragma comment(lib, "opencv_core340d.lib")
+#pragma comment(lib, "opencv_highgui340d.lib")
+#pragma comment(lib, "opencv_imgproc340d.lib")
+#pragma comment(lib, "opencv_imgcodecs340d.lib")
 #else
 #pragma comment(lib, "liblas.lib")
 
 #pragma comment(lib, "pcl_io_release.lib")
 
-#pragma comment(lib, "libboost_thread-vc141-mt-1_64.lib")
+#pragma comment(lib, "libboost_thread-vc140-mt-x64-1_67.lib")
 #pragma comment(lib, "pcl_common_release.lib")
 #pragma comment(lib, "pcl_features_release.lib")
 #pragma comment(lib, "pcl_filters_release.lib")
@@ -60,11 +60,11 @@
 #pragma comment(lib, "pcl_io_release.lib")
 #pragma comment(lib, "pcl_ml_release.lib")
 
-//#pragma comment(lib, "tbb.lib")
-//#pragma comment(lib, "opencv_core347.lib")
-//#pragma comment(lib, "opencv_highgui347.lib")
-//#pragma comment(lib, "opencv_imgproc347.lib")
-//#pragma comment(lib, "opencv_imgcodecs347.lib")
+#pragma comment(lib, "tbb.lib")
+#pragma comment(lib, "opencv_core340.lib")
+#pragma comment(lib, "opencv_highgui340.lib")
+#pragma comment(lib, "opencv_imgproc340.lib")
+#pragma comment(lib, "opencv_imgcodecs340.lib")
 #endif
 
 #pragma execution_character_set("utf-8")
@@ -84,6 +84,7 @@
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #include <pcl/registration/transformation_estimation_svd.h>
+#include <pcl/search/kdtree.h>
 
 #include <boost/make_shared.hpp>
 #include <boost/filesystem/convenience.hpp>
