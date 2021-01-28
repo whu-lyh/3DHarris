@@ -22,9 +22,6 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 
-//parallel library test
-#include <tbb/tbb.h>
-
 #include "PointCloudIO.h"
 #include "kmeans.hpp"
 //#include "iss_keypoint.h"
@@ -53,7 +50,7 @@ using namespace std;
 //#define SOR_FILTER
 //#define ROR_FILTER
 //#define CONNECT_ANALYSIS_TEST
-//#define CPLUSPLUS
+
 
 #if _WIN32
 #define DEFAULT_PATH "C:\\"
@@ -772,29 +769,6 @@ int main(int argc, char *argv[])
 	cv::imshow ( "show image", pData );
 	cv::imwrite ( "./point.jpg", pData );
 #endif // CONNECT_ANALYSIS_TEST
-
-
-#ifdef CPLUSPLUS
-	//tbb parallel
-	tbb::parallel_for(0, 10, [](int num) {std::cout << num << " : hello tbb " << std::endl; });
-
-	std::cout << sizeof(short int) << std::endl;
-	std::cout << sizeof(char) << std::endl;
-	std::cout << sizeof(bool) << std::endl;
-
-	//float 6 valid value will be keeped(the 1 will be saved)
-	float slamm = 0.000111111;
-	std::cout << slamm << std::endl;
-
-	vector<short int> occupation_grid;
-	occupation_grid.reserve(40000000);
-	occupation_grid.resize(40000000, false);
-	//for (auto singlegrid:occupation_grid)
-	//{
-	//	std::cout << singlegrid << std::endl;
-	//}
-
-#endif // CPLUSPLUS
 
 	system ( "pause" );
 	return 1;
