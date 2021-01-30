@@ -2,6 +2,9 @@
 //parallel library test
 #include <tbb/tbb.h>
 
+#include <Windows.h>
+#include <direct.h>
+
 #include <string>
 #include <iostream>
 #include <istream>
@@ -101,6 +104,12 @@ public:
 
 int main()
 {
+	char buffer[256];
+	char *val = _getcwd(buffer, sizeof(buffer));
+	if (val)
+	{
+		std::cout << "current position: " << buffer << std::endl;
+	}
 
 #ifdef VECTOR_TEST
 	int i;
