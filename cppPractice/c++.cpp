@@ -43,8 +43,8 @@
 //#define VECTOR_TEST
 //#define MAP_TEST
 //#define SET_TEST
-//#define SET_TEST_2
-#define VECTOR_TEST_2
+#define SET_TEST_2
+//#define VECTOR_TEST_2
 //#define DEQUE_TEST
 //#define LIST_TEST
 
@@ -93,10 +93,25 @@ public:
 		return this->imageid < frame_.imageid;
 	}
 
+	// Question, any func calls operator ()?
+	// if extra function for compare is used, then the operator() should be override, more detail in example
+
 	// but the std::find in algorithm function call the == operator
 	bool operator ==(const frame & frame_) const
 	{
 		return this->imageid == frame_.imageid;
+	}
+};
+
+class Compare
+{
+public:
+	bool operator()(const frame& f1, const frame& f2) const
+	{
+		if (f1.imageid == f2.imageid)
+			return f1.gpstime > f2.gpstime;
+		else
+			return f1.gpstime > f2.gpstime;
 	}
 };
 
@@ -230,6 +245,8 @@ int main()
 	//int i;
 	int ia[5] = { 0, 1, 2, 3, 4 };
 	set<int> iset{ ia, ia + 5 };
+	// for extra operator ()
+	set<int,Compare> iset2{ ia, ia + 5 };
 
 	cout << "size=" << iset.size() << endl;
 	cout << "3 count =" << iset.count(3) << endl;
@@ -425,14 +442,28 @@ int main()
 #endif
 
 #ifdef CPLUSPLUS
+	std::cout << std::fixed;
+	//std::cout << std::setprecision(10);
 
 	std::cout << sizeof(short int) << std::endl;
 	std::cout << sizeof(char) << std::endl;
 	std::cout << sizeof(bool) << std::endl;
 
+	double zero_d = 0.0;
+	float zero_f = 0.f;
+	if (zero_d == zero_f)
+	{
+		std::cout << "equal!" << std::endl;
+	}
+
 	//float 6 valid value will be keeped(the 1 will be saved)
 	float slamm = 0.000111111;
 	std::cout << slamm << std::endl;
+
+	double offset_x = 3453464.397;
+	std::cout << offset_x << std::endl;
+	float offset_xf = offset_x;
+	std::cout << offset_xf << std::endl;
 
 	vector<short int> occupation_grid;
 	occupation_grid.reserve(40000000);
