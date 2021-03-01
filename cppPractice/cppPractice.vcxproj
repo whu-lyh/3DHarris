@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2E7C20D3-66D6-45A1-83A5-206659068F62}</ProjectGuid>
     <RootNamespace>cppPractice</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -40,13 +40,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -69,8 +69,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>E:\Library\TBB-2020.2\install\include;E:\Library\Boost_1_67_0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\TBB-2020.2\install\lib\Release;E:\Library\Boost_1_67_0\x64\vc14\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Software\TBB2020.2\include;D:\Software\pcl-1.8.1\3rdParty\Boost\include\boost-1_64;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Software\pcl-1.8.1\3rdParty\Boost\lib;D:\Software\TBB2020.2\Release;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(IncludePath);D:\Software\pcl-1.8.1\3rdParty\Boost\include\boost-1_64;D:\Software\TBB2020.2\include</IncludePath>
+    <LibraryPath>$(LibraryPath);D:\Software\TBB2020.2\Debug;D:\Software\pcl-1.8.1\3rdParty\Boost\lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -30,10 +30,10 @@
 //#include <hash_map>
 
 #ifdef _DEBUG
-#pragma comment(lib, "libboost_thread-vc140-mt-gd-x64-1_67.lib")
+#pragma comment(lib, "libboost_thread-vc141-mt-gd-1_64.lib")
 #pragma comment(lib, "tbb_debug.lib")
 #else
-#pragma comment(lib, "libboost_thread-vc140-mt-x64-1_67.lib")
+#pragma comment(lib, "libboost_thread-vc141-mt-1_64.lib")
 #pragma comment(lib, "tbb.lib")
 #endif
 
