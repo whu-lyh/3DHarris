@@ -26,8 +26,7 @@
 #include "kmeans.hpp"
 //#include "iss_keypoint.h"
 
-#include "CCConst.h"
-#include "Neighbourhood.h"
+#include "nanoflann_pcl.h"
 
 //memory leaky
 //#include <vld.h>
