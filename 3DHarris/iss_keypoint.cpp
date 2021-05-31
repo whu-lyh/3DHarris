@@ -403,6 +403,11 @@ iss::ISSKeypoint3D<PointInT, PointOutT, NormalT>::detectKeypoints (PointCloudOut
 	  //omp_mem[tid][1] = (e1c - e2c) / e1c; //Linearity
 	  //omp_mem[tid][2] = e3c;
 	  //std::cout << e1c << "," << e2c << "," << e3c << std::endl;
+
+	  // feature dimension in paper, mulls-slam
+	  omp_mem[tid][0] = (e1c-e2c) / e1c;
+	  omp_mem[tid][1] = (e2c-e3c) / e1c;
+	  omp_mem[tid][2] = e3c / (e1c + e2c + e3c);
     }
 
     for (int d = 0; d < omp_mem[tid].size (); d++)

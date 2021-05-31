@@ -7,8 +7,6 @@
 #include "basicLibs.h"
 #include "PointCloudIO.h"
 
-#pragma comment(lib, "pcl_segmentation_release.lib")
-
 int main__morphological(int argc, char** argv)
 {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);

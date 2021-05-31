@@ -38,8 +38,8 @@ using namespace std;
 
 //#define COLORSETTING
 //#define ICP_REGISTRATION_
-//#define ISSMODIFY_
-#define KMEANS_
+#define ISSMODIFY_
+//#define KMEANS_
 //#define NORMAL_
 //#define PDF
 //#define PCLSIFT 
@@ -506,7 +506,7 @@ int main(int argc, char *argv[])
 		std::chrono::duration<double> t12report = std::chrono::duration_cast<std::chrono::duration<double>>(t2report - t1report);
 		std::cout << "Out put the key point extracted file, time cost: " << t12report.count() << "s" << std::endl;
 
-		tmppath = keypointpath + "/" + Utility::get_name_without_ext(pointfilepath) + "_keypoints.las";
+		std::string tmppath = keypointpath + "/" + Utility::get_name_without_ext(pointfilepath) + "_keypoints.las";
 		PointIO::saveLAS2<pcl::PointXYZ>(tmppath, cloud_src_iss, las_offset);
 	}
 

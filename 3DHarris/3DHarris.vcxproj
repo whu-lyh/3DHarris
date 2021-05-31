@@ -63,20 +63,18 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="C:\Users\yons\AppData\Local\Microsoft\MSBuild\v4.0\MicroStation_liblas_x64_Debug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="C:\Users\yons\AppData\Local\Microsoft\MSBuild\v4.0\MicroStation_liblas_x64_Release.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>E:\Library\Boost_1_67_0\include;E:\Library\eigen-3.3.4;E:\Library\flann-1.9.1\include;E:\Library\liblas-1.8.1\include;E:\Library\opencv-3.4.0\include;E:\Library\pcl-1.8.1\include;E:\Library\glog\include;..\;E:\Library\TBB-2020.2\install\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\Boost_1_67_0\x64\vc14\lib;E:\Library\flann-1.9.1\x64\vc14\lib;E:\Library\gdal-1.11.5\x64\vc14\lib\release;E:\Library\libtiff-4.0.6\x64\vc14\lib\release;E:\Library\libgeotiff-1.4.2\x64\vc14\lib\release;E:\Library\liblas-1.8.1\x64\vc14\lib\release;E:\Library\opencv-3.4.0\x64\vc14\lib;E:\Library\pcl-1.8.1\x64\vc14\lib;E:\Library\glog\x64\vc14\lib;E:\Library\TBB-2020.2\install\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ThirdPartyLibraries_vs2017_x64)\include;$(IncludePath);D:\Software\libLAS-1.8.1\libLAS-gdal203\install\include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(ThirdPartyLibraries_vs2017_x64)\x64\vc15\lib\Release;D:\Software\libLAS-1.8.1\libLAS-gdal203\install\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\Library\Boost_1_67_0\include;E:\Library\eigen-3.3.4;E:\Library\flann-1.9.1\include;E:\Library\liblas-1.8.1\include;E:\Library\opencv-3.4.0\include;E:\Library\pcl-1.8.1\include;E:\Library\glog\include;..\;E:\Library\TBB-2020.2\install\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Library\Boost_1_67_0\x64\vc14\lib;E:\Library\flann-1.9.1\x64\vc14\lib;E:\Library\gdal-1.11.5\x64\vc14\lib\release;E:\Library\libtiff-4.0.6\x64\vc14\lib\release;E:\Library\libgeotiff-1.4.2\x64\vc14\lib\release;E:\Library\liblas-1.8.1\x64\vc14\lib\release;E:\Library\opencv-3.4.0\x64\vc14\lib;E:\Library\pcl-1.8.1\x64\vc14\lib;E:\Library\glog\x64\vc14\lib;E:\Library\TBB-2020.2\install\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath);$(ThirdPartyLibraries_vs2017_x64)\include;D:\Software\libLAS-1.8.1\libLAS-gdal203\install\include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(ThirdPartyLibraries_vs2017_x64)\x64\vc15\lib\Debug;D:\Software\libLAS-1.8.1\libLAS-gdal203\install\lib</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,6 +111,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

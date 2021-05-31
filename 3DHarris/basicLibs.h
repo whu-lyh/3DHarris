@@ -25,8 +25,8 @@
 
 
 #ifdef _DEBUG
-#pragma comment(lib, "liblas.lib")
-
+#pragma comment(lib, "liblas_d.lib")
+#pragma comment(lib, "gdal203_d.lib")
 #pragma comment(lib, "pcl_common_debug.lib")
 #pragma comment(lib, "pcl_io_debug.lib")
 
@@ -37,6 +37,7 @@
 #pragma comment(lib, "pcl_kdtree_debug.lib")
 #pragma comment(lib, "pcl_search_debug.lib")
 #pragma comment(lib, "pcl_registration_debug.lib")
+#pragma comment(lib, "pcl_segmentation_debug.lib")
 #pragma comment(lib, "pcl_io_debug.lib")
 #pragma comment(lib, "pcl_ml_debug.lib")
 
@@ -47,7 +48,7 @@
 #pragma comment(lib, "opencv_imgcodecs347d.lib")
 #else
 #pragma comment(lib, "liblas.lib")
-
+#pragma comment(lib, "gdal203.lib")
 #pragma comment(lib, "pcl_io_release.lib")
 
 #pragma comment(lib, "libboost_thread-vc141-mt-1_64.lib")
@@ -57,6 +58,7 @@
 #pragma comment(lib, "pcl_kdtree_release.lib")
 #pragma comment(lib, "pcl_search_release.lib")
 #pragma comment(lib, "pcl_registration_release.lib")
+#pragma comment(lib, "pcl_segmentation_release.lib")
 #pragma comment(lib, "pcl_io_release.lib")
 #pragma comment(lib, "pcl_ml_release.lib")
 
