@@ -65,6 +65,7 @@ void printVector(vector<int> iv) {
 
 #if defined(SET_TEST_2) || defined(VECTOR_TEST_2)
 struct frame{
+	typedef std::shared_ptr<frame> Ptr;
 	std::string imagename;
 	double gpstime;
 	int imageid;
@@ -79,8 +80,14 @@ public:
 	//需要把运算符重载函数声明为类的友元函数，这样我们就能不用创建对象而直接调用函数。
 	friend std::ostream& operator << (std::ostream &os,const frame &frame_)
 	{
-		os << frame_.imagename << "," << frame_.gpstime << "," << frame_.imageid <<
+		os << frame_.imagename << "," << frame_.gpstime << "," << frame_.imageid << "," << frame_.imageid <<
 			frame_.x << "," << frame_.y << "," << frame_.z << std::endl;
+		return os;
+	}
+	friend std::ostream& operator << (std::ostream &os, const frame::Ptr &frame_)
+	{
+		os << frame_->imagename << "," << frame_->gpstime << "," << frame_->imageid << "," << frame_->imageid <<
+			frame_->x << "," << frame_->y << "," << frame_->z << std::endl;
 		return os;
 	}
 
@@ -92,6 +99,15 @@ public:
 	{
 		return this->imageid < frame_.imageid;
 	}
+	bool operator <(const frame::Ptr & frame_) const
+	{
+		return this->imageid < frame_->imageid;
+	}
+	// friend function could not be const
+	friend bool operator <(const frame::Ptr & frame1_,const frame::Ptr & frame2_)
+	{
+		return frame1_->imageid < frame2_->imageid;
+	}
 
 	// Question, any func calls operator ()?
 	// if extra function for compare is used, then the operator() should be override, more detail in example
@@ -100,6 +116,10 @@ public:
 	bool operator ==(const frame & frame_) const
 	{
 		return this->imageid == frame_.imageid;
+	}
+	bool operator ==(const frame::Ptr & frame_) const
+	{
+		return this->imageid == frame_->imageid;
 	}
 };
 
@@ -293,24 +313,24 @@ int main()
 
 #ifdef SET_TEST_2
 
-	std::set<frame> frame_set;
+	std::set<frame::Ptr> frame_set;
 	for (int i = 0; i < 10; i++)
 	{
-		frame tmp_frame;
-		tmp_frame.imagename = "imagename" + std::to_string(i) + ".png";
-		tmp_frame.gpstime = 13875 + 2 * i;
-		tmp_frame.imageid = i;
-		tmp_frame.x = 3458131.5068 + 2 * i;
-		tmp_frame.y = 639438.0068 + 2 * i;
-		tmp_frame.z = 15.281 + 2 * i;
-		tmp_frame.phi = 0.31508 + 3 * i;
-		tmp_frame.omega = 1.80411 + 3 * i;
-		tmp_frame.kappa = 118.2008 + 3 * i;
+		frame::Ptr tmp_frame = std::make_shared<frame>();
+		tmp_frame->imagename = "imagename" + std::to_string(0) + ".png";
+		tmp_frame->gpstime = 13875 + 2 * i;
+		tmp_frame->imageid = i + i * i;
+		tmp_frame->x = 3458131.5068 + 2 * i;
+		tmp_frame->y = 639438.0068 + 2 * i;
+		tmp_frame->z = 15.281 + 2 * i;
+		tmp_frame->phi = 0.31508 + 3 * i;
+		tmp_frame->omega = 1.80411 + 3 * i;
+		tmp_frame->kappa = 118.2008 + 3 * i;
 		frame_set.insert(tmp_frame);
 	}
 
-	set<frame>::iterator ite1 = frame_set.begin();
-	set<frame>::iterator ite2 = frame_set.end();
+	set<frame::Ptr>::iterator ite1 = frame_set.begin();
+	set<frame::Ptr>::iterator ite2 = frame_set.end();
 	for (; ite1 != ite2; ++ite1) {
 		// correct
 		//cout << (ite1->imagename) << endl;
@@ -319,20 +339,46 @@ int main()
 	}
 	cout << endl;
 
-	// 使用STL算法find可以搜索元素，但不推荐
-	frame tgt_frame;
-	tgt_frame.imageid = 6;
-	tgt_frame.gpstime = 13875 + 12;
-	//call both < and ==
-	ite1 = find(frame_set.begin(), frame_set.end(), tgt_frame);
-	if (ite1 != frame_set.end())
-		cout << "found" << endl;
+	std::set<frame> frame_set2;
+	for (int i = 0; i < 10; i++)
+	{
+		frame tmp_frame;
+		tmp_frame.imagename = "imagename" + std::to_string(0) + ".png";
+		tmp_frame.gpstime = 13875 + 2 * i;
+		tmp_frame.imageid = i + i * i;
+		tmp_frame.x = 3458131.5068 + 2 * i;
+		tmp_frame.y = 639438.0068 + 2 * i;
+		tmp_frame.z = 15.281 + 2 * i;
+		tmp_frame.phi = 0.31508 + 3 * i;
+		tmp_frame.omega = 1.80411 + 3 * i;
+		tmp_frame.kappa = 118.2008 + 3 * i;
+		frame_set2.insert(tmp_frame);
+	}
 
-	// only call <
-	// 关联式容器应使用专用的find函数搜索更有效率
-	ite1 = frame_set.find(tgt_frame);
-	if (ite1 != frame_set.end())
-		cout << "2 found" << endl;
+	set<frame>::iterator ite12 = frame_set2.begin();
+	set<frame>::iterator ite22 = frame_set2.end();
+	for (; ite12 != ite22; ++ite12) {
+		// correct
+		//cout << (ite1->imagename) << endl;
+		// failure
+		cout << *ite12 << endl;
+	}
+	cout << endl;
+
+	//// 使用STL算法find可以搜索元素，但不推荐
+	//frame tgt_frame;
+	//tgt_frame.imageid = 6;
+	//tgt_frame.gpstime = 13875 + 12;
+	////call both < and ==
+	//ite1 = find(frame_set.begin(), frame_set.end(), tgt_frame);
+	//if (ite1 != frame_set.end())
+	//	cout << "found" << endl;
+
+	//// only call <
+	//// 关联式容器应使用专用的find函数搜索更有效率
+	//ite1 = frame_set.find(tgt_frame);
+	//if (ite1 != frame_set.end())
+	//	cout << "2 found" << endl;
 
 #endif
 
