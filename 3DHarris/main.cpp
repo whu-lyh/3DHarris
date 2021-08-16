@@ -33,12 +33,14 @@
 
 //portable file dialog
 #include "portable-file-dialogs.h"
-
+// CCLIB
+#include <CCCoreLib/CCTypes.h>
+#include <CCCoreLib/ReferenceCloud.h>
 using namespace std;
 
 //#define COLORSETTING
 //#define ICP_REGISTRATION_
-#define ISSMODIFY_
+//#define ISSMODIFY_
 //#define KMEANS_
 //#define NORMAL_
 //#define PDF
@@ -49,7 +51,17 @@ using namespace std;
 //#define SOR_FILTER
 //#define ROR_FILTER
 //#define CONNECT_ANALYSIS_TEST
+#define CCLIB
 
+#ifdef _DEBUG
+#pragma comment(lib, "libboost_thread-vc141-mt-gd-1_64.lib")
+#pragma comment(lib, "tbb_debug.lib")
+#pragma comment(lib, "CCCoreLibd.lib")
+#else
+#pragma comment(lib, "libboost_thread-vc141-mt-1_64.lib")
+#pragma comment(lib, "tbb.lib")
+#pragma comment(lib, "CCCoreLib.lib")
+#endif
 
 #if _WIN32
 #define DEFAULT_PATH "C:\\"
@@ -768,6 +780,10 @@ int main(int argc, char *argv[])
 	cv::imshow ( "show image", pData );
 	cv::imwrite ( "./point.jpg", pData );
 #endif // CONNECT_ANALYSIS_TEST
+
+#ifdef CCLIB
+
+#endif // CCLIB
 
 	system ( "pause" );
 	return 1;
