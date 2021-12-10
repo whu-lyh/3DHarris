@@ -1,0 +1,6 @@
+[submodule "Data-Structures-and-Algorithms-in-C"]
+	path = Data-Structures-and-Algorithms-in-C
+	url = https://github.com/LeechanX/Data-Structures-and-Algorithms-in-C
+[submodule "Submodules/Data-Structures-and-Algorithms-in-C"]
+	path = Submodules/Data-Structures-and-Algorithms-in-C
+	url = https://github.com/LeechanX/Data-Structures-and-Algorithms-in-C

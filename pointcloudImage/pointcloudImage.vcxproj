@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\cameras\KannalaBrandt8.cpp" />
+    <ClCompile Include="src\cameras\Pinhole.cpp" />
+    <ClCompile Include="src\PanoramaImageConverter.cpp" />
+    <ClCompile Include="src\pointcloud2image.cpp" />
+    <ClCompile Include="src\TwoViewReconstruction.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\cameras\cameras.hpp" />
+    <ClInclude Include="include\cameras\Cameras_Common_command_line_helper.hpp" />
+    <ClInclude Include="include\cameras\cameras_io.hpp" />
+    <ClInclude Include="include\cameras\Camera_Common.hpp" />
+    <ClInclude Include="include\cameras\Camera_Intrinsics.hpp" />
+    <ClInclude Include="include\cameras\Camera_Intrinsics_io.hpp" />
+    <ClInclude Include="include\cameras\Camera_Pinhole.hpp" />
+    <ClInclude Include="include\cameras\Camera_Pinhole_Brown.hpp" />
+    <ClInclude Include="include\cameras\Camera_Pinhole_Brown_io.hpp" />
+    <ClInclude Include="include\cameras\Camera_Pinhole_Fisheye.hpp" />
+    <ClInclude Include="include\cameras\Camera_Pinhole_Fisheye_io.hpp" />
+    <ClInclude Include="include\cameras\Camera_Pinhole_io.hpp" />
+    <ClInclude Include="include\cameras\Camera_Pinhole_Radial.hpp" />
+    <ClInclude Include="include\cameras\Camera_Pinhole_Radial_io.hpp" />
+    <ClInclude Include="include\cameras\Camera_Spherical.hpp" />
+    <ClInclude Include="include\cameras\Camera_Spherical_io.hpp" />
+    <ClInclude Include="include\cameras\Camera_undistort_image.hpp" />
+    <ClInclude Include="include\cameras\GeometricCamera.h" />
+    <ClInclude Include="include\cameras\KannalaBrandt8.h" />
+    <ClInclude Include="include\cameras\Pinhole.h" />
+    <ClInclude Include="include\cameras\PinholeCamera.hpp" />
+    <ClInclude Include="include\image_container.hpp" />
+    <ClInclude Include="include\image_converter.hpp" />
+    <ClInclude Include="include\image_io.hpp" />
+    <ClInclude Include="include\numeric\accumulator_trait.hpp" />
+    <ClInclude Include="include\numeric\eigen_alias_definition.hpp" />
+    <ClInclude Include="include\numeric\extract_columns.hpp" />
+    <ClInclude Include="include\numeric\l1_solver_admm.hpp" />
+    <ClInclude Include="include\numeric\lm.hpp" />
+    <ClInclude Include="include\numeric\nullspace.hpp" />
+    <ClInclude Include="include\numeric\numeric.h" />
+    <ClInclude Include="include\numeric\poly.h" />
+    <ClInclude Include="include\pixel_types.hpp" />
+    <ClInclude Include="include\pose3.hpp" />
+    <ClInclude Include="include\projection.hpp" />
+    <ClInclude Include="include\sample.hpp" />
+    <ClInclude Include="include\spherical\cubic_image_sampler.hpp" />
+    <ClInclude Include="include\spherical\image_resampling.hpp" />
+    <ClInclude Include="src\pointcloud2image.h" />
+    <ClInclude Include="src\TwoViewReconstruction.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{9835ED52-810C-4D91-96E9-4CF591A0BE89}</ProjectGuid>
+    <RootNamespace>pointcloudImage</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(IncludePath);$(ThirdPartyLibraries_vs2017_x64)\include</IncludePath>
+    <LibraryPath>$(LibraryPath);$(ThirdPartyLibraries_vs2017_x64)\x64\vc15\lib\Release</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

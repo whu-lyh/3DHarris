@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="cameras">
+      <UniqueIdentifier>{34d2e093-666d-4376-9f99-ac7d8dc2a0c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="numeric">
+      <UniqueIdentifier>{25d73d9b-404a-4f9b-bdb3-3628779ac250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="spherical">
+      <UniqueIdentifier>{42cd1f37-f16d-4ec4-a9b4-5cc76a3a74ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\cameras">
+      <UniqueIdentifier>{bb541c77-2085-4bef-af1c-275aacc0c52f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\PanoramaImageConverter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pointcloud2image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TwoViewReconstruction.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cameras\KannalaBrandt8.cpp">
+      <Filter>源文件\cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cameras\Pinhole.cpp">
+      <Filter>源文件\cameras</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pointcloud2image.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TwoViewReconstruction.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image_container.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image_converter.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image_io.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pixel_types.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pose3.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\projection.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sample.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\spherical\image_resampling.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Common.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Intrinsics.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Intrinsics_io.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Pinhole.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Pinhole_Brown.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Pinhole_Brown_io.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Pinhole_Fisheye.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Pinhole_Fisheye_io.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Pinhole_io.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Pinhole_Radial.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Pinhole_Radial_io.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Spherical.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_Spherical_io.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Camera_undistort_image.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\cameras.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Cameras_Common_command_line_helper.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\cameras_io.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\GeometricCamera.h">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\KannalaBrandt8.h">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\Pinhole.h">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\cameras\PinholeCamera.hpp">
+      <Filter>cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\numeric\accumulator_trait.hpp">
+      <Filter>numeric</Filter>
+    </ClInclude>
+    <ClInclude Include="include\numeric\eigen_alias_definition.hpp">
+      <Filter>numeric</Filter>
+    </ClInclude>
+    <ClInclude Include="include\numeric\extract_columns.hpp">
+      <Filter>numeric</Filter>
+    </ClInclude>
+    <ClInclude Include="include\numeric\l1_solver_admm.hpp">
+      <Filter>numeric</Filter>
+    </ClInclude>
+    <ClInclude Include="include\numeric\lm.hpp">
+      <Filter>numeric</Filter>
+    </ClInclude>
+    <ClInclude Include="include\numeric\nullspace.hpp">
+      <Filter>numeric</Filter>
+    </ClInclude>
+    <ClInclude Include="include\numeric\numeric.h">
+      <Filter>numeric</Filter>
+    </ClInclude>
+    <ClInclude Include="include\numeric\poly.h">
+      <Filter>numeric</Filter>
+    </ClInclude>
+    <ClInclude Include="include\spherical\cubic_image_sampler.hpp">
+      <Filter>spherical</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
