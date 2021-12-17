@@ -9,16 +9,16 @@
 #ifndef OPENMVG_CAMERAS_CAMERAS_HPP
 #define OPENMVG_CAMERAS_CAMERAS_HPP
 
-#include "openMVG/cameras/Camera_Common.hpp"
-#include "openMVG/cameras/Camera_Intrinsics.hpp"
-#include "openMVG/cameras/Camera_Pinhole.hpp"
-#include "openMVG/cameras/Camera_Pinhole_Radial.hpp"
-#include "openMVG/cameras/Camera_Pinhole_Brown.hpp"
-#include "openMVG/cameras/Camera_Pinhole_Fisheye.hpp"
-#include "openMVG/cameras/Camera_Spherical.hpp"
-#include "openMVG/cameras/Camera_undistort_image.hpp"
+#include "PCImage/cameras/Camera_Common.hpp"
+#include "PCImage/cameras/Camera_Intrinsics.hpp"
+#include "PCImage/cameras/Camera_Pinhole.hpp"
+#include "PCImage/cameras/Camera_Pinhole_Radial.hpp"
+#include "PCImage/cameras/Camera_Pinhole_Brown.hpp"
+#include "PCImage/cameras/Camera_Pinhole_Fisheye.hpp"
+#include "PCImage/cameras/Camera_Spherical.hpp"
+#include "PCImage/cameras/Camera_undistort_image.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 /**
 * @brief Namespace handling various Camera classes and functions
@@ -27,7 +27,7 @@ namespace cameras
 {
 
 } // namespace cameras
-} // namespace openMVG
+} // namespace PCImage
 
 
 #endif // OPENMVG_CAMERAS_CAMERAS_HPP

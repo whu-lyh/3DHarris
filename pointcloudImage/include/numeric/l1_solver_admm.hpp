@@ -20,9 +20,9 @@
 
 #include <algorithm>
 
-#include "openMVG/system/logger.hpp"
+#include "PCImage/system/logger.hpp"
 
-namespace openMVG {
+namespace PCImage {
 
 // These are template overrides that allow the sparse linear solvers to work
 // with sparse or dense matrices. The sparseView() method is not implemented for
@@ -217,6 +217,6 @@ class L1Solver {
   }
 };
 
-}  // namespace openMVG
+}  // namespace PCImage
 
 #endif  // OPENMVG_NUMERIC_L1_SOLVER_ADMM_HPP

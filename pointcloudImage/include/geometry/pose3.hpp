@@ -9,9 +9,9 @@
 #ifndef OPENMVG_GEOMETRY_POSE3_HPP
 #define OPENMVG_GEOMETRY_POSE3_HPP
 
-#include "projection.hpp"
+#include "../multiview/projection.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 namespace geometry
 {
@@ -154,6 +154,6 @@ class Pose3
     inline void load( Archive & ar );
 };
 } // namespace geometry
-} // namespace openMVG
+} // namespace PCImage
 
 #endif  // OPENMVG_GEOMETRY_POSE3_HPP

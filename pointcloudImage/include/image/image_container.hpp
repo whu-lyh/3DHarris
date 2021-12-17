@@ -11,7 +11,7 @@
 
 #include <Eigen/Dense>
 
-namespace openMVG
+namespace PCImage
 {
 namespace image
 {
@@ -254,6 +254,6 @@ Image<T1> operator-( const Image<T1> & imgA , const Image<T1> & imgB )
 }
 
 } // namespace image
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // OPENMVG_IMAGE_IMAGE_CONTAINER_HPP

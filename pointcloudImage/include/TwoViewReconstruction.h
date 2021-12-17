@@ -19,11 +19,11 @@
 #ifndef TwoViewReconstruction_H
 #define TwoViewReconstruction_H
 
-#include<opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include <unordered_set>
 
-namespace ORB_SLAM3
+namespace PCImage
 {
 
 class TwoViewReconstruction
@@ -94,6 +94,6 @@ private:
 
 };
 
-} //namespace ORB_SLAM
+} //namespace PCImage
 
 #endif // TwoViewReconstruction_H

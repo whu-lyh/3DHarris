@@ -27,13 +27,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#include "numeric.h"
+#include "../../include/numeric/numeric.h"
 
 #include <Eigen/Geometry>
 
 #include <fstream>
 
-namespace openMVG {
+namespace PCImage {
 
 Mat3 CrossProductMatrix(const Vec3 &x) {
   Mat3 X;

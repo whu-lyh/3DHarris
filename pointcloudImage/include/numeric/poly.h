@@ -16,7 +16,7 @@
 #include <complex>
 #include <limits>
 
-namespace openMVG
+namespace PCImage
 {
 
 /**
@@ -169,5 +169,5 @@ static void polishQuarticPolynomialRoots
   }
 }
 
-}  // namespace openMVG
+}  // namespace PCImage
 #endif  // OPENMVG_NUMERIC_POLY_H

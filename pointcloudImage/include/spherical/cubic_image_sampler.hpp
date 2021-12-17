@@ -10,7 +10,7 @@
 
 #include <array>
 
-namespace openMVG
+namespace PCImage
 {
 namespace spherical
 {
@@ -19,15 +19,15 @@ namespace spherical
 double FocalFromPinholeHeight
 (
   int h,
-  double fov_radian = openMVG::D2R(45) // Camera FoV
+  double fov_radian = PCImage::D2R(45) // Camera FoV
 )
 {
   return h / (2 * tan(fov_radian));
 }
 
-const static std::array<openMVG::Mat3,6> GetCubicRotations()
+const static std::array<PCImage::Mat3,6> GetCubicRotations()
 {
-  using namespace openMVG;
+  using namespace PCImage;
   return {
     RotationAroundY(D2R(0)) ,   // front
     RotationAroundY(D2R(-90)),   // right
@@ -38,7 +38,7 @@ const static std::array<openMVG::Mat3,6> GetCubicRotations()
   };
 }
 
-openMVG::cameras::Pinhole_Intrinsic ComputeCubicCameraIntrinsics
+PCImage::cameras::Pinhole_Intrinsic ComputeCubicCameraIntrinsics
 (
   const int cubic_image_size,
   const double fov = D2R(45)
@@ -57,7 +57,7 @@ template <typename ImageT, typename SamplerT>
 void SphericalToCubic
 (
   const ImageT & equirectangular_image,
-  const openMVG::cameras::Pinhole_Intrinsic & pinhole_camera,
+  const PCImage::cameras::Pinhole_Intrinsic & pinhole_camera,
   std::vector<ImageT> & cube_images,
   const SamplerT sampler = image::Sampler2d<image::SamplerLinear>()
 )
@@ -73,4 +73,4 @@ void SphericalToCubic
 }
 
 } // namespace spherical
-} // namespace openMVG
+} // namespace PCImage

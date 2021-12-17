@@ -12,14 +12,14 @@
 #include <cereal/types/polymorphic.hpp>
 
 template <class Archive>
-void openMVG::cameras::IntrinsicBase::save( Archive & ar ) const
+void PCImage::cameras::IntrinsicBase::save( Archive & ar ) const
 {
   ar( cereal::make_nvp( "width", w_ ) );
   ar( cereal::make_nvp( "height", h_ ) );
 }
 
 template <class Archive>
-void openMVG::cameras::IntrinsicBase::load( Archive & ar )
+void PCImage::cameras::IntrinsicBase::load( Archive & ar )
 {
   ar( cereal::make_nvp( "width", w_ ) );
   ar( cereal::make_nvp( "height", h_ ) );

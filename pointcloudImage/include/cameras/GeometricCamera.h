@@ -33,7 +33,7 @@
 
 #include <Eigen/Geometry>
 
-namespace ORB_SLAM3 {
+namespace PCImage {
     class GeometricCamera {
 
     public:

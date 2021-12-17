@@ -22,14 +22,17 @@
     <Filter Include="spherical">
       <UniqueIdentifier>{42cd1f37-f16d-4ec4-a9b4-5cc76a3a74ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\cameras">
-      <UniqueIdentifier>{bb541c77-2085-4bef-af1c-275aacc0c52f}</UniqueIdentifier>
+    <Filter Include="geometry">
+      <UniqueIdentifier>{77aa4321-5e56-4187-8cb5-a30524e29652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="multiview">
+      <UniqueIdentifier>{746c712f-c509-404f-a132-30be41b36753}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="image">
+      <UniqueIdentifier>{40c2704b-cc45-476f-b5cb-85ac717f2f53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\PanoramaImageConverter.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\pointcloud2image.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -37,19 +40,19 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\cameras\KannalaBrandt8.cpp">
-      <Filter>源文件\cameras</Filter>
+      <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\cameras\Pinhole.cpp">
-      <Filter>源文件\cameras</Filter>
+    <ClCompile Include="src\multiview\projection.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PanoramaImageConverter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\numeric\numeric.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\pointcloud2image.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TwoViewReconstruction.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\image_container.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -72,6 +75,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\spherical\image_resampling.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DllExportsMacro.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TwoViewReconstruction.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\cameras\Camera_Common.hpp">
@@ -134,8 +143,11 @@
     <ClInclude Include="include\cameras\Pinhole.h">
       <Filter>cameras</Filter>
     </ClInclude>
-    <ClInclude Include="include\cameras\PinholeCamera.hpp">
-      <Filter>cameras</Filter>
+    <ClInclude Include="include\geometry\pose3.hpp">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="include\multiview\projection.hpp">
+      <Filter>multiview</Filter>
     </ClInclude>
     <ClInclude Include="include\numeric\accumulator_trait.hpp">
       <Filter>numeric</Filter>
@@ -163,6 +175,21 @@
     </ClInclude>
     <ClInclude Include="include\spherical\cubic_image_sampler.hpp">
       <Filter>spherical</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image\image_container.hpp">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image\image_converter.hpp">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image\image_io.hpp">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image\pixel_types.hpp">
+      <Filter>image</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image\sample.hpp">
+      <Filter>image</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

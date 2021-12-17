@@ -16,15 +16,13 @@
 * If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "TwoViewReconstruction.h"
-
-#include "Thirdparty/DBoW2/DUtils/Random.h"
-
+// STL
 #include<thread>
-
+// Local
+#include "../include/TwoViewReconstruction.h"
 
 using namespace std;
-namespace ORB_SLAM3
+namespace PCImage
 {
 
 TwoViewReconstruction::TwoViewReconstruction(cv::Mat& K, float sigma, int iterations)
@@ -76,8 +74,6 @@ bool TwoViewReconstruction::Reconstruct(const std::vector<cv::KeyPoint>& vKeys1,
     // Generate sets of 8 points for each RANSAC iteration
     mvSets = vector< vector<size_t> >(mMaxIterations,vector<size_t>(8,0));
 
-    DUtils::Random::SeedRandOnce(0);
-
     for(int it=0; it<mMaxIterations; it++)
     {
         vAvailableIndices = vAllIndices;
@@ -85,7 +81,7 @@ bool TwoViewReconstruction::Reconstruct(const std::vector<cv::KeyPoint>& vKeys1,
         // Select a minimum set
         for(size_t j=0; j<8; j++)
         {
-            int randi = DUtils::Random::RandomInt(0,vAvailableIndices.size()-1);
+			int randi = std::rand() % (vAvailableIndices.size());
             int idx = vAvailableIndices[randi];
 
             mvSets[it][j] = idx;

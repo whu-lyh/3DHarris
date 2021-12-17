@@ -9,9 +9,9 @@
 #ifndef OPENMVG_CAMERAS_CAMERA_SPHERICAL_HPP
 #define OPENMVG_CAMERAS_CAMERA_SPHERICAL_HPP
 
-#include "openMVG/cameras/Camera_Intrinsics.hpp"
+#include "../cameras/Camera_Intrinsics.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 namespace cameras
 {
@@ -196,7 +196,7 @@ using class_type = Intrinsic_Spherical;
   */
   virtual Mat34 get_projective_equivalent(const geometry::Pose3 &pose) const override
   {
-    return openMVG::HStack(pose.rotation(), pose.translation());
+    return PCImage::HStack(pose.rotation(), pose.translation());
   }
 
   /**
@@ -225,6 +225,6 @@ using class_type = Intrinsic_Spherical;
 };
 
 } // namespace cameras
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // #ifndef OPENMVG_CAMERAS_CAMERA_SPHERICAL_HPP

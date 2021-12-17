@@ -12,11 +12,11 @@
 #include <limits>
 #include <cmath>
 
-#include "openMVG/cameras/Camera_Intrinsics.hpp"
-#include "openMVG/image/image_container.hpp"
-#include "openMVG/image/sample.hpp"
+#include "Camera_Intrinsics.hpp"
+#include "../image/image_container.hpp"
+#include "../image/sample.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 namespace cameras
 {
@@ -146,6 +146,6 @@ void UndistortImageResized(
 
 
 } // namespace cameras
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // #ifndef OPENMVG_CAMERAS_CAMERA_UNDISTORT_IMAGE_HPP

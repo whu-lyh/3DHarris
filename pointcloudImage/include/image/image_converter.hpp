@@ -12,7 +12,7 @@
 #include "image_container.hpp"
 #include "pixel_types.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 namespace image
 {
@@ -186,6 +186,6 @@ inline void rgbFloat2rgbInt(
 }
 
 } // namespace image
-} // namespace openMVG
+} // namespace PCImage
 
 #endif  // OPENMVG_IMAGE_IMAGE_CONVERTER_HPP

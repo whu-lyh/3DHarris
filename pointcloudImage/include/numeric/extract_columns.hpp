@@ -9,9 +9,9 @@
 #ifndef OPENMVG_NUMERIC_EXTRACT_COLUMNS_HPP
 #define OPENMVG_NUMERIC_EXTRACT_COLUMNS_HPP
 
-#include "openMVG/numeric/eigen_alias_definition.hpp"
+#include "PCImage/numeric/eigen_alias_definition.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 
 /**
@@ -37,6 +37,6 @@ Mat ExtractColumns
   return compressed;
 }
 
-} // namespace openMVG
+} // namespace PCImage
 
 #endif  // OPENMVG_NUMERIC_EXTRACT_COLUMNS_HPP

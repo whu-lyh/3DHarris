@@ -11,10 +11,10 @@
 
 #include <vector>
 
-#include "openMVG/cameras/Camera_Common.hpp"
-#include "openMVG/cameras/Camera_Pinhole.hpp"
+#include "PCImage/cameras/Camera_Common.hpp"
+#include "PCImage/cameras/Camera_Pinhole.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 namespace cameras
 {
@@ -238,6 +238,6 @@ class Pinhole_Intrinsic_Brown_T2 : public Pinhole_Intrinsic
 
 
 } // namespace cameras
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // #ifndef OPENMVG_CAMERAS_CAMERA_PINHOLE_BROWN_HPP

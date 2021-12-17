@@ -20,7 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cameras\KannalaBrandt8.cpp" />
-    <ClCompile Include="src\cameras\Pinhole.cpp" />
+    <ClCompile Include="src\multiview\projection.cpp" />
+    <ClCompile Include="src\numeric\numeric.cpp" />
     <ClCompile Include="src\PanoramaImageConverter.cpp" />
     <ClCompile Include="src\pointcloud2image.cpp" />
     <ClCompile Include="src\TwoViewReconstruction.cpp" />
@@ -46,10 +47,17 @@
     <ClInclude Include="include\cameras\GeometricCamera.h" />
     <ClInclude Include="include\cameras\KannalaBrandt8.h" />
     <ClInclude Include="include\cameras\Pinhole.h" />
-    <ClInclude Include="include\cameras\PinholeCamera.hpp" />
+    <ClInclude Include="include\DllExportsMacro.h" />
+    <ClInclude Include="include\geometry\pose3.hpp" />
+    <ClInclude Include="include\image\image_container.hpp" />
+    <ClInclude Include="include\image\image_converter.hpp" />
+    <ClInclude Include="include\image\image_io.hpp" />
+    <ClInclude Include="include\image\pixel_types.hpp" />
+    <ClInclude Include="include\image\sample.hpp" />
     <ClInclude Include="include\image_container.hpp" />
     <ClInclude Include="include\image_converter.hpp" />
     <ClInclude Include="include\image_io.hpp" />
+    <ClInclude Include="include\multiview\projection.hpp" />
     <ClInclude Include="include\numeric\accumulator_trait.hpp" />
     <ClInclude Include="include\numeric\eigen_alias_definition.hpp" />
     <ClInclude Include="include\numeric\extract_columns.hpp" />
@@ -64,8 +72,7 @@
     <ClInclude Include="include\sample.hpp" />
     <ClInclude Include="include\spherical\cubic_image_sampler.hpp" />
     <ClInclude Include="include\spherical\image_resampling.hpp" />
-    <ClInclude Include="src\pointcloud2image.h" />
-    <ClInclude Include="src\TwoViewReconstruction.h" />
+    <ClInclude Include="include\TwoViewReconstruction.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -88,13 +95,13 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -119,8 +126,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(IncludePath);$(ThirdPartyLibraries_vs2017_x64)\include</IncludePath>
+    <IncludePath>$(IncludePath);$(ThirdPartyLibraries_vs2017_x64)\include;..\include;</IncludePath>
     <LibraryPath>$(LibraryPath);$(ThirdPartyLibraries_vs2017_x64)\x64\vc15\lib\Release</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(IncludePath);$(ThirdPartyLibraries_vs2017_x64)\include;../../include/;../include;</IncludePath>
+    <LibraryPath>$(LibraryPath);$(ThirdPartyLibraries_vs2017_x64)\x64\vc15\lib\Debug</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -130,10 +141,12 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_USE_MATH_DEFINES;POINTCLOUDIMAGE_USE_AS_DLL;POINTCLOUDIMAGE_EXPORTS;_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opencv_core347.lib;opencv_calib3d347.lib;opencv_imgcodecs347.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -150,6 +163,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_USE_MATH_DEFINES;POINTCLOUDIMAGE_USE_AS_DLL;POINTCLOUDIMAGE_EXPORTS;_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

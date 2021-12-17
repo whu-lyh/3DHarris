@@ -13,10 +13,10 @@
 
 #include "Camera_Common.hpp"
 #include "Camera_Intrinsics.hpp"
-#include "openMVG/geometry/pose3.hpp"
+#include "../geometry/pose3.hpp"
 #include "../numeric/eigen_alias_definition.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 namespace cameras
 {
@@ -306,6 +306,6 @@ class Pinhole_Intrinsic : public IntrinsicBase
 };
 
 } // namespace cameras
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // #ifndef OPENMVG_CAMERAS_CAMERA_PINHOLE_HPP

@@ -9,9 +9,9 @@
 #ifndef OPENMVG_NUMERIC_NULLSPACE_HPP
 #define OPENMVG_NUMERIC_NULLSPACE_HPP
 
-#include "openMVG/numeric/eigen_alias_definition.hpp"
+#include "PCImage/numeric/eigen_alias_definition.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 
 /**
@@ -35,6 +35,6 @@ double Nullspace
   Eigen::Ref<Vec> nullspace
 );
 
-} // namespace openMVG
+} // namespace PCImage
 
 #endif  // OPENMVG_NUMERIC_NULLSPACE_HPP

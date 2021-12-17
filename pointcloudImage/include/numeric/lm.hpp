@@ -12,7 +12,7 @@
 // Levenberg Marquardt Non Linear Optimization
 #include <Eigen/Core>
 
-namespace openMVG
+namespace PCImage
 {
 using namespace Eigen;
 
@@ -81,6 +81,6 @@ struct Functor
   //  void operator() (const InputType& x, ValueType* v, JacobianType* _j=0) const;
 };
 
-}; // namespace openMVG
+}; // namespace PCImage
 
 #endif // OPENMVG_NUMERIC_LM_HPP

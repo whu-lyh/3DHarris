@@ -29,11 +29,11 @@
 #ifndef OPENMVG_MULTIVIEW_PROJECTION_HPP
 #define OPENMVG_MULTIVIEW_PROJECTION_HPP
 
-#include "eigen_alias_definition.hpp"
+#include "../numeric/eigen_alias_definition.hpp"
 
 /// Collection of function related to the classic Projection matrix used
 ///  in computer vision. P = K[R|t] with [t]=[-RC] Cf HZ
-namespace openMVG
+namespace PCImage
 {
 
 /**
@@ -141,6 +141,6 @@ double RootMeanSquareError( const Mat2X &x_image,
                             const Mat3 &R,
                             const Vec3 &t );
 
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // OPENMVG_MULTIVIEW_PROJECTION_HPP

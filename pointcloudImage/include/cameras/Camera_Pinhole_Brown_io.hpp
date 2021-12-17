@@ -9,27 +9,27 @@
 #ifndef OPENMVG_CAMERAS_CAMERA_PINHOLE_BROWN_IO_HPP
 #define OPENMVG_CAMERAS_CAMERA_PINHOLE_BROWN_IO_HPP
 
-#include "openMVG/cameras/Camera_Pinhole_Brown.hpp"
+#include "PCImage/cameras/Camera_Pinhole_Brown.hpp"
 
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/vector.hpp>
 
 template <class Archive>
-inline void openMVG::cameras::Pinhole_Intrinsic_Brown_T2::save( Archive & ar ) const
+inline void PCImage::cameras::Pinhole_Intrinsic_Brown_T2::save( Archive & ar ) const
 {
     Pinhole_Intrinsic::save( ar );
     ar( cereal::make_nvp( "disto_t2", params_ ) );
 }
 
 template <class Archive>
-inline void openMVG::cameras::Pinhole_Intrinsic_Brown_T2::load( Archive & ar )
+inline void PCImage::cameras::Pinhole_Intrinsic_Brown_T2::load( Archive & ar )
 {
     Pinhole_Intrinsic::load( ar );
     ar( cereal::make_nvp( "disto_t2", params_ ) );
 }
 
-CEREAL_REGISTER_TYPE_WITH_NAME( openMVG::cameras::Pinhole_Intrinsic_Brown_T2, "pinhole_brown_t2" );
-CEREAL_REGISTER_POLYMORPHIC_RELATION(openMVG::cameras::IntrinsicBase, openMVG::cameras::Pinhole_Intrinsic_Brown_T2)
+CEREAL_REGISTER_TYPE_WITH_NAME( PCImage::cameras::Pinhole_Intrinsic_Brown_T2, "pinhole_brown_t2" );
+CEREAL_REGISTER_POLYMORPHIC_RELATION(PCImage::cameras::IntrinsicBase, PCImage::cameras::Pinhole_Intrinsic_Brown_T2)
 
 #endif // #ifndef OPENMVG_CAMERAS_CAMERA_PINHOLE_BROWN_IO_HPP
 

@@ -13,20 +13,20 @@
 #include <cereal/types/vector.hpp>
 
 template <class Archive>
-inline void openMVG::cameras::Pinhole_Intrinsic_Fisheye::save( Archive & ar ) const
+inline void PCImage::cameras::Pinhole_Intrinsic_Fisheye::save( Archive & ar ) const
 {
     Pinhole_Intrinsic::save( ar );
     ar( cereal::make_nvp( "fisheye", params_ ) );
 }
 
 template <class Archive>
-inline void openMVG::cameras::Pinhole_Intrinsic_Fisheye::load( Archive & ar )
+inline void PCImage::cameras::Pinhole_Intrinsic_Fisheye::load( Archive & ar )
 {
     Pinhole_Intrinsic::load( ar );
     ar( cereal::make_nvp( "fisheye", params_ ) );
 }
 
-CEREAL_REGISTER_TYPE_WITH_NAME( openMVG::cameras::Pinhole_Intrinsic_Fisheye, "fisheye" );
-CEREAL_REGISTER_POLYMORPHIC_RELATION(openMVG::cameras::IntrinsicBase, openMVG::cameras::Pinhole_Intrinsic_Fisheye)
+CEREAL_REGISTER_TYPE_WITH_NAME( PCImage::cameras::Pinhole_Intrinsic_Fisheye, "fisheye" );
+CEREAL_REGISTER_POLYMORPHIC_RELATION(PCImage::cameras::IntrinsicBase, PCImage::cameras::Pinhole_Intrinsic_Fisheye)
 
 #endif // #ifndef OPENMVG_CAMERAS_CAMERA_PINHOLE_FISHEYE_IO_HPP

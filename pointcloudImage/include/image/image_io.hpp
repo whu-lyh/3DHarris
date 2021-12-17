@@ -15,7 +15,7 @@
 #include <cstdio>
 #include <vector>
 
-namespace openMVG
+namespace PCImage
 {
 namespace image
 {
@@ -503,6 +503,6 @@ int WriteJpg( const char * filename, const Image<T>& im, int quality )
 }
 
 }  // namespace image
-}  // namespace openMVG
+}  // namespace PCImage
 
 #endif  // OPENMVG_IMAGE_IMAGE_IMAGE_IO_HPP

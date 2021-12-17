@@ -9,10 +9,10 @@
 #ifndef OPENMVG_CAMERAS_CAMERA_PINHOLECAMERA_HPP
 #define OPENMVG_CAMERAS_CAMERA_PINHOLECAMERA_HPP
 
-#include "openMVG/multiview/projection.hpp"
-#include "openMVG/numeric/numeric.h"
+#include "PCImage/multiview/projection.hpp"
+#include "../numeric/numeric.h"
 
-namespace openMVG {
+namespace PCImage {
 namespace cameras {
 
 /// Pinhole camera P = K[R|t], t = -RC
@@ -53,13 +53,13 @@ struct PinholeCamera
   /// Projection of a 3D point into the camera plane
   static Vec2 Project(const Mat34 & P, const Vec3 & pt3D)
   {
-    return openMVG::Project(P, pt3D);
+    return PCImage::Project(P, pt3D);
   }
 
   /// Projection of a 3D point into the camera plane (member function)
   Vec2 Project(const Vec3 & pt3D) const
   {
-    return openMVG::Project(_P, pt3D);
+    return PCImage::Project(_P, pt3D);
   }
 
   /// Return the residual value to the given 2d point
@@ -67,21 +67,21 @@ struct PinholeCamera
     const Mat34 & P,
     const Vec3 & pt3D,
     const Vec2 & ref) {
-    return (ref - openMVG::Project(P, pt3D)).norm();
+    return (ref - PCImage::Project(P, pt3D)).norm();
   }
 
   /// Return the residual value to the given 2d point
   double Residual(const Vec3 & pt3D, const Vec2 & ref) const  {
-    return (ref - openMVG::Project(_P, pt3D)).norm();
+    return (ref - PCImage::Project(_P, pt3D)).norm();
   }
 
   double ResidualSquared(const Vec3 & pt3D, const Vec2 & ref) const  {
-    return (ref - openMVG::Project(_P, pt3D)).squaredNorm();
+    return (ref - PCImage::Project(_P, pt3D)).squaredNorm();
   }
 
   // Compute the depth of the X point. R*X[2]+t[2].
   double Depth(const Vec3 &X) const{
-    return openMVG::Depth(_R, _t, X);
+    return PCImage::Depth(_R, _t, X);
   }
 
   /// Return the angle (degree) between two pinhole point rays
@@ -105,6 +105,6 @@ struct PinholeCamera
 };
 
 } // namespace cameras
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // #ifndef OPENMVG_CAMERAS_CAMERA_PINHOLECAMERA_HPP

@@ -12,12 +12,12 @@
 #include <string>
 #include <vector>
 
-#include "openMVG/sfm/sfm_data_BA.hpp"
-#include "openMVG/stl/split.hpp"
-#include "openMVG/system/logger.hpp"
+#include "PCImage/sfm/sfm_data_BA.hpp"
+#include "PCImage/stl/split.hpp"
+#include "PCImage/system/logger.hpp"
 
 
-namespace openMVG
+namespace PCImage
 {
 namespace cameras
 {
@@ -129,6 +129,6 @@ namespace sfm
     return extrinsics_opt;
   }
 } // namespace sfm
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // OPENMVG_CAMERAS_CAMERAS_COMMON_COMMAND_LINE_HELPER_HPP

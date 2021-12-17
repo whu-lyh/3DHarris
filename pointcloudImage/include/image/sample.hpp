@@ -14,7 +14,7 @@
 #include "image_container.hpp"
 #include "pixel_types.hpp"
 
-namespace openMVG
+namespace PCImage
 {
 namespace image
 {
@@ -577,6 +577,6 @@ struct Sampler2d
 };
 
 } // namespace image
-} // namespace openMVG
+} // namespace PCImage
 
 #endif  // OPENMVG_IMAGE_SAMPLE_HPP

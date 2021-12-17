@@ -9,7 +9,7 @@
 #ifndef OPENMVG_IMAGE_PIXEL_TYPES_HPP
 #define OPENMVG_IMAGE_PIXEL_TYPES_HPP
 
-namespace openMVG
+namespace PCImage
 {
 namespace image
 {
@@ -384,6 +384,6 @@ const RGBColor CYAN( 0, 255, 255 );
 const RGBColor MAGENTA( 255, 0, 255 );
 
 } // namespace image
-} // namespace openMVG
+} // namespace PCImage
 
 #endif // OPENMVG_IMAGE_PIXEL_TYPES_HPP
