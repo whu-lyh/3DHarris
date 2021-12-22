@@ -25,8 +25,8 @@
 
 
 #ifdef _DEBUG
-#pragma comment(lib, "liblas_d.lib")
-#pragma comment(lib, "gdal203_d.lib")
+#pragma comment(lib, "LASLibd.lib")
+#pragma comment(lib, "glogd.lib")
 #pragma comment(lib, "pcl_common_debug.lib")
 #pragma comment(lib, "pcl_io_debug.lib")
 
@@ -47,8 +47,8 @@
 #pragma comment(lib, "opencv_imgproc347d.lib")
 #pragma comment(lib, "opencv_imgcodecs347d.lib")
 #else
-#pragma comment(lib, "liblas.lib")
-#pragma comment(lib, "gdal203.lib")
+#pragma comment(lib, "LASLib.lib")
+#pragma comment(lib, "glog.lib")
 #pragma comment(lib, "pcl_io_release.lib")
 
 #pragma comment(lib, "libboost_thread-vc141-mt-1_64.lib")
@@ -79,10 +79,9 @@
 #include <fstream>
 
 #include <iomanip>
-#include <liblas/header.hpp>
-#include <liblas/reader.hpp>
-#include <liblas/writer.hpp>
-#include <liblas/factory.hpp>
+// LASLIB
+#include <LASlib/lasreader.hpp>
+#include <LASlib/laswriter.hpp>
 #include <pcl/point_types.h>
 #include <pcl/point_cloud.h>
 #include <pcl/registration/transformation_estimation_svd.h>

@@ -42,7 +42,7 @@ using namespace std;
 //#define ICP_REGISTRATION_
 //#define ISSMODIFY_
 //#define KMEANS_
-//#define NORMAL_
+#define NORMAL_
 //#define PDF
 //#define PCLSIFT 
 //#define 3DHARRIS
@@ -51,7 +51,7 @@ using namespace std;
 //#define SOR_FILTER
 //#define ROR_FILTER
 //#define CONNECT_ANALYSIS_TEST
-#define CCLIB
+//#define CCLIB
 
 #ifdef _DEBUG
 #pragma comment(lib, "libboost_thread-vc141-mt-gd-1_64.lib")
@@ -535,7 +535,7 @@ int main(int argc, char *argv[])
 	
 	pcl::PointCloud<pcl::PointXYZ>::Ptr normal_cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	//std::string pointfilepath = "F:/Data/TS/1028WHTSpointcloudfenkuai1-2-8-intensity-filt-lable3.las";
-	std::string pointfilepath = "F:/Data/TS/lable4-seg.las";
+	std::string pointfilepath = "E:/codefiles/NewVS/3DHarris/data/plane_cloud.las";
 	Utility::Offset las_offset;
 
 	if (PointIO::loadSingleLAS<PointT>(pointfilepath, normal_cloud, las_offset))
