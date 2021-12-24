@@ -570,7 +570,8 @@ int main(int argc, char *argv[])
 	//y axis
 	eigenVectorsPCA.col(1) = eigenVectorsPCA.col(0).cross(eigenVectorsPCA.col(2));
 	//change to x-y-z=pca.p-pca.p.cross(normal)-normal
-	eigenVectorsPCA.col(2).swap(eigenVectorsPCA.col(0));
+	// default is z-y-x
+	//eigenVectorsPCA.col(2).swap(eigenVectorsPCA.col(0));
 
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_src(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_target(new pcl::PointCloud<pcl::PointXYZ>);
@@ -635,6 +636,13 @@ int main(int argc, char *argv[])
 
 	Eigen::Affine3f affine_transform(Eigen::Affine3f::Identity());
 	affine_transform = eigenVectorsPCA.transpose();
+	Eigen::Matrix3f r_inv = eigenVectorsPCA.inverse();
+	std::cout << "r_inv:\n" << r_inv << std::endl;
+	std::cout << " The rotation to the canonical coordinate could be explained as the base of coordinate:" << std::endl;
+	std::cout << "[1 0 0] [x1] [main direction] [x2]" << std::endl;
+	std::cout << "[0 1 0]*[y1]=[midd direction]*[y2]" << std::endl;
+	std::cout << "[0 0 1] [1x] [norm direction] [z2]" << std::endl;
+	std::cout << "R.transporse = R.inverse" << std::endl;
 
 	pcl::PointCloud<PointT>::Ptr transformedCloud(new pcl::PointCloud<PointT>);
 	//pcl::transformPointCloud(*normal_cloud, *transformedCloud, trans);
