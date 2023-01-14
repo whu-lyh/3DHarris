@@ -1,3 +1,9 @@
 [submodule "Submodules/Data-Structures-and-Algorithms-in-C"]
 	path = Submodules/Data-Structures-and-Algorithms-in-C
 	url = https://github.com/LeechanX/Data-Structures-and-Algorithms-in-C
+[submodule "Submodules/Cpp_houjie"]
+	path = Submodules/Cpp_houjie
+	url = https://github.com/whu-lyh/Cpp_houjie.git
+[submodule "Submodules/STLSourceCodeNote"]
+	path = Submodules/STLSourceCodeNote
+	url = git@github.com:whu-lyh/STLSourceCodeNote.git
