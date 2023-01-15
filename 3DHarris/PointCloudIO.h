@@ -44,7 +44,7 @@ namespace PointIO
 	 bool loadPCD(const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud);
 
 	template <typename T>
-	bool savePCD ( const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud, const Utility::Offset& offset = Offset () );
+	bool savePCD ( const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud);
 
 	template <typename T>
 	 bool loadSPT(const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud, Utility::Offset& offset);

@@ -6,6 +6,8 @@
 #include "PointCloudIO.h"
 #include "PointType.h"
 
+#include <pcl/io/pcd_io.h>
+
 using namespace Utility;
 
 namespace PointIO
@@ -758,15 +760,13 @@ namespace PointIO
 		}
 		if (pcl::io::loadPCDFile(filename, *cloud) != -1)
 		{
-			Verbose::PrintMessage("Load PCD file: " + filename, Verbose::VERBOSITY_VERBOSE);
 			return true;
 		}
 		return false;
 	}
 
 	template <typename T>
-	bool savePCD(const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud,
-		const Offset& offset)
+	bool savePCD(const std::string& filename, const typename pcl::PointCloud<T>::Ptr& cloud)
 	{
 		if (cloud == nullptr)
 		{
@@ -778,24 +778,7 @@ namespace PointIO
 			LOG(ERROR) << "point cloud is empty!";
 			return false;
 		}
-		if (std::fabs(offset.x) <= Epsilon_d && std::fabs(offset.y) <= Epsilon_d && std::fabs(offset.z) <= Epsilon_d)
-		{
-			pcl::io::savePCDFileBinary(filename, *cloud);
-		}
-		else
-		{
-			pcl::PointCloud<T> out_cloud;
-			for (const auto& pt : cloud->points)
-			{
-				T out_pt = pt;
-				out_pt.x/* += offset.x*/;
-				out_pt.y/* += offset.y*/;
-				out_pt.z/* += offset.z*/;
-				out_cloud.push_back(out_pt);
-			}
-			pcl::io::savePCDFileBinary(filename, out_cloud);
-		}
-		Verbose::PrintMessage("Load PCD file: " + filename, Verbose::VERBOSITY_VERBOSE);
+		pcl::io::savePCDFileBinary(filename, *cloud);
 		return true;
 	}
 

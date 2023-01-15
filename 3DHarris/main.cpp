@@ -12,6 +12,7 @@
 #include <pcl/filters/approximate_voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/radius_outlier_removal.h>
+#include <pcl/surface/mls.h>
 #include <pcl/common/transforms.h>
 #include <cstdlib>
 #include <vector>
@@ -24,6 +25,7 @@
 
 #include "PointCloudIO.h"
 #include "kmeans.hpp"
+#include "dbscan.h"
 //#include "iss_keypoint.h"
 
 #include "nanoflann_pcl.h"
@@ -38,11 +40,13 @@
 #include <CCCoreLib/ReferenceCloud.h>
 using namespace std;
 
+#define DBSCAN_
+#define MLS_
 //#define COLORSETTING
 //#define ICP_REGISTRATION_
 //#define ISSMODIFY_
 //#define KMEANS_
-#define NORMAL_
+//#define NORMAL_
 //#define PDF
 //#define PCLSIFT 
 //#define 3DHARRIS
@@ -234,9 +238,26 @@ void setScatterMatrix(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const in
 
 int main(int argc, char *argv[])
 {
-
 	using PointT = pcl::PointXYZ;
 	using PointTcolor = pcl::PointXYZRGB;
+
+#ifdef DBSCAN_
+	// the density usage is unclear and parameter matters
+	std::string filename = "E:/codefiles/NewVS/3DHarris/data/000002.pcd";
+	std::string out_filename = "E:/codefiles/NewVS/3DHarris/data/000002_clustered.pcd";
+	pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud(new pcl::PointCloud<pcl::PointXYZ>());
+	PointIO::loadPCD<pcl::PointXYZ>(filename, input_cloud);
+	// minimal point number should be small
+	Util::DBSCAN dbscan(0.3, 2);
+	dbscan.setInputCloud(*input_cloud);
+	dbscan.clustering();
+	//dbscan.print();
+	dbscan.save2files(out_filename);
+#endif // DBSCAN_
+
+#ifdef MLS
+	//pcl::MovingLeastSquaresOMP<>();
+#endif
 
 #ifdef KMEANS_
 	std::string pointfilepath = "F:/Data/TS/local_9TS0.las";

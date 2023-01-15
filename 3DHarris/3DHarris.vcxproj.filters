@@ -48,6 +48,9 @@
     <ClCompile Include="iss_keypoint.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="dbscan.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PointCloudIO.h">
@@ -93,6 +96,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="nanoflann_pcl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="YamlRead.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dbscan.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -125,6 +125,7 @@
     <ClCompile Include="clipper_demo.cpp" />
     <ClCompile Include="clipper_offset.cpp" />
     <ClCompile Include="clipper_triangulation.cpp" />
+    <ClCompile Include="dbscan.cpp" />
     <ClCompile Include="iss_keypoint.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pointcloudculling.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="clipper.h" />
     <ClInclude Include="clipper_offset.h" />
     <ClInclude Include="clipper_triangulation.h" />
+    <ClInclude Include="dbscan.h" />
     <ClInclude Include="iss_keypoint.h" />
     <ClInclude Include="Jacobi.h" />
     <ClInclude Include="kmeans.hpp" />
@@ -149,6 +151,7 @@
     <ClInclude Include="portable-file-dialogs.h" />
     <ClInclude Include="svg.h" />
     <ClInclude Include="Utility.h" />
+    <ClInclude Include="YamlRead.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
