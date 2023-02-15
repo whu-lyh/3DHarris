@@ -7,3 +7,15 @@
 [submodule "Submodules/STLSourceCodeNote"]
 	path = Submodules/STLSourceCodeNote
 	url = git@github.com:whu-lyh/STLSourceCodeNote.git
+[submodule "Submodules/PoseSpline"]
+	path = Submodules/PoseSpline
+	url = git@github.com:whu-lyh/PoseSpline.git
+[submodule "Submodules/ceres_sandbox"]
+	path = Submodules/ceres_sandbox
+	url = git@github.com:whu-lyh/ceres_sandbox.git
+[submodule "Submodules/3D_Ground_Segmentation"]
+	path = Submodules/3D_Ground_Segmentation
+	url = git@github.com:chrise96/3D_Ground_Segmentation.git
+[submodule "Submodules/mba"]
+	path = Submodules/mba
+	url = git@github.com:whu-lyh/mba.git

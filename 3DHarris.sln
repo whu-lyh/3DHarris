@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CeresTest", "CeresTest\Cere
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Math", "Math\Math.vcxproj", "{19F8F77E-471E-4E48-8BAC-E3972D9FAC9C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ground_plane_fit", "Submodules\3D_Ground_Segmentation\GroundSegment\ground_plane_fit.vcxproj", "{9C43EA6A-2921-3130-97F8-A55635EA6503}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,12 @@ Global
 		{19F8F77E-471E-4E48-8BAC-E3972D9FAC9C}.Release|x64.Build.0 = Release|x64
 		{19F8F77E-471E-4E48-8BAC-E3972D9FAC9C}.Release|x86.ActiveCfg = Release|Win32
 		{19F8F77E-471E-4E48-8BAC-E3972D9FAC9C}.Release|x86.Build.0 = Release|Win32
+		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Debug|x64.ActiveCfg = Debug|x64
+		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Debug|x64.Build.0 = Debug|x64
+		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Debug|x86.ActiveCfg = Debug|x64
+		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Release|x64.ActiveCfg = Release|x64
+		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Release|x64.Build.0 = Release|x64
+		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

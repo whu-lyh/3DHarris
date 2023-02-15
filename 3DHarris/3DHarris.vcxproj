@@ -135,6 +135,7 @@
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Submodules\mba\mba\mba.hpp" />
     <ClInclude Include="basicLibs.h" />
     <ClInclude Include="clipper.h" />
     <ClInclude Include="clipper_offset.h" />

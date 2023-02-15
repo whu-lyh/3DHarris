@@ -53,12 +53,12 @@ namespace Utility
 			: min_x (min_x0), max_x (max_x0), min_y (min_y0), max_y (max_y0), min_z (min_z0), max_z (max_z0)
 		{
 		}
-
-		std::ostream& operator<< (std::ostream& os)
+		
+		friend std::ostream& operator<< (std::ostream& os, Bound b)
 		{
-			os << "Boundingbox scope, max_x= " << max_x << ", min_x= "
-				<< min_x << "\n max_y= " << max_y << ", min_y= "
-				<< min_y << "\n max_z= " << max_z << ", min_z= " << min_z;
+			os << "Boundingbox scope, max_x= " << b.max_x << ", min_x= "
+				<< b.min_x << ", max_y= " << b.max_y << ", min_y= "
+				<< b.min_y << ", max_z= " << b.max_z << ", min_z= " << b.min_z;
 			return os;
 		}
 

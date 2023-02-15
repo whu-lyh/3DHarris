@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <pcl\io\pcd_io.h>
 #include <pcl/point_cloud.h>
 #include <pcl/io/io.h>
@@ -23,9 +24,11 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 
+#include "Utility.h"
 #include "PointCloudIO.h"
 #include "kmeans.hpp"
 #include "dbscan.h"
+#include "../Submodules/mba/mba/mba.hpp"
 //#include "iss_keypoint.h"
 
 #include "nanoflann_pcl.h"
@@ -40,8 +43,8 @@
 #include <CCCoreLib/ReferenceCloud.h>
 using namespace std;
 
-#define DBSCAN_
-#define MLS_
+#define MBA_
+//#define DBSCAN_
 //#define COLORSETTING
 //#define ICP_REGISTRATION_
 //#define ISSMODIFY_
@@ -241,6 +244,48 @@ int main(int argc, char *argv[])
 	using PointT = pcl::PointXYZ;
 	using PointTcolor = pcl::PointXYZRGB;
 
+#ifdef MBA_
+	// load data
+	std::string filename = "F:/Data/BGP_ALS/test_data.las";
+	std::string out_filename = "F:/Data/BGP_ALS/test_data_ascii.txt";
+	pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud(new pcl::PointCloud<pcl::PointXYZ>());
+	Utility::Offset offset;
+	PointIO::loadSingleLAS<pcl::PointXYZ>(filename, input_cloud, offset);
+	// Coordinates of data points.
+	std::vector<mba::point<2>> coo;
+	// Data values.
+	std::vector<double> val;
+	// type transform
+	for (auto pt: input_cloud->points)
+	{
+		coo.push_back(mba::point<2>{pt.x, pt.y});
+		val.emplace_back(pt.z);
+	}
+	//// save as txt file
+	//std::ofstream ofs(out_filename);
+	//for (auto pt : input_cloud->points)
+	//{
+	//	ofs << pt.x << "," << pt.y << "," << pt.z << std::endl;
+	//}
+	//ofs.flush();
+	//ofs.close();
+	Utility::Bound bound = PointIO::getBoundBox<pcl::PointXYZ>(input_cloud);
+	std::cout << bound << std::endl;
+	// Bounding box containing the data points.
+	// here the slightly larger boundary is check from 
+	// https://github.com/ddemidov/mba/issues/12#issuecomment-696804621
+	mba::point<2> lo = { bound.min_x - 1.0, bound.min_y - 1.0 };
+	mba::point<2> hi = { bound.max_x + 1.0, bound.max_y + 1.0 };
+	// Initial grid size.
+	mba::index<2> grid = { 3, 3 };
+	// Algorithm setup. MBA is initialized with linear approximation
+	// larger level corresponding to higher precision
+	mba::MBA<2> interp(lo, hi, grid, coo, val);
+	// Get interpolated value at arbitrary location.
+	double w = interp(mba::point<2>{187689.5 - offset.x, 4989614.5 - offset.y});
+	std::cout << w + offset.z << std::endl;
+#endif MBA_
+
 #ifdef DBSCAN_
 	// the density usage is unclear and parameter matters
 	std::string filename = "E:/codefiles/NewVS/3DHarris/data/000002.pcd";
@@ -254,10 +299,6 @@ int main(int argc, char *argv[])
 	//dbscan.print();
 	dbscan.save2files(out_filename);
 #endif // DBSCAN_
-
-#ifdef MLS
-	//pcl::MovingLeastSquaresOMP<>();
-#endif
 
 #ifdef KMEANS_
 	std::string pointfilepath = "F:/Data/TS/local_9TS0.las";
