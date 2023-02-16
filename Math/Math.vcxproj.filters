@@ -23,5 +23,8 @@
     <ClInclude Include="DualQuaternion.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GaussNewton.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
