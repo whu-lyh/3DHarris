@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{19F8F77E-471E-4E48-8BAC-E3972D9FAC9C}</ProjectGuid>
-    <RootNamespace>Math</RootNamespace>
+    <ProjectGuid>{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}</ProjectGuid>
+    <RootNamespace>OpencvTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,11 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(IncludePath);$(ThirdPartyLibraries_vs2017_x64)\include;</IncludePath>
-    <LibraryPath>$(LibraryPath);$(ThirdPartyLibraries_vs2017_x64)\x64\vc15\lib\Release</LibraryPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(IncludePath);$(ThirdPartyLibraries_vs2017_x64)\include;</IncludePath>
-    <LibraryPath>$(LibraryPath);$(ThirdPartyLibraries_vs2017_x64)\x64\vc15\lib\Release</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(ThirdPartyLibraries_vs2017_x64)\x64\vc15\lib\Release;</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -85,11 +81,11 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>_USE_MATH_DEFINES;_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opencv_world347.lib;opencv_imgcodecs347.lib;opencv_imgproc347.lib;opencv_core347.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -123,12 +119,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GaussNewtonCurveFitting.cpp" />
+    <ClCompile Include="KITTI360PanoProcess.cpp" />
     <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DualQuaternion.h" />
-    <ClInclude Include="GaussNewton.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Math", "Math\Math.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ground_plane_fit", "Submodules\3D_Ground_Segmentation\GroundSegment\ground_plane_fit.vcxproj", "{9C43EA6A-2921-3130-97F8-A55635EA6503}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpencvTest", "OpencvTest\OpencvTest.vcxproj", "{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -69,6 +71,14 @@ Global
 		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Release|x64.ActiveCfg = Release|x64
 		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Release|x64.Build.0 = Release|x64
 		{9C43EA6A-2921-3130-97F8-A55635EA6503}.Release|x86.ActiveCfg = Release|x64
+		{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}.Debug|x64.ActiveCfg = Debug|x64
+		{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}.Debug|x64.Build.0 = Debug|x64
+		{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}.Debug|x86.ActiveCfg = Debug|Win32
+		{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}.Debug|x86.Build.0 = Debug|Win32
+		{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}.Release|x64.ActiveCfg = Release|x64
+		{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}.Release|x64.Build.0 = Release|x64
+		{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}.Release|x86.ActiveCfg = Release|Win32
+		{A21016A1-6B76-46FD-B6B8-1E6886CEFA91}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
