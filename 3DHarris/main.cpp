@@ -83,7 +83,7 @@ namespace pcl
 	struct SIFTKeypointFieldSelector<PointXYZ>
 	{
 		inline float
-			operator () ( const PointXYZ &p ) const
+			operator () (const PointXYZ &p) const
 		{
 			return p.z;
 		}
@@ -449,40 +449,40 @@ bool compareString(const std::string &str1, const std::string &str2)
 }
 
 // Unused function that just tests the whole API
-void api ()
+void api()
 {
 	// pfd::settings
-	pfd::settings::verbose ( true );
-	pfd::settings::rescan ();
+	pfd::settings::verbose(true);
+	pfd::settings::rescan();
 
 	// pfd::notify
-	pfd::notify ( "", "" );
-	pfd::notify ( "", "", pfd::icon::info );
-	pfd::notify ( "", "", pfd::icon::warning );
-	pfd::notify ( "", "", pfd::icon::error );
-	pfd::notify ( "", "", pfd::icon::question );
+	pfd::notify("", "");
+	pfd::notify("", "", pfd::icon::info);
+	pfd::notify("", "", pfd::icon::warning);
+	pfd::notify("", "", pfd::icon::error);
+	pfd::notify("", "", pfd::icon::question);
 
-	pfd::notify a ( "", "" );
-	(void) a.ready ();
-	(void) a.ready ( 42 );
+	pfd::notify a("", "");
+	(void)a.ready();
+	(void)a.ready(42);
 
 	// pfd::message
-	pfd::message ( "", "" );
-	pfd::message ( "", "", pfd::choice::ok );
-	pfd::message ( "", "", pfd::choice::ok_cancel );
-	pfd::message ( "", "", pfd::choice::yes_no );
-	pfd::message ( "", "", pfd::choice::yes_no_cancel );
-	pfd::message ( "", "", pfd::choice::retry_cancel );
-	pfd::message ( "", "", pfd::choice::abort_retry_ignore );
-	pfd::message ( "", "", pfd::choice::ok, pfd::icon::info );
-	pfd::message ( "", "", pfd::choice::ok, pfd::icon::warning );
-	pfd::message ( "", "", pfd::choice::ok, pfd::icon::error );
-	pfd::message ( "", "", pfd::choice::ok, pfd::icon::question );
+	pfd::message("", "");
+	pfd::message("", "", pfd::choice::ok);
+	pfd::message("", "", pfd::choice::ok_cancel);
+	pfd::message("", "", pfd::choice::yes_no);
+	pfd::message("", "", pfd::choice::yes_no_cancel);
+	pfd::message("", "", pfd::choice::retry_cancel);
+	pfd::message("", "", pfd::choice::abort_retry_ignore);
+	pfd::message("", "", pfd::choice::ok, pfd::icon::info);
+	pfd::message("", "", pfd::choice::ok, pfd::icon::warning);
+	pfd::message("", "", pfd::choice::ok, pfd::icon::error);
+	pfd::message("", "", pfd::choice::ok, pfd::icon::question);
 
-	pfd::message b ( "", "" );
-	(void) b.ready ();
-	(void) b.ready ( 42 );
-	(void) b.result ();
+	pfd::message b("", "");
+	(void)b.ready();
+	(void)b.ready(42);
+	(void)b.result();
 }
 
 void setScatterMatrix(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const int& current_index, Eigen::Matrix3d &cov_m)
@@ -511,7 +511,7 @@ void setScatterMatrix(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const in
 	double cov[9];
 	memset(cov, 0, sizeof(double) * 9);
 
-	for ( int n_idx = 0; n_idx < n_neighbors; n_idx++ )
+	for (int n_idx = 0; n_idx < n_neighbors; n_idx++)
 	{
 		const pcl::PointXYZ& n_point = input_cloud->points[nn_indices[n_idx]];
 
@@ -522,8 +522,8 @@ void setScatterMatrix(pcl::PointCloud<pcl::PointXYZ>::Ptr &input_cloud, const in
 		neigh_point[1] = n_point.y;
 		neigh_point[2] = n_point.z;
 
-		for ( int i = 0; i < 3; i++ )
-			for ( int j = 0; j < 3; j++ )
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
 				cov[i * 3 + j] += (neigh_point[i] - central_point[i]) * (neigh_point[j] - central_point[j]);
 	}
 
@@ -551,7 +551,7 @@ int main(int argc, char *argv[])
 	// Data values.
 	std::vector<double> val;
 	// type transform
-	for (auto pt: input_cloud->points)
+	for (auto pt : input_cloud->points)
 	{
 		coo.push_back(mba::point<2>{pt.x, pt.y});
 		val.emplace_back(pt.z);
@@ -614,7 +614,7 @@ int main(int argc, char *argv[])
 
 	std::vector<std::vector<float>> pts;//, centroids;
 
-	for (auto pt: input_cloud->points)
+	for (auto pt : input_cloud->points)
 	{
 		std::vector<float> pt_xyz = { pt.x,pt.y,pt.z };
 		pts.push_back(pt_xyz);
@@ -635,7 +635,7 @@ int main(int argc, char *argv[])
 
 	for (int i = 0; i < centroids.size(); ++i)
 	{
-		std::cout << centroids[i][0] << "," << centroids[i][1] << "," << centroids[i][2]<<std::endl;
+		std::cout << centroids[i][0] << "," << centroids[i][1] << "," << centroids[i][2] << std::endl;
 	}
 
 	pcl::Kmeans::ClustersToPoints clusters2points = kmean_ts.getclusters2points();
@@ -684,7 +684,7 @@ int main(int argc, char *argv[])
 			std::cout << target_cloud->points.size() << std::endl;
 		}
 
-		for (auto pt:source_cloud->points)
+		for (auto pt : source_cloud->points)
 		{
 			PointTcolor cpt;
 			cpt.x = pt.x;
@@ -727,16 +727,16 @@ int main(int argc, char *argv[])
 	//std::wcout << "1.\t" << StringToWString(source_pc_path) << std::endl;
 
 	std::wstring source_pc_path_w = L"F:/Data/Train/pairwiseregistration/京沈线_上行_普通线路_2019-03-15_0-27-3_0_0_t_dis.las";
-	std::cout << source_pc_path_w.length()<<std::endl; //each word(character) is 1 length
+	std::cout << source_pc_path_w.length() << std::endl; //each word(character) is 1 length
 	std::string source_pc_path = WStringToString(source_pc_path_w);
 	std::cout << "3.\t" << source_pc_path << std::endl;
 	std::wstring target_pc_path_w = L"/京沈线_上行_普通线路_2019-04-01_0-20-25_0_0_t_dis.las";
 	std::string target_pc_path = Utility::get_parent(source_pc_path) + WStringToString(target_pc_path_w);
 	std::string result_pc_path = Utility::get_parent(source_pc_path) + "/psline_up_normal_2019_0315-0401_0.las";
 
-	std::vector<std::string> source_files,target_files;
+	std::vector<std::string> source_files, target_files;
 	//Utility::get_files("F:/Data/Train/20190315", ".las", source_files);
-	Utility::get_files("F:/Data/Train/result_700_710", ".las", source_files); 
+	Utility::get_files("F:/Data/Train/result_700_710", ".las", source_files);
 	std::sort(source_files.begin(), source_files.end(), compareString);
 	Utility::get_files("F:/Data/Train/origin_0401_700_710", ".las", target_files);
 	std::sort(target_files.begin(), target_files.end(), compareString);
@@ -757,7 +757,7 @@ int main(int argc, char *argv[])
 	ndt->setResolution(0.2);
 	ndt->setStepSize(0.05);
 
-	for (int i=0;i<source_files.size();i++)
+	for (int i = 0; i < source_files.size(); i++)
 	{
 		pcl::PointCloud<PointT>::Ptr source_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
 		pcl::PointCloud<PointT>::Ptr target_cloud = boost::make_shared<pcl::PointCloud<PointT>>();
@@ -889,7 +889,7 @@ int main(int argc, char *argv[])
 #endif //ISSMODIFY_
 
 #ifdef NORMAL_
-	
+
 	pcl::PointCloud<pcl::PointXYZ>::Ptr normal_cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	//std::string pointfilepath = "F:/Data/TS/1028WHTSpointcloudfenkuai1-2-8-intensity-filt-lable3.las";
 	std::string pointfilepath = "E:/codefiles/NewVS/3DHarris/data/plane_cloud.las";
@@ -904,11 +904,11 @@ int main(int argc, char *argv[])
 	Eigen::Matrix<float, 3, 3> covariance_matrix;
 	Eigen::Matrix<float, 4, 1> centroid;
 	//calculate the covariance matrix using the cloud without demean
-	pcl::computeMeanAndCovarianceMatrix<pcl::PointXYZ,float>(*normal_cloud, covariance_matrix, centroid);
+	pcl::computeMeanAndCovarianceMatrix<pcl::PointXYZ, float>(*normal_cloud, covariance_matrix, centroid);
 	//normal direction
 	float nx, ny, nz, curvature;
 	pcl::solvePlaneParameters(covariance_matrix, nx, ny, nz, curvature);
-	
+
 	//nx,ny,nz is exactly the normal of this plane-like point cloud
 	std::cout << nx << "," << ny << "," << nz << std::endl;
 
@@ -979,7 +979,7 @@ int main(int argc, char *argv[])
 
 		//根据对应关系correspondences计算旋转平移矩阵;
 		pcl::registration::TransformationEstimationSVD<pcl::PointXYZ, pcl::PointXYZ> trans_est;
-		
+
 		trans_est.estimateRigidTransformation(*cloud_target, *cloud_src, correspondences, trans);
 	}
 	std::cout << "Object main direction transformed to canonical coordinate" << std::endl << trans << std::endl;
@@ -1018,59 +1018,59 @@ int main(int argc, char *argv[])
 
 #ifdef PDF  
 	// Set verbosity to true
-	pfd::settings::verbose ( true );
+	pfd::settings::verbose(true);
 
 	// Directory selection
-	auto dir = pfd::select_folder ( "请选择点云文件夹", DEFAULT_PATH ).result ();
+	auto dir = pfd::select_folder("请选择点云文件夹", DEFAULT_PATH).result();
 	std::cout << "Selected dir: " << dir << "\n";
 
 	std::vector<std::string> files;
-	Utility::get_files ( dir, ".lin", files );
-	int trajnum = files.size ();
+	Utility::get_files(dir, ".lin", files);
+	int trajnum = files.size();
 	std::string trajname;
-	for ( int i = 0; i < trajnum - 1; ++i )
+	for (int i = 0; i < trajnum - 1; ++i)
 	{
 		//std::cout << "trajectories: " << std::endl;
-		trajname += files [i] + ",";
+		trajname += files[i] + ",";
 	}
-	trajname += files [trajnum - 1];
+	trajname += files[trajnum - 1];
 	std::cout << trajname;
 
 	// File open
-	auto f = pfd::open_file ( "请选择轨迹文件", DEFAULT_PATH,
-	{ "车载点云轨迹 (.lin .Post .txtEst)", "*.lin *.Post *.txtEst",
-							  "全部文件", "*.*" },
-							  pfd::opt::multiselect );
+	auto f = pfd::open_file("请选择轨迹文件", DEFAULT_PATH,
+		{ "车载点云轨迹 (.lin .Post .txtEst)", "*.lin *.Post *.txtEst",
+								  "全部文件", "*.*" },
+		pfd::opt::multiselect);
 	std::cout << "Selected files:";
-	for ( auto const &name : f.result () )
+	for (auto const &name : f.result())
 		std::cout << name << ",";
 	std::cout << "\n";
 #endif // PDF
 
 	//octree voxel
 #ifdef VOXEL_FILTER
-	pcl::PointCloud<pcl::PointXYZ>::Ptr spl_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
+	pcl::PointCloud<pcl::PointXYZ>::Ptr spl_cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::VoxelGrid<pcl::PointXYZ> sor;
-	sor.setInputCloud ( input_cloud );
-	sor.setLeafSize ( 0.2, 0.2, 0.02 );
-	sor.filter ( *spl_cloud );
+	sor.setInputCloud(input_cloud);
+	sor.setLeafSize(0.2, 0.2, 0.02);
+	sor.filter(*spl_cloud);
 	//save as las
-	PointIO::saveLAS2<pcl::PointXYZ> ( featurepointpath, spl_cloud, las_offset );
+	PointIO::saveLAS2<pcl::PointXYZ>(featurepointpath, spl_cloud, las_offset);
 #endif
 
 	//approximate voxel filter
 	//using a hash table to mappint the points into the limited number of container, if the hash conflict occurs, clean the point that are already
 	// existed point as a out put point cloud? still from the origin  point cloud?
 #ifdef APPROXIMATE_VOXEL_FILTER
-	pcl::PointCloud<pcl::PointXYZ>::Ptr spl_cloud ( new pcl::PointCloud<pcl::PointXYZ> );
+	pcl::PointCloud<pcl::PointXYZ>::Ptr spl_cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::ApproximateVoxelGrid<pcl::PointXYZ> avg;
-	avg.setInputCloud ( input_cloud );
-	avg.setLeafSize ( 0.2, 0.2, 0.02 );
-	avg.filter ( *spl_cloud );
+	avg.setInputCloud(input_cloud);
+	avg.setLeafSize(0.2, 0.2, 0.02);
+	avg.filter(*spl_cloud);
 	//save as las
-	PointIO::saveLAS2<pcl::PointXYZ> ( featurepointpath, spl_cloud, las_offset );
+	PointIO::saveLAS2<pcl::PointXYZ>(featurepointpath, spl_cloud, las_offset);
 #endif
-	
+
 	//pcl 3d sift
 #ifdef PCLSIFT
 	const float min_scale = 0.1;
@@ -1080,20 +1080,20 @@ int main(int argc, char *argv[])
 
 	pcl::SIFTKeypoint<pcl::PointXYZ, pcl::PointWithScale> sift; //创建sift关键点检测对象
 	pcl::PointCloud<pcl::PointWithScale> result;
-	sift.setInputCloud ( input_cloud ); //设置输入点云
-	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree ( new pcl::search::KdTree<pcl::PointXYZ> () );
-	sift.setSearchMethod ( tree ); //创建一个空的kd树对象tree，并把它传递给sift检测对象
+	sift.setInputCloud(input_cloud); //设置输入点云
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
+	sift.setSearchMethod(tree); //创建一个空的kd树对象tree，并把它传递给sift检测对象
 	 //指定搜索关键点的尺度范围，在sift内部计算中，使用了一个默认的下采样方法，该方法采用voxel filter的方式用体素中心点近似代替原始点云进行下采样，
 	//也就是说采样之后的点不是原来的原始点云中的点了
-	sift.setScales ( min_scale, n_octaves, n_scales_per_octave ); 
-	sift.setMinimumContrast ( min_contrast ); //设置限制关键点检测的阈值
-	sift.compute ( result ); //执行sift关键点检测，保存结果在result
+	sift.setScales(min_scale, n_octaves, n_scales_per_octave);
+	sift.setMinimumContrast(min_contrast); //设置限制关键点检测的阈值
+	sift.compute(result); //执行sift关键点检测，保存结果在result
 
-	pcl::PointCloud<pcl::PointXYZ>::Ptr Sift_keypoint ( new pcl::PointCloud<pcl::PointXYZ> );
-	copyPointCloud ( result, *Sift_keypoint );//将点类型pcl::PointWithScale的数据转换为点类型pcl::PointXYZ的数据
+	pcl::PointCloud<pcl::PointXYZ>::Ptr Sift_keypoint(new pcl::PointCloud<pcl::PointXYZ>);
+	copyPointCloud(result, *Sift_keypoint);//将点类型pcl::PointWithScale的数据转换为点类型pcl::PointXYZ的数据
 
 	//save as las
-	PointIO::saveLAS2<pcl::PointXYZ> ( featurepointpath, Sift_keypoint, las_offset );
+	PointIO::saveLAS2<pcl::PointXYZ>(featurepointpath, Sift_keypoint, las_offset);
 #endif // PCLSIFT
 
 	//pcl 3d harris
@@ -1109,47 +1109,47 @@ int main(int argc, char *argv[])
 
 	//typedef pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZI> ColorHandlerT3;
 
-	pcl::PointCloud<pcl::PointXYZI>::Ptr Harris_keypoints ( new pcl::PointCloud<pcl::PointXYZI> () );
+	pcl::PointCloud<pcl::PointXYZI>::Ptr Harris_keypoints(new pcl::PointCloud<pcl::PointXYZI>());
 	pcl::HarrisKeypoint3D<pcl::PointXYZ, pcl::PointXYZI, pcl::Normal>* harris_detector = new pcl::HarrisKeypoint3D<pcl::PointXYZ, pcl::PointXYZI, pcl::Normal>;
 
-	harris_detector->setNonMaxSupression ( true );
-	harris_detector->setRadius ( r_normal );
-	harris_detector->setRadiusSearch ( r_keypoint );
-	harris_detector->setInputCloud ( input_cloud );
-	harris_detector->setNumberOfThreads ( 8 );
+	harris_detector->setNonMaxSupression(true);
+	harris_detector->setRadius(r_normal);
+	harris_detector->setRadiusSearch(r_keypoint);
+	harris_detector->setInputCloud(input_cloud);
+	harris_detector->setNumberOfThreads(8);
 	//harris_detector->setNormals(normal_source);
 	//harris_detector->setMethod(pcl::HarrisKeypoint3D<pcl::PointXYZRGB,pcl::PointXYZI>::LOWE);
-	harris_detector->compute ( *Harris_keypoints );
-	cout << "Harris_keypoints的大小是" << Harris_keypoints->size () << endl;
+	harris_detector->compute(*Harris_keypoints);
+	cout << "Harris_keypoints的大小是" << Harris_keypoints->size() << endl;
 	//writer.write<pcl::PointXYZI> ( "Harris_keypoints.pcd", *Harris_keypoints, false );
 
 	//save as las
-	PointIO::saveLAS2<pcl::PointXYZI> ( featurepointpath, Harris_keypoints, las_offset );
+	PointIO::saveLAS2<pcl::PointXYZI>(featurepointpath, Harris_keypoints, las_offset);
 #endif // HARRIS
 
 	//conncected analysis
 #ifdef CONNECT_ANALYSIS_TEST
 	pmProcessUrban::Bounds_ym  bound;
-	getCloudBound ( *input_cloud, bound );
+	getCloudBound(*input_cloud, bound);
 	int imagerows = bound.max_x - bound.min_x + 1;
 	int imagecols = bound.max_y - bound.min_y + 1;
-	cv::Mat pData = cv::Mat ( imagerows, imagecols, 3, CV_32FC1 );
+	cv::Mat pData = cv::Mat(imagerows, imagecols, 3, CV_32FC1);
 
-	for ( size_t i = 0; i < input_cloud->points.size (); ++i )
+	for (size_t i = 0; i < input_cloud->points.size(); ++i)
 	{
-		int row_x = input_cloud->points [i].x - bound.min_x;
-		int col_y = input_cloud->points [i].y - bound.min_y;
-		pData.at<uchar> ( row_x, col_y ) = input_cloud->points [i].intensity;
+		int row_x = input_cloud->points[i].x - bound.min_x;
+		int col_y = input_cloud->points[i].y - bound.min_y;
+		pData.at<uchar>(row_x, col_y) = input_cloud->points[i].intensity;
 	}
 
-	cv::imshow ( "show image", pData );
-	cv::imwrite ( "./point.jpg", pData );
+	cv::imshow("show image", pData);
+	cv::imwrite("./point.jpg", pData);
 #endif // CONNECT_ANALYSIS_TEST
 
 #ifdef CCLIB
 
 #endif // CCLIB
 
-	system ( "pause" );
+	system("pause");
 	return 1;
 }

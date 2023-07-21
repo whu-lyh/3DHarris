@@ -19,3 +19,6 @@
 [submodule "Submodules/mba"]
 	path = Submodules/mba
 	url = git@github.com:whu-lyh/mba.git
+[submodule "Submodules/BSC_MLS_PointCloudRegistration-MS"]
+	path = Submodules/BSC_MLS_PointCloudRegistration-MS
+	url = git@gitee.com:UbiquitousPointCloud/BSC_MLS_PointCloudRegistration-MS.git
