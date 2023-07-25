@@ -19,7 +19,13 @@ override the origin kmean with more out puts
 - voxel filters
 - ror filters
 
+### surface fitting
+
+MBA, pose spline
+
 ## OPENCV
+
+basic image process
 
 ## BOOST
 
@@ -35,3 +41,19 @@ For visualizing the registration result.
 
 ## CPPPractice
 - For normal c++ & STL practice
+
+## Ceres test
+
+curve fitting
+
+## Math
+
+Gaussian Newton algorithms\Dual quaternion
+
+## [Registration method test](./RegistrationTest/README.md)
+
++ FPFH
++ VPBF
++ BSC
+
+## More libraries in submodule
