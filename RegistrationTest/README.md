@@ -214,6 +214,12 @@ foption.fpfhOptions.CorrRejDist_Maximum_Distance = 0.1f;
 foption.fpfhOptions.RANSAC_Iterations = 5000;
 ```
 
+### 缺点
+
+似乎对某些场景容易出现匹配错误的情况，FPFH+GROR结果直接翻车。但是再次测试之后又恢复正常。
+
+![](https://cdn.jsdelivr.net/gh/whu-lyh/images//img/bsc_gror_mls_corner_case_all_in_one.png)
+
 ## 基于双平面的点云配准方法实际测试
 
 测试论文：Pairwise coarse registration of point clouds by traversing voxel-based 2-plane bases, IJRS 2022. [unofficial code](https://github.com/amine-chaabouni/pointcloud_registration_two_plane_base)
