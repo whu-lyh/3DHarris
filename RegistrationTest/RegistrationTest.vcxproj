@@ -119,12 +119,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="color_icp.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="optimization.cpp" />
+    <ClCompile Include="pso_registration.cpp" />
+    <ClCompile Include="voxel_grid\voxel_grid_fix.cpp" />
     <ClCompile Include="VPFBL.cpp" />
     <ClCompile Include="VPFBR.cpp" />
+    <ClCompile Include="yaml.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cc\cc_geom.h" />
+    <ClInclude Include="cc\jacobi.h" />
+    <ClInclude Include="cc\square_matrix.h" />
+    <ClInclude Include="color_icp\helper.h" />
+    <ClInclude Include="color_icp\remove_nan.h" />
+    <ClInclude Include="color_icp\yaml.h" />
     <ClInclude Include="pcl_registration_test.h" />
+    <ClInclude Include="pso_registration\metric.hpp" />
+    <ClInclude Include="pso_registration\particle.hpp" />
+    <ClInclude Include="pso_registration\swarm.hpp" />
+    <ClInclude Include="pso_registration\utilities.hpp" />
+    <ClInclude Include="voxel_grid\voxel_grid_fix.h" />
+    <ClInclude Include="voxel_grid\voxel_grid_fix.hpp" />
     <ClInclude Include="VPFBL.h" />
     <ClInclude Include="VPFBR.h" />
   </ItemGroup>

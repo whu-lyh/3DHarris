@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="color_icp">
+      <UniqueIdentifier>{9a9071cb-ffab-4362-9ad7-56024d97c6f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pso_registration">
+      <UniqueIdentifier>{a752fa33-350f-4809-a52b-8765ddc89277}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cc">
+      <UniqueIdentifier>{049ec6bd-4193-4c2a-84d0-dbb6eccb0706}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="voxel_grid">
+      <UniqueIdentifier>{9a16dec5-cc29-4353-998f-1dbe003313bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VPFBL.cpp">
@@ -22,6 +34,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pso_registration.cpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="voxel_grid\voxel_grid_fix.cpp">
+      <Filter>voxel_grid</Filter>
+    </ClCompile>
+    <ClCompile Include="color_icp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="optimization.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="yaml.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -34,6 +61,42 @@
     </ClInclude>
     <ClInclude Include="pcl_registration_test.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="color_icp\helper.h">
+      <Filter>color_icp</Filter>
+    </ClInclude>
+    <ClInclude Include="color_icp\remove_nan.h">
+      <Filter>color_icp</Filter>
+    </ClInclude>
+    <ClInclude Include="color_icp\yaml.h">
+      <Filter>color_icp</Filter>
+    </ClInclude>
+    <ClInclude Include="pso_registration\metric.hpp">
+      <Filter>pso_registration</Filter>
+    </ClInclude>
+    <ClInclude Include="pso_registration\particle.hpp">
+      <Filter>pso_registration</Filter>
+    </ClInclude>
+    <ClInclude Include="pso_registration\swarm.hpp">
+      <Filter>pso_registration</Filter>
+    </ClInclude>
+    <ClInclude Include="pso_registration\utilities.hpp">
+      <Filter>pso_registration</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\cc_geom.h">
+      <Filter>cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\jacobi.h">
+      <Filter>cc</Filter>
+    </ClInclude>
+    <ClInclude Include="cc\square_matrix.h">
+      <Filter>cc</Filter>
+    </ClInclude>
+    <ClInclude Include="voxel_grid\voxel_grid_fix.h">
+      <Filter>voxel_grid</Filter>
+    </ClInclude>
+    <ClInclude Include="voxel_grid\voxel_grid_fix.hpp">
+      <Filter>voxel_grid</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
