@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SplineTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoseSpline\PoseSplineUtility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoseSpline\PoseSpline.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoseSpline\QuaternionSpline.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoseSpline\QuaternionSplineUtility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoseSpline\PoseSplineSampleError.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoseSpline\QuaternionSplineSampleError.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PoseSpline\VectorSplineSampleAutoError.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PoseSpline\BSplineBase.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\PoseSpline.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\Quaternion.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\VectorSpaceSpline.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\QuaternionSpline.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\QuaternionSplineUtility.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\TypeTraits.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\Pose.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\Pose_imp.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\PoseLocalParameter.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\PoseSplineUtility.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\QuaternionLocalParameter.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\PoseSplineSampleError.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\QuaternionSplineSampleError.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\VectorSplineSampleAutoError.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\VectorSplineSampleError.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PoseSpline\ErrorInterface.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
