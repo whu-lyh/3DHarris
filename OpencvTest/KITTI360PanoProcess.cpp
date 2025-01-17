@@ -2,11 +2,17 @@
 // STL
 #include <iostream>
 #include <string>
+#include <chrono>
+#include <fstream>
 // OpenCV
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 // Boost
 #include <boost/filesystem.hpp>
+// PCL
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/filters/voxel_grid.h>
 
 // make dir existed
 bool ensure_dir(const std::string &dir)
@@ -162,18 +168,8 @@ bool is_directory(const std::string &dir)
 	return (boost::filesystem::exists(fullPath) && boost::filesystem::is_directory(fullPath)) ? true : false;
 }
 
-int main()
+int resizeAllSequences(const std::vector<std::string> &seqs)
 {
-	std::vector<std::string> seqs{
-		//"2013_05_28_drive_0000_sync",
-		//"2013_05_28_drive_0002_sync" ,
-		//"2013_05_28_drive_0003_sync" ,
-		//"2013_05_28_drive_0004_sync" ,
-		//"2013_05_28_drive_0005_sync" ,
-		//"2013_05_28_drive_0006_sync" ,
-		//"2013_05_28_drive_0007_sync" ,
-		"2013_05_28_drive_0009_sync" ,
-		"2013_05_28_drive_0010_sync" };
 	// source image path
 	std::string source_image_path = "H:/KITTI360/data_2d_pano/";
 	// target image path
@@ -199,7 +195,7 @@ int main()
 				std::cerr << "Image not existed!" << images[j] << std::endl;
 				continue;
 			}
-			//std::cout << "width: " << pano.cols << "\t height£º" << pano.rows << "\t channels£º" << pano.channels() << std::endl;
+			//std::cout << "width: " << pano.cols << "\t height: " << pano.rows << "\t channels: " << pano.channels() << std::endl;
 			//cv::imshow("1",pano);
 			std::string out_image = get_name(images[j]);
 			std::string out_image_path = out_image_path_bath + "/" + out_image;
@@ -212,6 +208,190 @@ int main()
 		}
 		std::cout << seqs[i] << " done! \n" << std::endl;
 	}
+}
+
+int readPointCloud(const std::string &filename, pcl::PointCloud<pcl::PointXYZI>::Ptr &point_cloud)
+{
+	point_cloud->clear();
+	std::ifstream binfile(filename.c_str(), std::ios::binary);
+	if (!binfile)
+	{
+		throw std::runtime_error("File cannot open");
+		return -1;
+	}
+	else
+	{
+		//std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+		//std::vector<float> tmp;
+		//while (1)
+		//{
+		//	short s;
+		//	pcl::PointXYZ point;
+		//	binfile.read((char*)&s, sizeof(short));
+		//	if (binfile.eof()) break;
+		//	point.x = s * 0.005;
+		//	binfile.read((char*)&s, sizeof(short));
+		//	point.y = s * 0.005;
+		//	binfile.read((char*)&s, sizeof(short));
+		//	point.z = s * 0.005;
+		//	point_cloud.push_back(point);
+		//}
+		//std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+		std::fstream input(filename.c_str(), std::ios::in | std::ios::binary);
+		if (!input.good())
+		{
+			return false;
+		}
+		int i = 0;
+		for (i = 0; input.good() && !input.eof(); ++i)
+		{
+			pcl::PointXYZI point;
+			pcl::PointXYZI newpoint;
+			float temp = 0.f;
+			input.read((char *)&point.x, 3 * sizeof(float));
+			input.read((char *)&temp, sizeof(float));
+			newpoint.x = point.x;
+			newpoint.y = point.y;
+			newpoint.z = point.z;
+			newpoint.intensity = temp;
+			point_cloud->push_back(newpoint);
+		}
+		input.close();
+	}
+	binfile.close();
+	return 1;
+}
+
+void generateImage(pcl::PointCloud<pcl::PointXYZI> &point_cloud, int &x_max_ind, int &y_max_ind, cv::Mat &mat_local_image)
+{
+	float resolution = 0.4;
+	pcl::VoxelGrid<pcl::PointXYZI> down_size_filter;
+	down_size_filter.setLeafSize(resolution, resolution, resolution / 2);
+	down_size_filter.setInputCloud(point_cloud.makeShared());
+	down_size_filter.filter(point_cloud);
+
+	float x_min = 10000, y_min = 10000, x_max = -100000, y_max = -100000;
+	for (int i = 0; i < point_cloud.size(); i++)
+	{
+		if (point_cloud.points[i].y < x_min)
+			x_min = point_cloud.points[i].y;
+		if (point_cloud.points[i].y > x_max)
+			x_max = point_cloud.points[i].y;
+		if (point_cloud.points[i].x < y_min)
+			y_min = point_cloud.points[i].x;
+		if (point_cloud.points[i].x > y_max)
+			y_max = point_cloud.points[i].x;
+	}
+
+	int x_min_ind = int(x_min / resolution);
+	x_max_ind = int(x_max / resolution);
+	int y_min_ind = int(y_min / resolution);
+	y_max_ind = int(y_max / resolution);
+	//std::cout << x_min << ' ' << x_max << ' ' <<  y_min << ' ' << y_max << std::endl;
+	//std::cout << x_min_ind << ' ' << x_max_ind << ' ' <<  y_min_ind << ' ' << y_max_ind << std::endl;
+
+	int x_num = x_max_ind - x_min_ind + 1;
+	int y_num = y_max_ind - y_min_ind + 1;
+	mat_local_image = cv::Mat(y_num, x_num, CV_8UC1, cv::Scalar::all(0));
+
+	for (int i = 0; i < point_cloud.size(); i++)
+	{
+		int x_ind = x_max_ind - int((point_cloud.points[i].y) / resolution);
+		int y_ind = y_max_ind - int((point_cloud.points[i].x) / resolution);
+		if (x_ind >= x_num || y_ind >= y_num) continue;
+		mat_local_image.at<uint8_t>(y_ind, x_ind) += 1;
+	}
+	uint8_t max_pixel = 0;
+	for (int i = 0; i < x_num; i++)
+		for (int j = 0; j < y_num; j++)
+		{
+			if (mat_local_image.at<uint8_t>(j, i) > max_pixel)
+				max_pixel = mat_local_image.at<uint8_t>(j, i);
+		}
+	for (int i = 0; i < x_num; i++)
+		for (int j = 0; j < y_num; j++)
+		{
+			if (uint8_t(mat_local_image.at<uint8_t>(j, i) * 10) > 122)
+			{
+				mat_local_image.at<uint8_t>(j, i) = 122;
+				continue;
+			}
+			mat_local_image.at<uint8_t>(j, i) = uint8_t(mat_local_image.at<uint8_t>(j, i) * 10);//1.0/max_pixel*255);
+			if (uint8_t(mat_local_image.at<uint8_t>(j, i)) == 0)
+			{
+				mat_local_image.at<uint8_t>(j, i) = 10;
+				continue;
+			}
+		}
+}
+
+void imagePadding(cv::Mat& img, int &cor_x, int & cor_y)
+{
+	int pad_size = 138;
+	cv::copyMakeBorder(img, img, pad_size / 2, pad_size / 2, pad_size / 2, pad_size / 2, cv::BORDER_CONSTANT, cv::Scalar(10));
+
+	//Extending image
+	int m = cv::getOptimalDFTSize(img.rows);
+	int n = cv::getOptimalDFTSize(img.cols);
+	int row_pad = (m - img.rows) / 2;
+	int col_pad = (n - img.cols) / 2;
+	//take this step to make fft faster
+	cv::copyMakeBorder(img, img, row_pad, (m - img.rows) % 2 ? row_pad + 1 : row_pad,
+		col_pad, (n - img.cols) % 2 ? col_pad + 1 : col_pad, cv::BORDER_CONSTANT, cv::Scalar(10));
+	cor_x += col_pad + pad_size / 2;
+	cor_y += row_pad + pad_size / 2;
+}
+
+void generateBEVs(const std::vector<std::string> &seqs)
+{
+	// source point cloud path
+	std::string source_submap_path = "F:/PublicDataSet/KITTI_Velodyne/";
+	// target image path
+	std::string target_image_path = "F:/PublicDataSet/KITTI360/";
+	// sequence loop
+	for (int i = 0; i < seqs.size(); ++i)
+	{
+		std::string out_image_path_bath = target_image_path + seqs[i] + "/bev/";
+		ensure_dir_recursive(out_image_path_bath);
+		std::string bins_path = source_submap_path + "/sequences/" + seqs[i] + "/velodyne";
+		std::vector<std::string> bin_files;
+		get_files(bins_path, ".bin", bin_files);
+		std::cout << "Bin file number:\t" << bin_files.size() << std::endl;
+#pragma omp parallel for
+		for (int j = 0; j < bin_files.size(); ++j)
+		{
+			pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZI>);
+			readPointCloud(bin_files[j], cloud);
+			if (cloud->empty())
+			{
+				std::cerr << "Point cloud load failed!" << bin_files[j] << std::endl;
+				continue;
+			}
+			int x_max_ind = 0, y_max_ind = 0;
+			cv::Mat bev_image;
+			generateImage(*cloud, x_max_ind, y_max_ind, bev_image);
+			//imagePadding(bev_image, x_max_ind, y_max_ind); // useless
+			std::string out_image_path = out_image_path_bath + get_name_without_ext(bin_files[j]) + ".png";
+			cv::imwrite(out_image_path, bev_image);
+		}
+		std::cout << seqs[i] << " done! \n" << std::endl;
+	}
+}
+
+int main()
+{
+	std::vector<std::string> sequences{ "07" };
+		//"2013_05_28_drive_0000_sync",
+		//"2013_05_28_drive_0002_sync" ,
+		//"2013_05_28_drive_0003_sync" ,
+		//"2013_05_28_drive_0004_sync" ,
+		//"2013_05_28_drive_0005_sync" ,
+		//"2013_05_28_drive_0006_sync" ,
+		//"2013_05_28_drive_0007_sync" ,
+		//"2013_05_28_drive_0009_sync" ,
+		//"2013_05_28_drive_0010_sync" };
+	//resizeAllSequences(sequences);
+	generateBEVs(sequences);
 	std::cout << "Done!" << std::endl;
 	system("pause");
 	return 1;
